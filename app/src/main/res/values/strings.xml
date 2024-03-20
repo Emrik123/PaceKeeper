@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">testApp</string>
+    <string name="viewString">Current speed </string>
+    <string name="viewString2"> km/h </string>
+    <string name="reachedSpeed"> You\'ve reached the desired speed! </string>
+    <string name="tooFast"> You\'re going too fast! </string>
+    <string name="tooSlow"> You\'re going too slow! </string>
+    <string name="_0_00">0.00</string>
+    <string name="pacekeeper">PaceKeeper</string>
+    <string name="status">Status: </string>
+    <string name="speed">Speed: </string>
+    <string name="n_a">N/A</string>
+</resources>
