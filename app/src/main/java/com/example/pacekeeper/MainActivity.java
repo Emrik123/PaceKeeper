@@ -1,5 +1,6 @@
 package com.example.pacekeeper;
 
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -15,8 +16,9 @@ import com.google.android.gms.location.*;
 
 public class MainActivity extends AppCompatActivity {
     private EditText speedInput;
-    private TextView viewSpeed;
-    private TextView viewStatus;
+    private TextView speedDisplay;
+    private TextView statusDisplay;
+    private TextView distanceDisplay;
     private Button confirm;
     private com.google.android.gms.location.LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private Location location;
     private double currentSpeed;
     private double speed;
+    private double distance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +35,12 @@ public class MainActivity extends AppCompatActivity {
         currentSpeed = 0;
         speedInput = findViewById(R.id.speedInput);
         confirm = findViewById(R.id.confirmButton);
-        viewSpeed = findViewById(R.id.speedText);
-        viewStatus = findViewById(R.id.viewStatus);
+        speedDisplay = findViewById(R.id.speedDisplay);
+        statusDisplay = findViewById(R.id.statusDisplay);
+        distanceDisplay = findViewById(R.id.distanceDisplay);
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(1000);
-        locationRequest.setFastestInterval(1000);
+        locationRequest.setInterval(500);
+        locationRequest.setFastestInterval(500);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
         confirm.setOnClickListener(new View.OnClickListener() {
@@ -58,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
+                if(location != null){
+                    distance = distance + location.distanceTo(locationResult.getLastLocation());
+                }
                 location = locationResult.getLastLocation();
                 currentSpeed = location.getSpeed();
                 updateUI();
@@ -73,24 +80,27 @@ public class MainActivity extends AppCompatActivity {
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
+    @SuppressLint("SetTextI18n")
     public void updateUI(){
+        int roundedDistance = (int) distance;
+        distanceDisplay.setText(Integer.toString(roundedDistance));
         currentSpeed = currentSpeed * 3.6;
         int roundedSpeed = (int) currentSpeed;
         String s1 = Double.toString(roundedSpeed);
         String s2 = getString(R.string.viewString);
         String s3 = getString(R.string.viewString2);
-        viewStatus.setText(s1);
+        statusDisplay.setText(s1);
         //viewSpeed.setText(s2 + s1 + s3);
         //Toast.makeText(MainActivity.this,Double.toString(currentSpeed), Toast.LENGTH_SHORT).show();
         if(roundedSpeed == speed || (roundedSpeed >= speed -1 && roundedSpeed <= speed +1)){
-            viewSpeed.setText(getString(R.string.reachedSpeed));
-            viewStatus.setTextColor(Color.parseColor("green"));
+            speedDisplay.setText(getString(R.string.reachedSpeed));
+            statusDisplay.setTextColor(Color.parseColor("green"));
         }else if(roundedSpeed > speed+1){
-            viewSpeed.setText(getString(R.string.tooFast));
-            viewStatus.setTextColor(Color.parseColor("red"));
+            speedDisplay.setText(getString(R.string.tooFast));
+            statusDisplay.setTextColor(Color.parseColor("red"));
         }else if(roundedSpeed < speed-1){
-            viewSpeed.setText(getString(R.string.tooSlow));
-            viewStatus.setTextColor(Color.parseColor("blue"));
+            speedDisplay.setText(getString(R.string.tooSlow));
+            statusDisplay.setTextColor(Color.parseColor("blue"));
         }
     }
 }
