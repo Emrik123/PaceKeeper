@@ -1,9 +1,12 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
     private double currentSpeed;
     private double speed;
     private double distance;
+    private Vibrator vibrator;
+    private VibrationEffect increaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{150,75,150,75,150},new int[]{255,0,255,0,255},-1); //Creates Vibration pattern for being too slow
+    private VibrationEffect decreaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{900},new int[]{255},-1); //Creates Vibration pattern for being too fast
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         locationRequest.setFastestInterval(500);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+        vibrator = (Vibrator) getBaseContext().getSystemService(Context.VIBRATOR_SERVICE); //Assigns vibrator to local variable
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -98,9 +106,11 @@ public class MainActivity extends AppCompatActivity {
         }else if(roundedSpeed > speed+1){
             statusDisplay.setText(getString(R.string.tooFast));
             speedDisplay.setTextColor(Color.parseColor("red"));
+            vibrator.vibrate(decreaseSpeedVibrationPattern); //Calls for the vibrator to vibrate according to the decreaseSpeedVibrationPattern
         }else if(roundedSpeed < speed-1){
             statusDisplay.setText(getString(R.string.tooSlow));
             speedDisplay.setTextColor(Color.parseColor("blue"));
+            vibrator.vibrate(increaseSpeedVibrationPattern); //Calls for the vibrator to vibrate according to the increaseSpeedVibrationPattern
         }
     }
 }
