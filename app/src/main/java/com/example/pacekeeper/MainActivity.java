@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         locationRequest.setFastestInterval(500);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
-        vibrator = (Vibrator) getBaseContext().getSystemService(Context.VIBRATOR_SERVICE); //Assigns vibrator to local variable
+        vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE); //Assigns vibrator to local variable
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
