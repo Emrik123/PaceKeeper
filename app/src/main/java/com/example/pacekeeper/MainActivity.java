@@ -89,18 +89,18 @@ public class MainActivity extends AppCompatActivity {
         String s1 = Double.toString(roundedSpeed);
         String s2 = getString(R.string.viewString);
         String s3 = getString(R.string.viewString2);
-        statusDisplay.setText(s1);
+        speedDisplay.setText(s1);
         //viewSpeed.setText(s2 + s1 + s3);
         //Toast.makeText(MainActivity.this,Double.toString(currentSpeed), Toast.LENGTH_SHORT).show();
         if(roundedSpeed == speed || (roundedSpeed >= speed -1 && roundedSpeed <= speed +1)){
-            speedDisplay.setText(getString(R.string.reachedSpeed));
-            statusDisplay.setTextColor(Color.parseColor("green"));
+            statusDisplay.setText(getString(R.string.reachedSpeed));
+            speedDisplay.setTextColor(Color.parseColor("green"));
         }else if(roundedSpeed > speed+1){
-            speedDisplay.setText(getString(R.string.tooFast));
-            statusDisplay.setTextColor(Color.parseColor("red"));
+            statusDisplay.setText(getString(R.string.tooFast));
+            speedDisplay.setTextColor(Color.parseColor("red"));
         }else if(roundedSpeed < speed-1){
-            speedDisplay.setText(getString(R.string.tooSlow));
-            statusDisplay.setTextColor(Color.parseColor("blue"));
+            statusDisplay.setText(getString(R.string.tooSlow));
+            speedDisplay.setTextColor(Color.parseColor("blue"));
         }
     }
 }
