@@ -7,37 +7,107 @@
     tools:context=".BlankFragment">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_marginTop="30dp"
-        android:layout_width="113dp"
+        android:id="@+id/timeLogo"
+        android:layout_width="100dp"
         android:layout_height="50dp"
-        android:src="@drawable/stopwatch"
-        />
+        android:layout_marginTop="30dp"
+        android:src="@drawable/stopwatch" />
 
     <TextView
-        android:id="@+id/time"
         android:layout_width="300dp"
-        android:layout_height="100dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="50dp"
         android:fontFamily="monospace"
 
         android:text="@string/timeS"
         android:textAlignment="textStart"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="60sp"
+        android:textSize="48sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="100dp"
+        android:text="@string/time"
+        android:textColor="#FFFFFF"
+        android:textSize="75sp"
+        android:visibility="visible"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/distanceLogo"
+        android:layout_width="113dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="220dp"
+        android:src="@drawable/distancelog" />
+
+    <TextView
+        android:id="@+id/distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="240dp"
+        android:text="@string/distance"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="48sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/distanceDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="290dp"
+        android:text="@string/distanceS"
+        android:textColor="#FFFFFF"
+        android:textSize="75sp"
+        android:visibility="visible"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/speedLogo"
+        android:layout_width="113dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="390dp"
+        android:src="@drawable/pngwing" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="410dp"
+        android:text="@string/speed"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="48sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/speedDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="160dp"
-        android:text="@string/time"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="460dp"
+        android:text="@string/distanceS"
         android:textColor="#FFFFFF"
-        android:textSize="60sp"
+        android:textSize="75sp"
         android:visibility="visible"
         tools:visibility="visible" />
+
+
+    <ImageButton
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/pauselogo"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="580dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/round_button"
+        />
 
 </FrameLayout>
