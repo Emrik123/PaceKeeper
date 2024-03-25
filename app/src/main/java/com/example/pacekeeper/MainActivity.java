@@ -17,6 +17,10 @@ import android.os.Bundle;
 import androidx.core.app.ActivityCompat;
 import com.google.android.gms.location.*;
 
+import java.sql.Time;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MainActivity extends AppCompatActivity {
     private EditText speedInput;
     private TextView speedDisplay;
@@ -86,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        startVibrationTimer();
     }
 
     @SuppressLint("SetTextI18n")
@@ -106,10 +111,34 @@ public class MainActivity extends AppCompatActivity {
         }else if(roundedSpeed > speed+1){
             statusDisplay.setText(getString(R.string.tooFast));
             speedDisplay.setTextColor(Color.parseColor("red"));
-            vibrator.vibrate(decreaseSpeedVibrationPattern); //Calls for the vibrator to vibrate according to the decreaseSpeedVibrationPattern
+          //  vibrator.vibrate(decreaseSpeedVibrationPattern); //Calls for the vibrator to vibrate according to the decreaseSpeedVibrationPattern
         }else if(roundedSpeed < speed-1){
             statusDisplay.setText(getString(R.string.tooSlow));
             speedDisplay.setTextColor(Color.parseColor("blue"));
+           // vibrator.vibrate(increaseSpeedVibrationPattern); //Calls for the vibrator to vibrate according to the increaseSpeedVibrationPattern
+        }
+    }
+
+    public void startVibrationTimer(){
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if(currentSpeed>speed+1 || currentSpeed<speed-1){
+                    vibrationFeedback();
+                }
+            }
+        };
+        timer.schedule(timerTask,0,2000);
+
+    }
+
+    public void vibrationFeedback(){
+        currentSpeed = currentSpeed * 3.6;
+        int roundedSpeed = (int) currentSpeed;
+       if(roundedSpeed > speed+1){;
+            vibrator.vibrate(decreaseSpeedVibrationPattern); //Calls for the vibrator to vibrate according to the decreaseSpeedVibrationPattern
+        }else if(roundedSpeed < speed-1){
             vibrator.vibrate(increaseSpeedVibrationPattern); //Calls for the vibrator to vibrate according to the increaseSpeedVibrationPattern
         }
     }
