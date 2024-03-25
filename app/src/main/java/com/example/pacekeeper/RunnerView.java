@@ -22,6 +22,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import java.sql.Time;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link RunnerView#newInstance} factory method to
@@ -30,7 +32,7 @@ import com.google.android.gms.location.LocationServices;
 public class RunnerView extends Fragment {
     private NumberPicker speedInput;
     private TextView speedDisplay;
-    private TextView statusDisplay;
+    private TextView timeDisplay;
     private TextView distanceDisplay;
     private Button confirm;
     private LocationRequest locationRequest;
@@ -40,6 +42,7 @@ public class RunnerView extends Fragment {
     private double currentSpeed;
     private double speed;
     private double distance;
+    private long startTimeMillis;
 
     public RunnerView() {
         // Required empty public constructor
@@ -61,8 +64,10 @@ public class RunnerView extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_blank, container, false);
 
         // Initialize views
+        timeDisplay = rootView.findViewById(R.id.time);
         speedDisplay = rootView.findViewById(R.id.speedDisplay);
         distanceDisplay = rootView.findViewById(R.id.distanceDisplay);
+        startTimeMillis = System.currentTimeMillis();
 
         // Initialize speed with the value passed through arguments
         Bundle args = getArguments();
@@ -114,6 +119,22 @@ public class RunnerView extends Fragment {
         }else if(roundedSpeed < speed-1){
             speedDisplay.setTextColor(Color.parseColor("blue"));
         }
+
+
+
+        long currentTimeMillis = System.currentTimeMillis()-startTimeMillis;
+
+        int hours = (int) (currentTimeMillis / (1000 * 60 * 60)) % 24;
+        int minutes = (int) ((currentTimeMillis / (1000 * 60)) % 60);
+        int seconds = (int) (currentTimeMillis / 1000) % 60;
+
+        String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        timeDisplay.setText(timeString);
+
+
+
+
+
     }
 
 
