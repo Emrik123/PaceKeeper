@@ -5,11 +5,13 @@
     <string name="reachedSpeed"> You\'ve reached the desired speed! </string>
     <string name="tooFast"> You\'re going too fast! </string>
     <string name="tooSlow"> You\'re going too slow! </string>
-    <string name="_0_00">0.00</string>
+    <string name="time">00:00:00</string>
     <string name="pacekeeper">PaceKeeper</string>
     <string name="status">Status: </string>
-    <string name="speed">Speed: </string>
     <string name="n_a">N/A</string>
     <string name="distance">Distance: </string>
-    <string name="confirm">Confirm</string>
+    <string name="confirm">Start</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="timeS">Time</string>
 </resources>

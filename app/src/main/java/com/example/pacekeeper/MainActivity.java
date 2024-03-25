@@ -10,7 +10,10 @@ import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.NumberPicker;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,16 +38,17 @@ public class MainActivity extends AppCompatActivity {
     private VibrationEffect decreaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{900},new int[]{255},-1); //Creates Vibration pattern for being too fast
 
 
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         currentSpeed = 0;
-        speedInput = findViewById(R.id.speedInput);
+        speedInput = findViewById(R.id.leftNPicker);
         confirm = findViewById(R.id.confirmButton);
-        speedDisplay = findViewById(R.id.speedDisplay);
-        statusDisplay = findViewById(R.id.statusDisplay);
-        distanceDisplay = findViewById(R.id.distanceDisplay);
+       // speedDisplay = findViewById(R.id.speedDisplay);
+       // statusDisplay = findViewById(R.id.statusDisplay);
+       // distanceDisplay = findViewById(R.id.distanceDisplay);
         locationRequest = new LocationRequest();
         locationRequest.setInterval(500);
         locationRequest.setFastestInterval(500);
@@ -83,7 +87,9 @@ public class MainActivity extends AppCompatActivity {
     private void start() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            BlankFragment blankFragment = new BlankFragment();
             return;
+
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
@@ -112,5 +118,10 @@ public class MainActivity extends AppCompatActivity {
             speedDisplay.setTextColor(Color.parseColor("blue"));
             vibrator.vibrate(increaseSpeedVibrationPattern); //Calls for the vibrator to vibrate according to the increaseSpeedVibrationPattern
         }
+    }
+    public void scroll(){
+      
+        
+
     }
 }
