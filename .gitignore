@@ -379,3 +379,4 @@ obj/
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,java,windows,jetbrains,intellij,androidstudio
+.idea/deploymentTargetDropDown.xml
