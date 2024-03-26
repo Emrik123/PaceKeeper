@@ -26,6 +26,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Time;
 
@@ -44,10 +45,14 @@ public class RunnerView extends Fragment {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
     private Location location;
+    private Kalman kalman;
     private double currentSpeed;
     private double speed;
     private double distance;
     private long startTimeMillis;
+    private final double UPDATE_INTERVAL_MS = 500;
+    private final double MEASUREMENT_NOISE_M = 5;
+    private final double ACCEL_NOISE_MS = 0.1;
     private Bundle savedInstance;
 
     public RunnerView() {
@@ -63,6 +68,7 @@ public class RunnerView extends Fragment {
         return fragment;
     }
 
+    @SuppressLint("VisibleForTests")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,21 +86,31 @@ public class RunnerView extends Fragment {
         }
 
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(500);
-        locationRequest.setFastestInterval(500);
+        locationRequest.setInterval((long) UPDATE_INTERVAL_MS);
+        locationRequest.setFastestInterval((long) UPDATE_INTERVAL_MS);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
+        // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
+        // Ignore for now
+        kalman = new Kalman(UPDATE_INTERVAL_MS, MEASUREMENT_NOISE_M, ACCEL_NOISE_MS);
 
         locationCallback = new LocationCallback() {
             @Override
-            public void onLocationResult(LocationResult locationResult) {
+            public void onLocationResult(@NotNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                if (location != null) {
-                    distance = distance + location.distanceTo(locationResult.getLastLocation());
+                if (locationResult.getLastLocation() != null) {
+                    //Location rawLocation = locationResult.getLastLocation();
+                    //Location filteredLocation = kalman.predictAndCorrect(rawLocation);
+                    Location lastLocation = locationResult.getLastLocation();
+                    if(location != null){
+                        if(currentSpeed > 1){
+                            distance+= lastLocation.distanceTo(location);
+                        }
+                    }
+                    location = lastLocation;
+                    currentSpeed = location.getSpeed();
+                    updateUI();
                 }
-                location = locationResult.getLastLocation();
-                currentSpeed = location.getSpeed();
-                updateUI();
             }
         };
 
