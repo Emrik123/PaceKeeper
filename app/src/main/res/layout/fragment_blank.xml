@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_blank"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1C8399"
@@ -101,6 +102,7 @@
 
 
     <ImageButton
+        android:id="@+id/pauseButtonLogo"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/pauselogo"
@@ -108,6 +110,6 @@
         android:layout_marginTop="580dp"
         android:scaleType="centerCrop"
         android:background="@drawable/round_button"
-        android:contentDescription="TODO" />
+       />
 
 </FrameLayout>
