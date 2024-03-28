@@ -1,19 +1,27 @@
 <resources>
     <string name="app_name">testApp</string>
-    <string name="viewString">Current speed </string>
-    <string name="viewString2"> km/h </string>
-    <string name="reachedSpeed"> You\'ve reached the desired speed! </string>
-    <string name="tooFast"> You\'re going too fast! </string>
-    <string name="tooSlow"> You\'re going too slow! </string>
+    <string name="viewString">Current speed</string>
+    <string name="viewString2">km/h</string>
+    <string name="reachedSpeed">You\'ve reached the desired speed!</string>
+    <string name="tooFast">You\'re going too fast!</string>
+    <string name="tooSlow">You\'re going too slow!</string>
     <string name="time">00:00:00</string>
     <string name="pacekeeper">PaceKeeper</string>
-    <string name="status">Status: </string>
+    <string name="status">Status:</string>
     <string name="n_a">N/A</string>
-    <string name="distance">Distance </string>
+    <string name="distance">Distance</string>
     <string name="confirm">Start</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="timeS">Time</string>
     <string name="distanceS">0.00 km</string>
     <string name="speed">Speed</string>
+    <string name="settings_header">Settings</string>
+    <string name="feedback_method">Feedback method</string>
+    <string name="vibration_settings">Vibration</string>
+    <string name="audio_settings">Audio</string>
+    <string name="feedback_frequency">Feedback frequency</string>
+    <string name="frequency_low">low</string>
+    <string name="frequency_medium">medium</string>
+    <string name="frequency_high">high</string>
 </resources>

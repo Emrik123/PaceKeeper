@@ -8,14 +8,11 @@ import android.location.Location;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.NumberPicker;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.location.*;
@@ -31,13 +28,14 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         confirm = findViewById(R.id.confirmButton);
+        ImageButton settingsButton = findViewById(R.id.settingsButton);
         NumberPicker numberPicker = findViewById(R.id.leftNPicker);
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(40);
-
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,8 +49,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-    }
 
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, SettingsFragment.class, null)
+                        .setReorderingAllowed(true)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+    }
 
     private void displayRunnerView(int speed) {
         // Create a new instance of RunnerView fragment with the selected speed
