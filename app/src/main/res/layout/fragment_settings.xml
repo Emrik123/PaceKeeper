@@ -5,6 +5,7 @@
               android:layout_height="match_parent"
               tools:context=".SettingsFragment"
               android:background="#1C8399"
+              android:clickable="true"
               android:orientation="vertical">
 
 
@@ -47,7 +48,7 @@
     <RadioGroup
             android:id="@+id/feedback_frequency_radiogroup"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
         <RadioButton
                 android:text="@string/frequency_low"
@@ -68,4 +69,9 @@
                 android:id="@+id/radio_frequency_high"
                 android:layout_weight="1"/>
     </RadioGroup>
+    <Button
+            android:text="@string/save_settings_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/saveSettings"/>
 </LinearLayout>

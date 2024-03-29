@@ -2,6 +2,7 @@ package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -23,17 +24,23 @@ public class MainActivity extends AppCompatActivity {
     private Vibrator vibrator;
     private VibrationEffect increaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{150, 75, 150, 75, 150}, new int[]{255, 0, 255, 0, 255}, -1); //Creates Vibration pattern for being too slow
     private VibrationEffect decreaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{900}, new int[]{255}, -1); //Creates Vibration pattern for being too fast
-
+    private NumberPicker numberPicker;
+    private ImageButton settingsButton;
+    private Boolean vibration;
+    private Boolean audio;
+    private String feedbackFrequency;
+    private SharedPreferences preferences;
 
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
         super.onCreate(savedInstanceState);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        loadSharedPreferences();
         setContentView(R.layout.activity_main);
         confirm = findViewById(R.id.confirmButton);
-        ImageButton settingsButton = findViewById(R.id.settingsButton);
-        NumberPicker numberPicker = findViewById(R.id.leftNPicker);
+        settingsButton = findViewById(R.id.settingsButton);
+        numberPicker = findViewById(R.id.leftNPicker);
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(40);
 
@@ -59,6 +66,13 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
             }
         });
+    }
+
+    public void loadSharedPreferences(){
+        preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+        vibration = preferences.getBoolean("vibrationFeedback", true);
+        audio = preferences.getBoolean("audioFeedback", true);
+        feedbackFrequency = preferences.getString("feedbackFrequency", "medium");
     }
 
     private void displayRunnerView(int speed) {

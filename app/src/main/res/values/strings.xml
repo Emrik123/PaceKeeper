@@ -24,4 +24,5 @@
     <string name="frequency_low">low</string>
     <string name="frequency_medium">medium</string>
     <string name="frequency_high">high</string>
+    <string name="save_settings_button">Save settings</string>
 </resources>
