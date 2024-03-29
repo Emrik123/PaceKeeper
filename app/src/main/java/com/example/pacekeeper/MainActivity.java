@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private Boolean audio;
     private String feedbackFrequency;
     private SharedPreferences preferences;
+    private Button sessionsButton;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -43,6 +44,15 @@ public class MainActivity extends AppCompatActivity {
         numberPicker = findViewById(R.id.leftNPicker);
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(40);
+        sessionsButton = findViewById(R.id.historyButton);
+
+        sessionsButton.setOnClickListener(v -> {
+            fragmentManager.beginTransaction().replace(R.id.fragment_container, HistoryFragment.class, null)
+                    .setReorderingAllowed(true)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,5 +95,6 @@ public class MainActivity extends AppCompatActivity {
         transaction.addToBackStack(null); // Optional: Add transaction to back stack
         transaction.commit();
     }
+
 
 }
