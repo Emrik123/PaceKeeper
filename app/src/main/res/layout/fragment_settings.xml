@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:context=".SettingsFragment"
+              android:background="#1C8399"
+              android:clickable="true"
+              android:orientation="vertical">
+
+
+    <TextView
+            android:padding="12dp"
+            android:text="@string/settings_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="38sp"
+            android:id="@+id/textView2"/>
+
+    <TextView
+            android:text="@string/feedback_method"
+            android:textSize="18dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView4"/>
+
+    <androidx.appcompat.widget.SwitchCompat
+            android:theme="@style/Base.Theme.PaceKeeper"
+            android:text="@string/vibration_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:id="@+id/vibration_switch"/>
+    <androidx.appcompat.widget.SwitchCompat
+            android:theme="@style/Base.Theme.PaceKeeper"
+            android:text="@string/audio_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:id="@+id/audio_switch"/>
+
+    <TextView
+            android:text="@string/feedback_frequency"
+            android:textSize="18dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView"/>
+    <RadioGroup
+            android:id="@+id/feedback_frequency_radiogroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <RadioButton
+                android:text="@string/frequency_low"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radio_frequency_low"
+                android:layout_weight="1"/>
+        <RadioButton
+                android:text="@string/frequency_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radio_frequency_medium"
+                android:layout_weight="1"/>
+        <RadioButton
+                android:text="@string/frequency_high"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radio_frequency_high"
+                android:layout_weight="1"/>
+    </RadioGroup>
+    <Button
+            android:text="@string/save_settings_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/saveSettings"/>
+</LinearLayout>

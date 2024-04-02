@@ -50,8 +50,10 @@
 
 
     <ImageButton
+        android:id="@+id/settingsButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
         tools:layout_editor_absoluteX="352dp"
         tools:ignore="MissingConstraints" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
