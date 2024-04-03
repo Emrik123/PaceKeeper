@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.View;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Boolean audio;
     private String feedbackFrequency;
     private SharedPreferences preferences;
+    private MediaPlayer alert;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         numberPicker = findViewById(R.id.leftNPicker);
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(40);
+        alert = MediaPlayer.create(MainActivity.this, R.raw.test_sound_alert);
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
                 if (speed != 0) {
                     Toast.makeText(MainActivity.this, "Speed stored.", Toast.LENGTH_SHORT).show();
                     displayRunnerView(speed);
+                    alert.start(); // <- Testa! Skitstörigt
+
                 } else {
                     Toast.makeText(MainActivity.this, "Please enter a valid speed.", Toast.LENGTH_SHORT).show();
                 }
