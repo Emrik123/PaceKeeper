@@ -6,6 +6,8 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
@@ -29,6 +31,7 @@ import com.google.android.gms.location.LocationServices;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Time;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,6 +57,8 @@ public class RunnerView extends Fragment {
     private final double MEASUREMENT_NOISE_M = 5;
     private final double ACCEL_NOISE_MS = 0.1;
     private Bundle savedInstance;
+    private MediaPlayer tooSlowAlert;
+    private MediaPlayer tooFastAlert;
 
     public RunnerView() {
         // Required empty public constructor
@@ -81,6 +86,8 @@ public class RunnerView extends Fragment {
         distanceDisplay = rootView.findViewById(R.id.distanceDisplay);
         pauseButton = rootView.findViewById(R.id.pauseButtonLogo);
         startTimeMillis = System.currentTimeMillis();
+        tooFastAlert = MediaPlayer.create(getActivity(), raw.toofast_notification);
+        tooSlowAlert = MediaPlayer.create(getActivity(), raw.tooslow_notification);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -114,6 +121,8 @@ public class RunnerView extends Fragment {
                     updateUI();
                 }
             }
+
+
         };
 
         pauseButton.setOnClickListener(new View.OnClickListener() {
@@ -145,8 +154,10 @@ public class RunnerView extends Fragment {
             speedDisplay.setTextColor(Color.parseColor("green"));
         }else if(roundedSpeed > speed+1){
             speedDisplay.setTextColor(Color.parseColor("red"));
+            tooFastAlert.start();
         }else if(roundedSpeed < speed-1){
             speedDisplay.setTextColor(Color.parseColor("blue"));
+            tooSlowAlert.start();
         }
 
 
