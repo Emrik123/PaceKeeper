@@ -31,6 +31,7 @@ import com.google.android.gms.location.LocationServices;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -47,21 +48,22 @@ public class RunnerView extends Fragment {
     private LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
-    private Location location;
     private Kalman kalman;
-    private double currentSpeed;
     private double speed;
-    private double distance;
-    private long startTimeMillis;
     private final double UPDATE_INTERVAL_MS = 500;
     private final double MEASUREMENT_NOISE_M = 5;
     private final double ACCEL_NOISE_MS = 0.1;
     private Bundle savedInstance;
     private MediaPlayer tooSlowAlert;
     private MediaPlayer tooFastAlert;
+    private Session currentSession;
+    private ArrayList<Session> sessionHistory; // For storing session when you stop a current one, also for loading up existing sessions from file.
 
     public RunnerView() {
-        // Required empty public constructor
+        // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
+        // Ignore for now
+        kalman = new Kalman(UPDATE_INTERVAL_MS, MEASUREMENT_NOISE_M, ACCEL_NOISE_MS);
+        sessionHistory = new ArrayList<>();
     }
 
     public static RunnerView newInstance(int speed) {
@@ -85,7 +87,6 @@ public class RunnerView extends Fragment {
         speedDisplay = rootView.findViewById(R.id.speedDisplay);
         distanceDisplay = rootView.findViewById(R.id.distanceDisplay);
         pauseButton = rootView.findViewById(R.id.pauseButtonLogo);
-        startTimeMillis = System.currentTimeMillis();
         tooFastAlert = MediaPlayer.create(getActivity(), raw.toofast_notification);
         tooSlowAlert = MediaPlayer.create(getActivity(), raw.tooslow_notification);
 
@@ -93,31 +94,21 @@ public class RunnerView extends Fragment {
         if (args != null) {
             speed = args.getInt("speed", 0);
         }
-
         locationRequest = new LocationRequest();
         locationRequest.setInterval((long) UPDATE_INTERVAL_MS);
         locationRequest.setFastestInterval((long) UPDATE_INTERVAL_MS);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
-        // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
-        // Ignore for now
-        kalman = new Kalman(UPDATE_INTERVAL_MS, MEASUREMENT_NOISE_M, ACCEL_NOISE_MS);
 
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NotNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 if (locationResult.getLastLocation() != null) {
-                    //Location rawLocation = locationResult.getLastLocation();
-                    //Location filteredLocation = kalman.predictAndCorrect(rawLocation);
+                    //Location rawLocation = locationResult.getLastLocation(); <- Icke Kalman-filtrerad location med noise
+                    //Location filteredLocation = kalman.predictAndCorrect(rawLocation); <- Kalman filtrerad location utan noise
                     Location lastLocation = locationResult.getLastLocation();
-                    if(location != null){
-                        if(currentSpeed > 1){
-                            distance+= lastLocation.distanceTo(location);
-                        }
-                    }
-                    location = lastLocation;
-                    currentSpeed = location.getSpeed();
+                    currentSession.updateLocation(lastLocation);
                     updateUI();
                 }
             }
@@ -129,6 +120,7 @@ public class RunnerView extends Fragment {
             @Override
             public void onClick(View view) {
                //TODO få upp pausmenyn.
+                currentSession.pauseSession();
             }
         });
 
@@ -140,37 +132,28 @@ public class RunnerView extends Fragment {
 
     @SuppressLint("SetTextI18n")
     public void updateUI(){
-        int roundedDistance = (int) distance;
-        distanceDisplay.setText(Integer.toString(roundedDistance));
-        currentSpeed = currentSpeed * 3.6;
-        int roundedSpeed = (int) currentSpeed;
-        String s1 = Double.toString(roundedSpeed);
-        String s2 = getString(R.string.viewString);
-        String s3 = getString(R.string.viewString2);
-        speedDisplay.setText(s1);
+        if(currentSession.getRunning()){
+            int roundedDistance = (int) currentSession.getDistance();
+            distanceDisplay.setText(Integer.toString(roundedDistance));
+            int roundedSpeed = (int) currentSession.getCurrentSpeed();
+            String s1 = Double.toString(roundedSpeed);
+            speedDisplay.setText(s1);
 
 
-        if(roundedSpeed == speed || (roundedSpeed >= speed -1 && roundedSpeed <= speed +1)){
-            speedDisplay.setTextColor(Color.parseColor("green"));
-        }else if(roundedSpeed > speed+1){
-            speedDisplay.setTextColor(Color.parseColor("red"));
-            tooFastAlert.start();
-        }else if(roundedSpeed < speed-1){
-            speedDisplay.setTextColor(Color.parseColor("blue"));
-            tooSlowAlert.start();
+            if(roundedSpeed == currentSession.getSelectedSpeed() ||
+                    (roundedSpeed >= currentSession.getSelectedSpeed() -1
+                            && roundedSpeed <= currentSession.getSelectedSpeed() +1)){
+                speedDisplay.setTextColor(Color.parseColor("green"));
+            }else if(roundedSpeed > currentSession.getSelectedSpeed()+1){
+                speedDisplay.setTextColor(Color.parseColor("red"));
+                tooFastAlert.start();
+            }else if(roundedSpeed < currentSession.getSelectedSpeed()-1){
+                speedDisplay.setTextColor(Color.parseColor("blue"));
+                tooSlowAlert.start();
+            }
+
+            timeDisplay.setText(currentSession.updateTime());
         }
-
-
-
-        long currentTimeMillis = System.currentTimeMillis()-startTimeMillis;
-
-        int hours = (int) (currentTimeMillis / (1000 * 60 * 60)) % 24;
-        int minutes = (int) ((currentTimeMillis / (1000 * 60)) % 60);
-        int seconds = (int) (currentTimeMillis / 1000) % 60;
-
-        @SuppressLint("DefaultLocale") String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-        timeDisplay.setText(timeString);
-
     }
 
 
@@ -183,6 +166,7 @@ public class RunnerView extends Fragment {
             return;
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        currentSession = new Session(speed);
     }
 
 }
