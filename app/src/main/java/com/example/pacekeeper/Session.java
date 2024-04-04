@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.location.Location;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Session implements Serializable {
@@ -15,12 +16,18 @@ public class Session implements Serializable {
     private double setConversionUnit = 3.6;
     private long startTimeMillis;
     private boolean isRunning;
+    private LocalDate sessionDate;
 
     public Session(double selectedSpeed){
+        this.sessionDate = LocalDate.now();
         this.selectedSpeed = selectedSpeed;
         startTimeMillis = System.currentTimeMillis();
         this.isRunning = true;
         route = new ArrayList<>();
+    }
+
+    public LocalDate getSessionDate(){
+        return sessionDate;
     }
 
     public String updateTime(){
