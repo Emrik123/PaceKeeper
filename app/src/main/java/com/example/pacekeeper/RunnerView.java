@@ -3,6 +3,7 @@ package com.example.pacekeeper;
 import static com.example.pacekeeper.R.*;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -33,6 +34,8 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,12 +61,14 @@ public class RunnerView extends Fragment {
     private MediaPlayer tooFastAlert;
     private Session currentSession;
     private ArrayList<Session> sessionHistory; // For storing session when you stop a current one, also for loading up existing sessions from file.
+    private FeedbackHandler feedback;
 
     public RunnerView() {
         // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
         // Ignore for now
         kalman = new Kalman(UPDATE_INTERVAL_MS, MEASUREMENT_NOISE_M, ACCEL_NOISE_MS);
         sessionHistory = new ArrayList<>();
+
     }
 
     public static RunnerView newInstance(int speed) {
@@ -71,6 +76,7 @@ public class RunnerView extends Fragment {
         Bundle args = new Bundle();
         // You can pass arguments if needed
         args.putInt("speed", speed);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,8 +93,10 @@ public class RunnerView extends Fragment {
         speedDisplay = rootView.findViewById(R.id.speedDisplay);
         distanceDisplay = rootView.findViewById(R.id.distanceDisplay);
         pauseButton = rootView.findViewById(R.id.pauseButtonLogo);
-        tooFastAlert = MediaPlayer.create(getActivity(), raw.toofast_notification);
-        tooSlowAlert = MediaPlayer.create(getActivity(), raw.tooslow_notification);
+        Intent intent = getActivity().getIntent();
+        if (intent != null) {
+            feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
+        }
 
         Bundle args = getArguments();
         if (args != null) {
@@ -109,6 +117,9 @@ public class RunnerView extends Fragment {
                     //Location filteredLocation = kalman.predictAndCorrect(rawLocation); <- Kalman filtrerad location utan noise
                     Location lastLocation = locationResult.getLastLocation();
                     currentSession.updateLocation(lastLocation);
+                    if (currentSession.getRunning()) {
+                        feedback.giveFeedback(currentSession.getSelectedSpeed(), currentSession.getCurrentSpeed());
+                    }
                     updateUI();
                 }
             }
@@ -140,7 +151,7 @@ public class RunnerView extends Fragment {
             speedDisplay.setText(s1);
 
 
-            if(roundedSpeed == currentSession.getSelectedSpeed() ||
+            /*if(roundedSpeed == currentSession.getSelectedSpeed() ||
                     (roundedSpeed >= currentSession.getSelectedSpeed() -1
                             && roundedSpeed <= currentSession.getSelectedSpeed() +1)){
                 speedDisplay.setTextColor(Color.parseColor("green"));
@@ -150,7 +161,8 @@ public class RunnerView extends Fragment {
             }else if(roundedSpeed < currentSession.getSelectedSpeed()-1){
                 speedDisplay.setTextColor(Color.parseColor("blue"));
                 tooSlowAlert.start();
-            }
+            }*/
+
 
             timeDisplay.setText(currentSession.updateTime());
         }

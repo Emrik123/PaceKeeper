@@ -2,6 +2,7 @@ package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private Boolean audio;
     private String feedbackFrequency;
     private SharedPreferences preferences;
-    private MediaPlayer alert;
+    private FeedbackHandler feedback;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -45,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
         numberPicker = findViewById(R.id.leftNPicker);
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(40);
-        alert = MediaPlayer.create(MainActivity.this, R.raw.test_sound_alert);
+        feedback = new FeedbackHandler(getApplicationContext());
+        setFeedbackPreferences();
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 if (speed != 0) {
                     Toast.makeText(MainActivity.this, "Speed stored.", Toast.LENGTH_SHORT).show();
                     displayRunnerView(speed);
-                    alert.start(); // <- Testa! Skitstörigt
+                    //alert.start(); // <- Testa! Skitstörigt
 
                 } else {
                     Toast.makeText(MainActivity.this, "Please enter a valid speed.", Toast.LENGTH_SHORT).show();
@@ -80,9 +82,18 @@ public class MainActivity extends AppCompatActivity {
         feedbackFrequency = preferences.getString("feedbackFrequency", "medium");
     }
 
+    public void setFeedbackPreferences() {
+        feedback.setVibrationAllowed(vibration);
+        feedback.setAudioAllowed(audio);
+    }
+
     private void displayRunnerView(int speed) {
         // Create a new instance of RunnerView fragment with the selected speed
         RunnerView runnerView = RunnerView.newInstance(speed);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("speed", speed);
+        getIntent().putExtra("feedbackHandler", feedback);
 
         // Replace the current fragment with the RunnerView fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
