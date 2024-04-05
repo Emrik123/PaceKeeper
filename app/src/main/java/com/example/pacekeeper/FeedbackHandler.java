@@ -22,18 +22,18 @@ public class FeedbackHandler implements Serializable {
 
     public void giveFeedback(double selectedSpeed, double currentSpeed) {
         if (audioAllowed) {
-            if (runningTooFast(selectedSpeed, currentSpeed)) {
+            if (movingTooFast(selectedSpeed, currentSpeed)) {
                 audioPlayer.decreaseSound();
             }
-            if (runningTooSlow(selectedSpeed, currentSpeed)) {
+            if (movingTooSlow(selectedSpeed, currentSpeed)) {
                 audioPlayer.increaseSound();
             }
         }
         if (vibrationAllowed) {
-            if (runningTooFast(selectedSpeed, currentSpeed)) {
+            if (movingTooFast(selectedSpeed, currentSpeed)) {
                 vibrator.vibrateSlower();
             }
-            if (runningTooSlow(selectedSpeed, currentSpeed)) {
+            if (movingTooSlow(selectedSpeed, currentSpeed)) {
                 vibrator.vibrateFaster();
             }
         }
@@ -54,11 +54,11 @@ public class FeedbackHandler implements Serializable {
         }
     }
 
-    private boolean runningTooFast(double selectedSpeed, double currentSpeed) {
+    private boolean movingTooFast(double selectedSpeed, double currentSpeed) {
         return currentSpeed >= selectedSpeed + feedbackDeltaMPS;
     }
 
-    private boolean runningTooSlow(double selectedSpeed, double currentSpeed) {
+    private boolean movingTooSlow(double selectedSpeed, double currentSpeed) {
         return currentSpeed <= selectedSpeed - feedbackDeltaMPS;
     }
 
