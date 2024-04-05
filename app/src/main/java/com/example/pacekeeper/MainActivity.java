@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     public void setFeedbackPreferences() {
         feedback.setVibrationAllowed(vibration);
         feedback.setAudioAllowed(audio);
+        feedback.setFeedbackFrequency(feedbackFrequency);
     }
 
     private void displayRunnerView(int speed) {
