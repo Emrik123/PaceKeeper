@@ -23,9 +23,6 @@ import com.google.android.gms.location.*;
 public class MainActivity extends AppCompatActivity {
     private int speed;
     private Button confirm;
-    private Vibrator vibrator;
-    private VibrationEffect increaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{150, 75, 150, 75, 150}, new int[]{255, 0, 255, 0, 255}, -1); //Creates Vibration pattern for being too slow
-    private VibrationEffect decreaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{900}, new int[]{255}, -1); //Creates Vibration pattern for being too fast
     private NumberPicker numberPicker;
     private ImageButton settingsButton;
     private Boolean vibration;
@@ -56,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
                 if (speed != 0) {
                     Toast.makeText(MainActivity.this, "Speed stored.", Toast.LENGTH_SHORT).show();
                     displayRunnerView(speed);
-                    //alert.start(); // <- Testa! Skitstörigt
 
                 } else {
                     Toast.makeText(MainActivity.this, "Please enter a valid speed.", Toast.LENGTH_SHORT).show();
@@ -88,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayRunnerView(int speed) {
+        loadSharedPreferences();
+        setFeedbackPreferences();
         // Create a new instance of RunnerView fragment with the selected speed
         RunnerView runnerView = RunnerView.newInstance(speed);
 
