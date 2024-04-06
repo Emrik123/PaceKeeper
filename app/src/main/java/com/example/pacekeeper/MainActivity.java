@@ -12,6 +12,12 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.View;
 import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.NumberPicker;
+import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.app.ActivityCompat;
@@ -30,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private String feedbackFrequency;
     private SharedPreferences preferences;
     private FeedbackHandler feedback;
+    private ImageButton sessions;
+
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -45,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         numberPicker.setMaxValue(40);
         feedback = new FeedbackHandler(getApplicationContext());
         setFeedbackPreferences();
+        sessions = findViewById(R.id.historyButton);
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,8 +69,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View v) {
                 fragmentManager.beginTransaction().replace(R.id.fragment_container, SettingsFragment.class, null)
                         .setReorderingAllowed(true)
@@ -69,6 +80,17 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
             }
         });
+
+
+
+        sessions.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick (View v){
+                displaySessionsView("test", "test");
+                }
+            });
+
+
     }
 
     public void loadSharedPreferences(){
@@ -82,6 +104,28 @@ public class MainActivity extends AppCompatActivity {
         feedback.setVibrationAllowed(vibration);
         feedback.setAudioAllowed(audio);
         feedback.setFeedbackFrequency(feedbackFrequency);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void displaySessionsView(String arg1, String arg2){
+        SessionFragment sessionFragment = SessionFragment.newInstance(arg1, arg2);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, sessionFragment); // Replace fragment_container with the id of your container layout
+        transaction.addToBackStack(null); // Optional: Add transaction to back stack
+        transaction.commit();
     }
 
     private void displayRunnerView(int speed) {
