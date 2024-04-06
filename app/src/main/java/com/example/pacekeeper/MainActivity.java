@@ -41,12 +41,6 @@ public class MainActivity extends AppCompatActivity {
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(40);
 
-        sessions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displaySessionsView("test", "test");
-            }
-        });
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,7 +53,43 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        sessions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displaySessionsView("test", "test");
+            }
+        });
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     private void displaySessionsView(String arg1, String arg2){

@@ -17,10 +17,14 @@
     <string name="distanceS">0.00 km</string>
     <string name="speed">Speed</string>
     <string name="sessionOverview">30/3 | 18 min | 5.2 km</string>
-    <string name="extendedSessionInfo"><![CDATA[
-    km1 | 5:35
-    km2 | 6:40
-    km3 | 5:45
+    <string name="each_km_in_session"><![CDATA[
+    km1 | 5:35 \n
+    km2 | 6:40 \n
+    km3 | 5:45 \n
+    ---------------------------
     ]]>
     </string>
+    <string name="route">Route \n -------------------------</string>
+    <string name="session_comment_title">Session Comment \n -------------------------</string>
+    <string name="session_comment">Ran around the park. Had only eaten a banana. </string>
 </resources>

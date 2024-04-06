@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -67,19 +68,39 @@ public class SessionFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_session, container, false);
 
+        ImageButton returnButton = rootView.findViewById(R.id.return_button);
         ImageButton expandButton =rootView.findViewById(R.id.expand_button);
-        TextView expandableContent = rootView.findViewById(R.id.detail_text_view);
-
+        TextView allKmInSession = rootView.findViewById(R.id.detail_text_view_km);
+        TextView routeText = rootView.findViewById(R.id.detail_text_view_route);
+        ImageView routeAsImage = rootView.findViewById(R.id.route_image);
+        TextView sessionCommentTitle = rootView.findViewById(R.id.detail_text_view_session_comment_title);
+        TextView sessionComment = rootView.findViewById(R.id.detail_text_view_session_comment_text);
         expandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (expandableContent.getVisibility() == View.VISIBLE) {
-                    expandableContent.setVisibility(View.GONE);
+                if (allKmInSession.getVisibility() == View.VISIBLE) {
+                    allKmInSession.setVisibility(View.GONE);
+                    routeText.setVisibility(View.GONE);
+                    routeAsImage.setVisibility(View.GONE);
+                    sessionCommentTitle.setVisibility(View.GONE);
+                    sessionComment.setVisibility(View.GONE);
                 } else {
-                    expandableContent.setVisibility(View.VISIBLE);
+                    allKmInSession.setVisibility(View.VISIBLE);
+                    routeText.setVisibility(View.VISIBLE);
+                    routeAsImage.setVisibility(View.VISIBLE);
+                    sessionCommentTitle.setVisibility(View.VISIBLE);
+                    sessionComment.setVisibility(View.VISIBLE);
                 }
             }
         });
+
+        returnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requireActivity().onBackPressed();
+            }
+        });
+
         return rootView;
     }
 }
