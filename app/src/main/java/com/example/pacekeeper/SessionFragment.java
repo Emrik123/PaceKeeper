@@ -63,9 +63,8 @@ public class SessionFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_session, container, false);
 
         ImageButton expandButton =rootView.findViewById(R.id.expand_button);
@@ -81,6 +80,6 @@ public class SessionFragment extends Fragment {
                 }
             }
         });
-        return inflater.inflate(R.layout.fragment_session, container, false);
+        return rootView;
     }
 }
