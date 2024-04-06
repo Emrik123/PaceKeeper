@@ -24,6 +24,7 @@ public class SettingsFragment extends Fragment {
     private String feedbackFrequency;
     private Button saveSettingsButton;
     private SharedPreferences preferences;
+    private ImageButton returnButton;
 
 
     public SettingsFragment() {
@@ -50,6 +51,8 @@ public class SettingsFragment extends Fragment {
         radioFrequencyMedium = rootView.findViewById(R.id.radio_frequency_medium);
         radioFrequencyHigh = rootView.findViewById(R.id.radio_frequency_high);
         saveSettingsButton = rootView.findViewById(R.id.saveSettings);
+        returnButton = rootView.findViewById(R.id.return_button);
+
 
         loadAndSetCurrentSettings();
         setGraphicElements();
@@ -89,6 +92,14 @@ public class SettingsFragment extends Fragment {
                 saveSettings();
             }
         });
+
+        returnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParentFragmentManager().popBackStackImmediate();
+            }
+        });
+
         return rootView;
     }
 
