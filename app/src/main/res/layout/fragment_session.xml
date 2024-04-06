@@ -1,0 +1,67 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_session"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1C8399"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/titleSession"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:fontFamily="sans-serif-black"
+        android:text="Sessions"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/titleSession"
+        app:layout_constraintTop_toBottomOf="@+id/titleSession"
+        android:background="@drawable/border"
+        />
+
+    <TextView
+        android:id="@+id/summary_text_view1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/sessionOverview"
+        app:layout_constraintTop_toTopOf="@id/linearLayout"
+        app:layout_constraintStart_toStartOf="@id/linearLayout"
+        app:layout_constraintEnd_toEndOf="@id/linearLayout"/>
+
+
+    <ImageButton
+        android:id="@+id/expand_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:backgroundTint="#1C8399"
+        android:scaleType="centerCrop"
+        android:src="@drawable/expandlogopng"
+        app:layout_constraintEnd_toEndOf="@id/linearLayout"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@id/summary_text_view1" />
+
+    <TextView
+        android:id="@+id/detail_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/extendedSessionInfo"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/expand_button"
+        app:layout_constraintStart_toStartOf="@id/linearLayout"
+        app:layout_constraintEnd_toEndOf="@id/linearLayout"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

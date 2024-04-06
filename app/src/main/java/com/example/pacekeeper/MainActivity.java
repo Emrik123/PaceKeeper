@@ -10,6 +10,7 @@ import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import com.google.android.gms.location.*;
 public class MainActivity extends AppCompatActivity {
     private int speed;
     private Button confirm;
+    private ImageButton sessions;
     private Vibrator vibrator;
     private VibrationEffect increaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{150, 75, 150, 75, 150}, new int[]{255, 0, 255, 0, 255}, -1); //Creates Vibration pattern for being too slow
     private VibrationEffect decreaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{900}, new int[]{255}, -1); //Creates Vibration pattern for being too fast
@@ -34,11 +36,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         confirm = findViewById(R.id.confirmButton);
+        sessions = findViewById(R.id.historyButton);
         NumberPicker numberPicker = findViewById(R.id.leftNPicker);
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(40);
 
-
+        sessions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displaySessionsView("test", "test");
+            }
+        });
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,6 +61,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    private void displaySessionsView(String arg1, String arg2){
+        SessionFragment sessionFragment = SessionFragment.newInstance(arg1, arg2);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, sessionFragment); // Replace fragment_container with the id of your container layout
+        transaction.addToBackStack(null); // Optional: Add transaction to back stack
+        transaction.commit();
+    }
 
     private void displayRunnerView(int speed) {
         // Create a new instance of RunnerView fragment with the selected speed

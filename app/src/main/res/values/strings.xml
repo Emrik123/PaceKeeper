@@ -16,4 +16,11 @@
     <string name="timeS">Time</string>
     <string name="distanceS">0.00 km</string>
     <string name="speed">Speed</string>
+    <string name="sessionOverview">30/3 | 18 min | 5.2 km</string>
+    <string name="extendedSessionInfo"><![CDATA[
+    km1 | 5:35
+    km2 | 6:40
+    km3 | 5:45
+    ]]>
+    </string>
 </resources>

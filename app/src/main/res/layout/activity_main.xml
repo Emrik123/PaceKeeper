@@ -50,8 +50,25 @@
 
 
     <ImageButton
+        android:id="@+id/settingsButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        tools:layout_editor_absoluteX="352dp"
-        tools:ignore="MissingConstraints" />
+        android:backgroundTint="#1C8399"
+        android:scaleType="centerCrop"
+        android:src="@drawable/settinglogo"
+        app:layout_constraintEnd_toEndOf="@id/fragment_container"
+        app:layout_constraintTop_toTopOf="@id/fragment_container" />
+
+    <ImageButton
+        android:id="@+id/historyButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:backgroundTint="#1C8399"
+        android:scaleType="centerCrop"
+        android:src="@drawable/history"
+        app:layout_constraintStart_toStartOf="@id/fragment_container"
+        app:layout_constraintTop_toTopOf="@id/fragment_container" />
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
