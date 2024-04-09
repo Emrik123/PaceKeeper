@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class Session implements Serializable {
     private ArrayList<Location> route;
+    private ArrayList<Double> storedSpeedArray;
     private Location currentLocation;
     private double distance;
     private double selectedSpeed;
@@ -16,7 +17,7 @@ public class Session implements Serializable {
     private double setConversionUnit = 3.6;
     private long startTimeMillis;
     private boolean isRunning;
-    private LocalDate sessionDate;
+    private final LocalDate sessionDate;
 
     public Session(double selectedSpeed){
         this.sessionDate = LocalDate.now();
@@ -24,10 +25,7 @@ public class Session implements Serializable {
         startTimeMillis = System.currentTimeMillis();
         this.isRunning = true;
         route = new ArrayList<>();
-    }
-
-    public LocalDate getSessionDate(){
-        return sessionDate;
+        storedSpeedArray = new ArrayList<>();
     }
 
     public String updateTime(){
@@ -41,24 +39,24 @@ public class Session implements Serializable {
         return timeString;
     }
 
-    public Location getCurrentLocation(){
-        return currentLocation;
-    }
-
-    public void changeSelectedSpeed(double speed){
+    public void setSelectedSpeed(double speed){
         this.selectedSpeed = speed;
     }
 
-    public double getSelectedSpeed(){
-        return selectedSpeed;
+    public void setConversionUnit(double value){
+        this.setConversionUnit = value;
     }
 
     public void pauseSession(){
         isRunning = false;
     }
 
-    public boolean getRunning(){
-        return isRunning;
+    public void continueSession(){
+        isRunning = true;
+    }
+
+    public void killSession(){
+        isRunning = false;
     }
 
     public void updateLocation(Location location){
@@ -68,6 +66,19 @@ public class Session implements Serializable {
         }
         this.currentLocation = location;
         this.currentSpeed = currentLocation.getSpeed();
+        storedSpeedArray.add(currentSpeed);
+    }
+
+    public boolean getRunning(){
+        return isRunning;
+    }
+
+    public Location getCurrentLocation(){
+        return currentLocation;
+    }
+
+    public double getSelectedSpeed(){
+        return selectedSpeed;
     }
 
     public double getCurrentSpeed(){
@@ -78,5 +89,23 @@ public class Session implements Serializable {
         return distance;
     }
 
+    public LocalDate getSessionDate(){
+        return sessionDate;
+    }
 
+    public double getSetConversionUnit(){
+        return setConversionUnit;
+    }
+
+    public ArrayList<Location> getRoute(){
+        return route;
+    }
+
+    public double calculateAverageSpeed(){
+        double avg = 0;
+        for(Double d : storedSpeedArray){
+            avg+=d;
+        }
+        return avg/storedSpeedArray.size();
+    }
 }
