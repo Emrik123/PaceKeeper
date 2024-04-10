@@ -6,6 +6,7 @@ import android.location.Location;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Session implements Serializable {
     private ArrayList<Location> route;
@@ -18,6 +19,7 @@ public class Session implements Serializable {
     private long startTimeMillis;
     private boolean isRunning;
     private final LocalDate sessionDate;
+    private String speedDisplayMode;
 
     public Session(double selectedSpeed){
         this.sessionDate = LocalDate.now();
@@ -81,8 +83,17 @@ public class Session implements Serializable {
         return selectedSpeed;
     }
 
+//    public double getCurrentSpeed(){
+//        return currentSpeed * setConversionUnit;
+//    }
+
     public double getCurrentSpeed(){
-        return currentSpeed * setConversionUnit;
+        if (speedDisplayMode.equals("kmh")){
+            return currentSpeed * setConversionUnit;
+        }
+        else{
+            return ((double) TimeUnit.SECONDS.toMinutes((long) (1000 / currentSpeed)) /60);
+        }
     }
 
     public double getDistance(){
@@ -99,6 +110,11 @@ public class Session implements Serializable {
 
     public ArrayList<Location> getRoute(){
         return route;
+    }
+
+    public void setSpeedDisplayMode(String mode){
+        speedDisplayMode = mode;
+        System.out.println("setspeeddisplaymode method session");
     }
 
     public double calculateAverageSpeed(){
