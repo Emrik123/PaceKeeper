@@ -26,9 +26,7 @@ public class FeedbackHandler implements Serializable {
         vibrator = new Vibrator(context);
     }
 
-
     public void giveFeedback() {
-        System.out.println("Feedback called");
         if (isRunning) {
             if (audioAllowed) {
                 if (movingTooFast()) {
@@ -111,6 +109,5 @@ public class FeedbackHandler implements Serializable {
 
     public void setCurrentSpeed(double currentSpeed) {
         this.currentSpeed = currentSpeed;
-        System.out.println("speed was set");
     }
 }

@@ -106,18 +106,15 @@ public class RunnerView extends Fragment {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
-
-
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                //TODO få upp pausmenyn.
                 currentSession.pauseSession();
                 feedback.stopFeedback();
-                // Location needs to stop when the session is paused. Needs to be handled differently if
+                // Locationupdates needs to stop/pause when the session is paused. Needs to be handled differently if
                 // you should be able to start the session with the same listener.
                 fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-
             }
         });
 
@@ -138,9 +135,7 @@ public class RunnerView extends Fragment {
 
 
         };
-
         start();
-
         return rootView;
     }
 
@@ -153,7 +148,6 @@ public class RunnerView extends Fragment {
             String s1 = Double.toString(roundedSpeed);
             speedDisplay.setText(s1);
 
-
             /*if(roundedSpeed == currentSession.getSelectedSpeed() ||
                     (roundedSpeed >= currentSession.getSelectedSpeed() -1
                             && roundedSpeed <= currentSession.getSelectedSpeed() +1)){
@@ -165,8 +159,6 @@ public class RunnerView extends Fragment {
                 speedDisplay.setTextColor(Color.parseColor("blue"));
                 tooSlowAlert.start();
             }*/
-
-
             timeDisplay.setText(currentSession.updateTime());
         }
     }
@@ -183,8 +175,6 @@ public class RunnerView extends Fragment {
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
         currentSession = new Session(speed);
         feedback.runFeedback(currentSession.getSelectedSpeed());
-
-
     }
 
 }
