@@ -19,7 +19,7 @@ public class Session implements Serializable {
     private long startTimeMillis;
     private boolean isRunning;
     private final LocalDate sessionDate;
-    private String speedDisplayMode;
+    private String speedDisplayMode = "kmh";
 
     public Session(double selectedSpeed){
         this.sessionDate = LocalDate.now();
@@ -114,7 +114,6 @@ public class Session implements Serializable {
 
     public void setSpeedDisplayMode(String mode){
         speedDisplayMode = mode;
-        System.out.println("setspeeddisplaymode method session");
     }
 
     public double calculateAverageSpeed(){
