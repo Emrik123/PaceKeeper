@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.pacekeeper"
-        minSdk = 29
+        minSdk = 28
         //noinspection EditedTargetSdkVersion
         targetSdk = 34
         versionCode = 1

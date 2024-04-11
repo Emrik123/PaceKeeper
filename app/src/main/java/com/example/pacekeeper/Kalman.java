@@ -8,12 +8,12 @@ public class Kalman {
     private KalmanFilter kalmanFilter;
     private ProcessModel processModel;
     private MeasurementModel measurementModel;
-    private double timeInterval;
+    private double dt;
     private double mNoise;
     private double aNoise;
 
     public Kalman(double tInterval, double mNoise, double aNoise){
-        this.timeInterval = tInterval;
+        this.dt = tInterval;
         this.mNoise = mNoise;
         this.aNoise = aNoise;
         processModel = initProcessModel();
@@ -22,7 +22,6 @@ public class Kalman {
     }
 
     public ProcessModel initProcessModel(){
-        double dt = timeInterval;
         double sigmaA2 = Math.pow(aNoise, 2);
 
         RealMatrix A = new Array2DRowRealMatrix(new double[][]{

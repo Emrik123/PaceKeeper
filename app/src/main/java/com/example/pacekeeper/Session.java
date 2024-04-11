@@ -1,14 +1,21 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.location.Location;
+import android.os.Environment;
+import android.util.Log;
+import android.widget.Toast;
 
-import java.io.Serializable;
+import java.io.*;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Session implements Serializable {
-    private ArrayList<Location> route;
+    private ArrayList<StoredLocation> route;
     private ArrayList<Double> storedSpeedArray;
     private Location currentLocation;
     private double distance;
@@ -62,7 +69,7 @@ public class Session implements Serializable {
     public void updateLocation(Location location){
         if(currentSpeed > 1 && isRunning){
             distance+= location.distanceTo(currentLocation);
-            route.add(currentLocation);
+            route.add(new StoredLocation(currentLocation.getLongitude(), currentLocation.getLatitude(), currentLocation.getSpeed()));
         }
         this.currentLocation = location;
         this.currentSpeed = currentLocation.getSpeed();
@@ -97,7 +104,7 @@ public class Session implements Serializable {
         return setConversionUnit;
     }
 
-    public ArrayList<Location> getRoute(){
+    public ArrayList<StoredLocation> getRoute(){
         return route;
     }
 
@@ -108,4 +115,45 @@ public class Session implements Serializable {
         }
         return avg/storedSpeedArray.size();
     }
+
+    public void storeSessionToMemory(Context context){
+        try{
+            StoredSession temp = new StoredSession(route, sessionDate);
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
+                    "testDataFile_" + temp.dateStamp + "_" + temp.sessionID +".dat");
+            ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file.toPath()));
+            oos.writeObject(temp);
+            oos.flush();
+            oos.close();
+            Toast.makeText(context, "File stored", Toast.LENGTH_SHORT).show();
+            System.out.println("File successfully created and stored in: " + file.getPath());
+        }catch (IOException e){
+            Log.e("Store session", "ObjectStream couldn't be initialized, perhaps file not found " + e);
+        }
+    }
+
+    public static class StoredLocation implements Serializable{
+        private double longitude;
+        private double latitude;
+        private double speed;
+        public StoredLocation(double longitude, double latitude, double speed){
+            this.longitude = longitude;
+            this.latitude = latitude;
+            this.speed = speed;
+        }
+    }
+
+    public static class StoredSession implements Serializable{
+        private ArrayList<StoredLocation> route;
+        private LocalDate dateStamp;
+        private static final AtomicInteger idCount = new AtomicInteger(0);
+        private int sessionID;
+
+        public StoredSession(ArrayList<StoredLocation> route, LocalDate dateStamp){
+            this.route = route;
+            this.dateStamp = dateStamp;
+            this.sessionID = idCount.incrementAndGet();
+        }
+    }
 }
+//File successfully created and store in: /data/user/0/com.example.pacekeeper/files/testDataFile.dat
