@@ -83,8 +83,6 @@ public class RunnerView extends Fragment {
 
     @SuppressLint("VisibleForTests")
     @Override
-
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_blank, container, false);
@@ -108,6 +106,21 @@ public class RunnerView extends Fragment {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
+
+
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               //TODO få upp pausmenyn.
+                currentSession.pauseSession();
+                feedback.stopFeedback();
+                // Location needs to stop when the session is paused. Needs to be handled differently if
+                // you should be able to start the session with the same listener.
+                fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+
+            }
+        });
+
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NotNull LocationResult locationResult) {
@@ -117,24 +130,14 @@ public class RunnerView extends Fragment {
                     //Location filteredLocation = kalman.predictAndCorrect(rawLocation); <- Kalman filtrerad location utan noise
                     Location lastLocation = locationResult.getLastLocation();
                     currentSession.updateLocation(lastLocation);
-                    if (currentSession.getRunning()) {
-                        feedback.giveFeedback(currentSession.getSelectedSpeed(), currentSession.getCurrentSpeed());
-                    }
+                    feedback.setRunning(currentSession.getRunning());
+                    feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
                     updateUI();
                 }
             }
 
 
         };
-
-        pauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               //TODO få upp pausmenyn.
-                currentSession.pauseSession();
-            }
-        });
-
 
         start();
 
@@ -179,6 +182,9 @@ public class RunnerView extends Fragment {
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
         currentSession = new Session(speed);
+        feedback.runFeedback(currentSession.getSelectedSpeed());
+
+
     }
 
 }
