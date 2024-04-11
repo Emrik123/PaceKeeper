@@ -2,6 +2,7 @@ package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
 import android.location.Location;
+import android.text.format.DateUtils;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -84,16 +85,25 @@ public class Session implements Serializable {
     }
 
 //    public double getCurrentSpeed(){
+//        System.out.println("Speed in ms: " + currentSpeed);
 //        return currentSpeed * setConversionUnit;
 //    }
 
-    public double getCurrentSpeed(){
+    public String getCurrentSpeed(){
         if (speedDisplayMode.equals("kmh")){
-            return currentSpeed * setConversionUnit;
+            System.out.println("current speed kmh" +currentSpeed * setConversionUnit);
+            return Double.toString(currentSpeed*setConversionUnit);
         }
         else{
-            return ((double) TimeUnit.SECONDS.toMinutes((long) (1000 / currentSpeed)) /60);
+            System.out.println("current speed m/s: " + currentSpeed);
+            System.out.println("current speed min/km: "+ (1000/currentSpeed)/60);
+            return DateUtils.formatElapsedTime((long)(1000/currentSpeed)) + "min/km";
         }
+    }
+
+
+    public double getCurrentSpeedMinPerKm(){
+        return (1000/currentSpeed)/60;
     }
 
     public double getDistance(){

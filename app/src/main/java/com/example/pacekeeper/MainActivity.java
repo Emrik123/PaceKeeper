@@ -130,9 +130,9 @@ public class MainActivity extends AppCompatActivity {
         RunnerView runnerView = RunnerView.newInstance(speed);
 
         Bundle bundle = new Bundle();
-        bundle.putString("speedDisplayMode", speedDisplayMode);
         bundle.putInt("speed", speed);
         getIntent().putExtra("feedbackHandler", feedback);
+        getIntent().putExtra("speedDisplayMode", speedDisplayMode);
 
         // Replace the current fragment with the RunnerView fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
