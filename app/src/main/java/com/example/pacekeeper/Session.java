@@ -11,7 +11,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Session implements Serializable {
@@ -69,7 +68,7 @@ public class Session implements Serializable {
     public void updateLocation(Location location){
         if(currentSpeed > 1 && isRunning){
             distance+= location.distanceTo(currentLocation);
-            route.add(new StoredLocation(currentLocation.getLongitude(), currentLocation.getLatitude(), currentLocation.getSpeed()));
+            route.add(new StoredLocation(currentLocation.getLongitude(), currentLocation.getLatitude(), currentLocation.getSpeed(), updateTime()));
         }
         this.currentLocation = location;
         this.currentSpeed = currentLocation.getSpeed();
@@ -118,7 +117,7 @@ public class Session implements Serializable {
 
     public void storeSessionToMemory(Context context){
         try{
-            StoredSession temp = new StoredSession(route, sessionDate);
+            StoredSession temp = new StoredSession(route, sessionDate, distance, updateTime());
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
                     "testDataFile_" + temp.dateStamp + "_" + temp.sessionID +".dat");
             ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file.toPath()));
@@ -133,10 +132,12 @@ public class Session implements Serializable {
     }
 
     public static class StoredLocation implements Serializable{
-        private double longitude;
-        private double latitude;
-        private double speed;
-        public StoredLocation(double longitude, double latitude, double speed){
+        private final double longitude;
+        private final double latitude;
+        private final double speed;
+        private final String timeStamp;
+        public StoredLocation(double longitude, double latitude, double speed, String timeStamp){
+            this.timeStamp = timeStamp;
             this.longitude = longitude;
             this.latitude = latitude;
             this.speed = speed;
@@ -147,9 +148,13 @@ public class Session implements Serializable {
         private ArrayList<StoredLocation> route;
         private LocalDate dateStamp;
         private static final AtomicInteger idCount = new AtomicInteger(0);
+        private final double totalDistance;
+        private final String totalTime;
         private int sessionID;
 
-        public StoredSession(ArrayList<StoredLocation> route, LocalDate dateStamp){
+        public StoredSession(ArrayList<StoredLocation> route, LocalDate dateStamp, double distance, String time){
+            this.totalTime = time;
+            this.totalDistance = distance;
             this.route = route;
             this.dateStamp = dateStamp;
             this.sessionID = idCount.incrementAndGet();
