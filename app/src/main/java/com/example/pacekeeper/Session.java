@@ -3,6 +3,7 @@ package com.example.pacekeeper;
 import android.annotation.SuppressLint;
 import android.location.Location;
 import android.text.format.DateUtils;
+import org.apache.commons.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ public class Session implements Serializable {
     private boolean isRunning;
     private final LocalDate sessionDate;
     private String speedDisplayMode = "kmh";
+    //private Stopwatch stopwatch;
 
     public Session(double selectedSpeed){
         this.sessionDate = LocalDate.now();
@@ -39,6 +41,10 @@ public class Session implements Serializable {
 
         @SuppressLint("DefaultLocale") String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         return timeString;
+    }
+
+    public void startSessionTime() {
+
     }
 
     public void setSelectedSpeed(double speed){
