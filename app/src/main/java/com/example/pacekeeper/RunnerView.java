@@ -38,6 +38,7 @@ public class RunnerView extends Fragment {
     private TextView distanceDisplay;
     private ImageButton pauseButton;
     private ImageButton resumeButton;
+    private ImageButton stopButton;
     private LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
@@ -81,7 +82,10 @@ public class RunnerView extends Fragment {
         distanceDisplay = rootView.findViewById(R.id.distanceDisplay);
         pauseButton = rootView.findViewById(R.id.pauseButtonLogo);
         resumeButton = rootView.findViewById(R.id.playButtonLogo);
+        stopButton = rootView.findViewById(R.id.stopButtonLogo);
+        stopButton.setVisibility(View.INVISIBLE);
         resumeButton.setVisibility(View.INVISIBLE);
+
         Intent intent = getActivity().getIntent();
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
@@ -103,6 +107,7 @@ public class RunnerView extends Fragment {
             public void onClick(View view) {
                 pauseButton.setVisibility(View.INVISIBLE);
                 resumeButton.setVisibility(View.VISIBLE);
+                stopButton.setVisibility(View.VISIBLE);
                 currentSession.pauseSession();
                 feedback.stopFeedback();
                 stopLocationUpdates();
@@ -114,6 +119,7 @@ public class RunnerView extends Fragment {
             public void onClick(View v) {
                 pauseButton.setVisibility(View.VISIBLE);
                 resumeButton.setVisibility(View.INVISIBLE);
+                stopButton.setVisibility(View.INVISIBLE);
                 currentSession.continueSession();
                 startLocationUpdates();
                 feedback.runFeedback(currentSession.getSelectedSpeed());
