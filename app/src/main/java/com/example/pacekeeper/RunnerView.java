@@ -68,7 +68,6 @@ public class RunnerView extends Fragment {
         // Ignore for now
         kalman = new Kalman(UPDATE_INTERVAL_MS, MEASUREMENT_NOISE_M, ACCEL_NOISE_MS);
         sessionHistory = new ArrayList<>();
-
     }
 
     public static RunnerView newInstance(int speed) {
@@ -132,8 +131,6 @@ public class RunnerView extends Fragment {
                     updateUI();
                 }
             }
-
-
         };
         start();
         return rootView;
@@ -162,10 +159,6 @@ public class RunnerView extends Fragment {
             timeDisplay.setText(currentSession.updateTime());
         }
     }
-
-
-
-
 
     private void start() {
         if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

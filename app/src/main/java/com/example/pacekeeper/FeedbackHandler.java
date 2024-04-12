@@ -27,7 +27,8 @@ public class FeedbackHandler implements Serializable {
     }
 
     public void giveFeedback() {
-        if (isRunning) {
+        final int AVG_WALKING_SPEED_KMH = 4;
+        if (isRunning || currentSpeed > AVG_WALKING_SPEED_KMH) {
             if (audioAllowed) {
                 if (movingTooFast()) {
                     audioPlayer.decreaseSound();
@@ -69,7 +70,7 @@ public class FeedbackHandler implements Serializable {
                 setFeedbackDelayMillis(7000);
                 break;
             case "high":
-                setFeedbackDelayMillis(500);
+                setFeedbackDelayMillis(1000);
                 break;
         }
     }

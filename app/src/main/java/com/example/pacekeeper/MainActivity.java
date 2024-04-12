@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
 
@@ -81,16 +80,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
         sessions.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick (View v){
                 displaySessionsView("test", "test");
                 }
             });
-
-
     }
 
     public void loadSharedPreferences(){
@@ -105,20 +100,6 @@ public class MainActivity extends AppCompatActivity {
         feedback.setAudioAllowed(audio);
         feedback.setFeedbackFrequency(feedbackFrequency);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private void displaySessionsView(String arg1, String arg2){
         SessionFragment sessionFragment = SessionFragment.newInstance(arg1, arg2);
