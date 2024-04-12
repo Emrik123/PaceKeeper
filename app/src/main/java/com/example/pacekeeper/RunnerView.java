@@ -62,6 +62,7 @@ public class RunnerView extends Fragment {
     private Session currentSession;
     private ArrayList<Session> sessionHistory; // For storing session when you stop a current one, also for loading up existing sessions from file.
     private FeedbackHandler feedback;
+    private String speedDisplayMode;
 
     public RunnerView() {
         // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
@@ -75,7 +76,6 @@ public class RunnerView extends Fragment {
         Bundle args = new Bundle();
         // You can pass arguments if needed
         args.putInt("speed", speed);
-
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,12 +93,16 @@ public class RunnerView extends Fragment {
         Intent intent = getActivity().getIntent();
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
+            speedDisplayMode = intent.getStringExtra("speedDisplayMode");
         }
 
         Bundle args = getArguments();
         if (args != null) {
             speed = args.getInt("speed", 0);
         }
+        System.out.println(speedDisplayMode + "runnerview");
+        System.out.println(speed);
+
         locationRequest = new LocationRequest();
         locationRequest.setInterval((long) UPDATE_INTERVAL_MS);
         locationRequest.setFastestInterval((long) UPDATE_INTERVAL_MS);
@@ -127,7 +131,18 @@ public class RunnerView extends Fragment {
                     Location lastLocation = locationResult.getLastLocation();
                     currentSession.updateLocation(lastLocation);
                     feedback.setRunning(currentSession.getRunning());
-                    feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
+                    feedback.setCurrentSpeed(currentSession.getCurrentSpeedDouble());
+                    if (currentSession.getRunning()) {
+                        feedback.giveFeedback();
+/*                        if(speedDisplayMode.equals("kmh")){
+                            feedback.giveFeedback(currentSession.getSelectedSpeed(), Double.parseDouble(currentSession.getCurrentSpeed()));
+                            feedback.giveFeedback();
+                        }
+                        else {
+                            feedback.giveFeedback(currentSession.getSelectedSpeed(), currentSession.getCurrentSpeedMinPerKm());
+                            feedback.giveFeedback();
+                        }*/
+                    }
                     updateUI();
                 }
             }
@@ -141,9 +156,16 @@ public class RunnerView extends Fragment {
         if(currentSession.getRunning()){
             int roundedDistance = (int) currentSession.getDistance();
             distanceDisplay.setText(Integer.toString(roundedDistance));
-            int roundedSpeed = (int) currentSession.getCurrentSpeed();
-            String s1 = Double.toString(roundedSpeed);
-            speedDisplay.setText(s1);
+
+          //  int roundedSpeed = (int) currentSession.getCurrentSpeed();
+            // String s1 = Double.toString(roundedSpeed);
+//            speedDisplay.setText(s1);
+            if(speedDisplayMode.equals("kmh")){
+                speedDisplay.setText(currentSession.getCurrentSpeed().substring(0,currentSession.getCurrentSpeed().indexOf(".")+2));
+            }
+            else{
+                speedDisplay.setText(currentSession.getCurrentSpeed().substring(0,currentSession.getCurrentSpeed().indexOf(":")+3));
+            }
 
             /*if(roundedSpeed == currentSession.getSelectedSpeed() ||
                     (roundedSpeed >= currentSession.getSelectedSpeed() -1
@@ -168,6 +190,7 @@ public class RunnerView extends Fragment {
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
         currentSession = new Session(speed);
         feedback.runFeedback(currentSession.getSelectedSpeed());
+        currentSession.setSpeedDisplayMode(speedDisplayMode);
     }
 
 }

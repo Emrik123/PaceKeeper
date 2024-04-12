@@ -9,8 +9,8 @@ android {
     defaultConfig {
         applicationId = "com.example.pacekeeper"
         minSdk = 29
-        //noinspection EditedTargetSdkVersion
-        targetSdk = 34
+        //noinspection ExpiredTargetSdkVersion,EditedTargetSdkVersion
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
 
@@ -32,7 +32,7 @@ android {
 dependencies {
 
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.8.0")
+    implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation ("com.google.android.gms:play-services-location:21.2.0")
     implementation ("org.apache.commons:commons-math3:3.6.1")

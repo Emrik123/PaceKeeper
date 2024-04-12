@@ -32,31 +32,31 @@
         tools:visibility="visible" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/confirmButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/confirmButton"
 
-        >
-
-        <NumberPicker
-            android:id="@+id/leftNPicker"
-            android:layout_width="107dp"
-            android:layout_height="211dp"
-            android:visibility="visible"
-            android:layout_marginEnd="5dp"
-            tools:layout_editor_absoluteY="102dp"
-            tools:visibility="visible" />
+            android:id="@+id/linearLayout2">
 
         <NumberPicker
-            android:id="@+id/RightNPicker"
-            android:layout_width="102dp"
-            android:layout_height="211dp"
-            android:layout_marginStart="5dp"
-            android:visibility="visible"
-            tools:visibility="visible" />
+                android:id="@+id/leftNPicker"
+                android:layout_width="107dp"
+                android:layout_height="211dp"
+                android:visibility="visible"
+                android:layout_marginEnd="5dp"
+                tools:layout_editor_absoluteY="102dp"
+                tools:visibility="visible"/>
+
+        <NumberPicker
+                android:id="@+id/RightNPicker"
+                android:layout_width="102dp"
+                android:layout_height="211dp"
+                android:layout_marginStart="5dp"
+                android:visibility="visible"
+                tools:visibility="visible"/>
 
 
     </LinearLayout>
@@ -83,6 +83,14 @@
         android:src="@drawable/history"
         app:layout_constraintStart_toStartOf="@id/fragment_container"
         app:layout_constraintTop_toTopOf="@id/fragment_container" />
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/unitTextView"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout2" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.578" app:layout_constraintVertical_bias="0.51"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout2"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

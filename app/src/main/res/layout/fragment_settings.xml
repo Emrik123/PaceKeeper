@@ -61,11 +61,49 @@
                 android:minHeight="48dp"
                 android:id="@+id/audio_switch"/>
         <TextView
+                android:text="@string/sessions_textView"
+                android:textSize="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sessions_textView"/>
+        <androidx.appcompat.widget.SwitchCompat
+                android:theme="@style/Base.Theme.PaceKeeper"
+                android:text="@string/autosave_session"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:id="@+id/autosave_switch"/>
+        <TextView
+                android:text="@string/display_speed_preference"
+                android:textSize="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/display_speed_textView"/>
+        <RadioGroup
+                android:id="@+id/speed_display_radiogroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <RadioButton
+                    android:text="@string/speed_min_km"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radio_min_km"
+                    android:layout_weight="1"/>
+            <RadioButton
+                    android:text="@string/speed_km_h"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radio_km_h"
+                    android:layout_weight="1"/>
+
+        </RadioGroup>
+        <TextView
                 android:text="@string/feedback_frequency"
                 android:textSize="18dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView"/>
+                android:id="@+id/feedback_frequency_textView"/>
         <RadioGroup
                 android:id="@+id/feedback_frequency_radiogroup"
                 android:layout_width="match_parent"
@@ -90,11 +128,7 @@
                     android:id="@+id/radio_frequency_high"
                     android:layout_weight="1"/>
         </RadioGroup>
-        <Button
-                android:text="@string/save_settings_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/saveSettings"/>
+
     </LinearLayout>
 
 </LinearLayout>

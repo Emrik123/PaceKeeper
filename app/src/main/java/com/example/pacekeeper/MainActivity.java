@@ -1,30 +1,13 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Location;
-import android.media.MediaPlayer;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.View;
 import android.widget.*;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.NumberPicker;
-import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
-import com.google.android.gms.location.*;
 
 public class MainActivity extends AppCompatActivity {
     private int speed;
@@ -33,27 +16,33 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton settingsButton;
     private Boolean vibration;
     private Boolean audio;
+    private Boolean autoSaveSession;
     private String feedbackFrequency;
+    private String speedDisplayMode;
     private SharedPreferences preferences;
     private FeedbackHandler feedback;
     private ImageButton sessions;
+    private FragmentManager fragmentManager;
+    private TextView unitTextView;
 
 
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        loadSharedPreferences();
         setContentView(R.layout.activity_main);
+        fragmentManager = getSupportFragmentManager();
+        loadSharedPreferences();
         confirm = findViewById(R.id.confirmButton);
         settingsButton = findViewById(R.id.settingsButton);
         numberPicker = findViewById(R.id.leftNPicker);
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(40);
         feedback = new FeedbackHandler(getApplicationContext());
-        setFeedbackPreferences();
         sessions = findViewById(R.id.historyButton);
+        unitTextView = findViewById(R.id.unitTextView);
+        setFeedbackPreferences();
+        setUnit();
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,12 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
-
             public void onClick(View v) {
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, SettingsFragment.class, null)
-                        .setReorderingAllowed(true)
-                        .addToBackStack(null)
-                        .commit();
+                displaySettingsView();
             }
         });
 
@@ -88,11 +73,18 @@ public class MainActivity extends AppCompatActivity {
             });
     }
 
+    public void updateSettings(){
+        loadSharedPreferences();
+        setUnit();
+    }
+
     public void loadSharedPreferences(){
         preferences = getSharedPreferences("preferences", MODE_PRIVATE);
         vibration = preferences.getBoolean("vibrationFeedback", true);
         audio = preferences.getBoolean("audioFeedback", true);
         feedbackFrequency = preferences.getString("feedbackFrequency", "medium");
+        autoSaveSession = preferences.getBoolean("autoSaveSessions", false);
+        speedDisplayMode = preferences.getString("speedDisplayMode", "minPerKm");
     }
 
     public void setFeedbackPreferences() {
@@ -101,12 +93,29 @@ public class MainActivity extends AppCompatActivity {
         feedback.setFeedbackFrequency(feedbackFrequency);
     }
 
+    @SuppressLint("SetTextI18n")
+    public void setUnit(){
+        System.out.println(speedDisplayMode);
+        if(speedDisplayMode.equals("minPerKm")){
+            unitTextView.setText("min/km");
+        }
+        else{
+            unitTextView.setText("km/h");
+        }
+    }
+
     private void displaySessionsView(String arg1, String arg2){
         SessionFragment sessionFragment = SessionFragment.newInstance(arg1, arg2);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, sessionFragment); // Replace fragment_container with the id of your container layout
         transaction.addToBackStack(null); // Optional: Add transaction to back stack
         transaction.commit();
+    }
+
+    private void displaySettingsView(){
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, SettingsFragment.class, null)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void displayRunnerView(int speed) {
@@ -118,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putInt("speed", speed);
         getIntent().putExtra("feedbackHandler", feedback);
+        getIntent().putExtra("speedDisplayMode", speedDisplayMode);
 
         // Replace the current fragment with the RunnerView fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
