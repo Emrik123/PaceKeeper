@@ -84,10 +84,10 @@ public class Session implements Serializable {
         return selectedSpeed;
     }
 
-//    public double getCurrentSpeed(){
-//        System.out.println("Speed in ms: " + currentSpeed);
-//        return currentSpeed * setConversionUnit;
-//    }
+    public double getCurrentSpeedDouble(){
+        System.out.println("Speed in ms: " + currentSpeed);
+        return currentSpeed * setConversionUnit;
+    }
 
     public String getCurrentSpeed(){
         if (speedDisplayMode.equals("kmh")){
