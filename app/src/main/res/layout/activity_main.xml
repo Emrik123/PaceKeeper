@@ -50,8 +50,18 @@
                 tools:layout_editor_absoluteY="102dp"
                 tools:visibility="visible"/>
 
+        <TextView
+                android:text="."
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/dot" android:layout_weight="1"
+                android:textSize="34sp"
+                android:layout_gravity="center"
+        />
+
+
+
         <NumberPicker
-                android:id="@+id/RightNPicker"
+                android:id="@+id/rightNPicker"
                 android:layout_width="102dp"
                 android:layout_height="211dp"
                 android:layout_marginStart="5dp"
@@ -91,6 +101,24 @@
             app:layout_constraintHorizontal_bias="0.578" app:layout_constraintVertical_bias="0.51"
             app:layout_constraintTop_toTopOf="@+id/linearLayout2"
             app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"/>
+    <TextView
+            android:text="@string/minutes_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/minutesTag"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="64dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="116dp" android:layout_marginBottom="7dp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2" app:layout_constraintEnd_toStartOf="@+id/secondsTag"
+            android:layout_marginEnd="67dp"/>
+    <TextView
+            android:text="@string/seconds_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/secondsTag"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="64dp"
+            app:layout_constraintStart_toEndOf="@+id/minutesTag" android:layout_marginBottom="7dp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2" android:layout_marginEnd="114dp"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintVertical_bias="0.51"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

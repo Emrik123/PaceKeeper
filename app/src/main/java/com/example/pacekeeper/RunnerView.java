@@ -1,28 +1,21 @@
 package com.example.pacekeeper;
 
-import static com.example.pacekeeper.R.*;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
-import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -31,11 +24,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -100,9 +89,6 @@ public class RunnerView extends Fragment {
         if (args != null) {
             speed = args.getInt("speed", 0);
         }
-        System.out.println(speedDisplayMode + "runnerview");
-        System.out.println(speed);
-
         locationRequest = new LocationRequest();
         locationRequest.setInterval((long) UPDATE_INTERVAL_MS);
         locationRequest.setFastestInterval((long) UPDATE_INTERVAL_MS);
@@ -112,12 +98,15 @@ public class RunnerView extends Fragment {
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               //TODO få upp pausmenyn.
-                currentSession.pauseSession();
-                feedback.stopFeedback();
-                // Locationupdates needs to stop/pause when the session is paused. Needs to be handled differently if
-                // you should be able to start the session with the same listener.
-                fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+                if (currentSession.getRunning()) {
+                    currentSession.pauseSession();
+                    feedback.stopFeedback();
+                    stopLocationUpdates();
+                } else {
+                    currentSession.continueSession();
+                    startLocationUpdates();
+                    feedback.runFeedback(currentSession.getSelectedSpeed());
+                }
             }
         });
 
@@ -131,18 +120,7 @@ public class RunnerView extends Fragment {
                     Location lastLocation = locationResult.getLastLocation();
                     currentSession.updateLocation(lastLocation);
                     feedback.setRunning(currentSession.getRunning());
-                    feedback.setCurrentSpeed(currentSession.getCurrentSpeedDouble());
-                    if (currentSession.getRunning()) {
-                        feedback.giveFeedback();
-/*                        if(speedDisplayMode.equals("kmh")){
-                            feedback.giveFeedback(currentSession.getSelectedSpeed(), Double.parseDouble(currentSession.getCurrentSpeed()));
-                            feedback.giveFeedback();
-                        }
-                        else {
-                            feedback.giveFeedback(currentSession.getSelectedSpeed(), currentSession.getCurrentSpeedMinPerKm());
-                            feedback.giveFeedback();
-                        }*/
-                    }
+                    feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
                     updateUI();
                 }
             }
@@ -156,17 +134,12 @@ public class RunnerView extends Fragment {
         if(currentSession.getRunning()){
             int roundedDistance = (int) currentSession.getDistance();
             distanceDisplay.setText(Integer.toString(roundedDistance));
-
-          //  int roundedSpeed = (int) currentSession.getCurrentSpeed();
-            // String s1 = Double.toString(roundedSpeed);
-//            speedDisplay.setText(s1);
             if(speedDisplayMode.equals("kmh")){
-                speedDisplay.setText(currentSession.getCurrentSpeed().substring(0,currentSession.getCurrentSpeed().indexOf(".")+2));
+                speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(".")+2));
             }
             else{
-                speedDisplay.setText(currentSession.getCurrentSpeed().substring(0,currentSession.getCurrentSpeed().indexOf(":")+3));
+                speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
             }
-
             /*if(roundedSpeed == currentSession.getSelectedSpeed() ||
                     (roundedSpeed >= currentSession.getSelectedSpeed() -1
                             && roundedSpeed <= currentSession.getSelectedSpeed() +1)){
@@ -182,15 +155,22 @@ public class RunnerView extends Fragment {
         }
     }
 
-    private void start() {
+    public void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
-        currentSession = new Session(speed);
-        feedback.runFeedback(currentSession.getSelectedSpeed());
-        currentSession.setSpeedDisplayMode(speedDisplayMode);
     }
 
+    public void stopLocationUpdates() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+    }
+
+    private void start() {
+        startLocationUpdates();
+        currentSession = new Session(speed);
+        currentSession.setSpeedDisplayMode(speedDisplayMode);
+        feedback.runFeedback(currentSession.getSelectedSpeed());
+    }
 }

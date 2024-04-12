@@ -3,6 +3,7 @@ package com.example.pacekeeper;
 import android.annotation.SuppressLint;
 import android.location.Location;
 import android.text.format.DateUtils;
+import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public class Session implements Serializable {
     private boolean isRunning;
     private final LocalDate sessionDate;
     private String speedDisplayMode = "kmh";
+    private StopWatch stopwatch;
 
     public Session(double selectedSpeed){
         this.sessionDate = LocalDate.now();
@@ -40,6 +42,10 @@ public class Session implements Serializable {
 
         @SuppressLint("DefaultLocale") String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         return timeString;
+    }
+
+    public void startSessionTime() {
+
     }
 
     public void setSelectedSpeed(double speed){
@@ -84,19 +90,15 @@ public class Session implements Serializable {
         return selectedSpeed;
     }
 
-    public double getCurrentSpeedDouble(){
-        System.out.println("Speed in ms: " + currentSpeed);
-        return currentSpeed * setConversionUnit;
+    public double getCurrentSpeed() {
+        return currentSpeed;
     }
 
-    public String getCurrentSpeed(){
+    public String getFormattedSpeed(){
         if (speedDisplayMode.equals("kmh")){
-            System.out.println("current speed kmh" +currentSpeed * setConversionUnit);
             return Double.toString(currentSpeed*setConversionUnit);
         }
-        else{
-            System.out.println("current speed m/s: " + currentSpeed);
-            System.out.println("current speed min/km: "+ (1000/currentSpeed)/60);
+        else {
             return DateUtils.formatElapsedTime((long)(1000/currentSpeed)) + "min/km";
         }
     }
