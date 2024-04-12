@@ -7,7 +7,6 @@ import android.text.format.DateUtils;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class Session implements Serializable {
     private ArrayList<Location> route;
@@ -84,12 +83,12 @@ public class Session implements Serializable {
         return selectedSpeed;
     }
 
-//    public double getCurrentSpeed(){
-//        System.out.println("Speed in ms: " + currentSpeed);
-//        return currentSpeed * setConversionUnit;
-//    }
+    public double getCurrentSpeed(){
+        System.out.println("Speed in ms: " + currentSpeed);
+        return currentSpeed * setConversionUnit;
+    }
 
-    public String getCurrentSpeed(){
+    public String getFormattedSpeed(){
         if (speedDisplayMode.equals("kmh")){
             System.out.println("current speed kmh" +currentSpeed * setConversionUnit);
             return Double.toString(currentSpeed*setConversionUnit);
