@@ -42,5 +42,7 @@
     <string name="speed_km_h">km/h</string>
     <string name="autosave_session">Automatically save finished sessions</string>
     <string name="sessions_textView">Session</string>
+    <string name="minutes_tag">Minutes</string>
+    <string name="seconds_tag">Seconds</string>
 
 </resources>

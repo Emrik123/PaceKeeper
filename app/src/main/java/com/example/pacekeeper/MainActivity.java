@@ -1,35 +1,23 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Location;
-import android.media.MediaPlayer;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.View;
-import android.widget.*;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
-import com.google.android.gms.location.*;
 
 public class MainActivity extends AppCompatActivity {
     private int speed;
     private Button confirm;
-    private NumberPicker numberPicker;
+    private NumberPicker leftNPicker;
+    private NumberPicker rightNPicker;
     private ImageButton settingsButton;
     private Boolean vibration;
     private Boolean audio;
@@ -47,16 +35,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        //FragmentManager fragmentManager = getSupportFragmentManager();
         loadSharedPreferences();
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
         loadSharedPreferences();
         confirm = findViewById(R.id.confirmButton);
         settingsButton = findViewById(R.id.settingsButton);
-        numberPicker = findViewById(R.id.leftNPicker);
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(40);
+        leftNPicker = findViewById(R.id.leftNPicker);
+        rightNPicker = findViewById(R.id.rightNPicker);
+        setPickerStyle("default");
         feedback = new FeedbackHandler(getApplicationContext());
         setFeedbackPreferences();
         sessions = findViewById(R.id.historyButton);
@@ -67,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                speed = numberPicker.getValue();
+                speed = leftNPicker.getValue();
                 if (speed != 0) {
                     Toast.makeText(MainActivity.this, "Speed stored.", Toast.LENGTH_SHORT).show();
                     displayRunnerView(speed);
@@ -102,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     public void updateSettings(){
         loadSharedPreferences();
         setUnit();
+        setPickerStyle(speedDisplayMode);
     }
 
     public void loadSharedPreferences(){
@@ -160,6 +149,30 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, runnerView); // Replace fragment_container with the id of your container layout
         transaction.addToBackStack(null); // Optional: Add transaction to back stack
         transaction.commit();
+    }
+
+    public void setPickerStyle(String speedDisplayMode) {
+        switch (speedDisplayMode) {
+            case "minPerKm":
+                leftNPicker.setMinValue(1);
+                leftNPicker.setMaxValue(59);
+                rightNPicker.setMaxValue(0);
+                rightNPicker.setMaxValue(59);
+                findViewById(R.id.dot).setVisibility(View.INVISIBLE);
+                findViewById(R.id.minutesTag).setVisibility(View.VISIBLE);
+                findViewById(R.id.secondsTag).setVisibility(View.VISIBLE);
+                break;
+            case "km":
+            default:
+                leftNPicker.setMinValue(4);
+                leftNPicker.setMaxValue(40);
+                rightNPicker.setMaxValue(0);
+                rightNPicker.setMaxValue(9);
+                findViewById(R.id.dot).setVisibility(View.VISIBLE);
+                findViewById(R.id.minutesTag).setVisibility(View.INVISIBLE);
+                findViewById(R.id.secondsTag).setVisibility(View.INVISIBLE);
+                break;
+        }
     }
 
 }
