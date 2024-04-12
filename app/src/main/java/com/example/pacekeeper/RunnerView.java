@@ -62,6 +62,7 @@ public class RunnerView extends Fragment {
     private Session currentSession;
     private ArrayList<Session> sessionHistory; // For storing session when you stop a current one, also for loading up existing sessions from file.
     private FeedbackHandler feedback;
+    private String speedDisplayMode;
 
     public RunnerView() {
         // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
@@ -75,7 +76,6 @@ public class RunnerView extends Fragment {
         Bundle args = new Bundle();
         // You can pass arguments if needed
         args.putInt("speed", speed);
-
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,6 +93,7 @@ public class RunnerView extends Fragment {
         Intent intent = getActivity().getIntent();
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
+            speedDisplayMode = intent.getStringExtra("speedDisplayMode");
         }
 
         Bundle args = getArguments();
@@ -141,9 +142,15 @@ public class RunnerView extends Fragment {
         if(currentSession.getRunning()){
             int roundedDistance = (int) currentSession.getDistance();
             distanceDisplay.setText(Integer.toString(roundedDistance));
-            int roundedSpeed = (int) currentSession.getCurrentSpeed();
-            String s1 = Double.toString(roundedSpeed);
-            speedDisplay.setText(s1);
+          //  int roundedSpeed = (int) currentSession.getCurrentSpeed();
+            // String s1 = Double.toString(roundedSpeed);
+//            speedDisplay.setText(s1);
+            if(speedDisplayMode.equals("kmh")){
+                speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(".")+2));
+            }
+            else{
+                speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
+            }
 
             /*if(roundedSpeed == currentSession.getSelectedSpeed() ||
                     (roundedSpeed >= currentSession.getSelectedSpeed() -1
@@ -167,6 +174,7 @@ public class RunnerView extends Fragment {
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
         currentSession = new Session(speed);
+        currentSession.setSpeedDisplayMode(speedDisplayMode);
         feedback.runFeedback(currentSession.getSelectedSpeed());
     }
 

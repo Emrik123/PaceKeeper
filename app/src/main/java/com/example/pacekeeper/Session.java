@@ -2,10 +2,12 @@ package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
 import android.location.Location;
+import android.text.format.DateUtils;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Session implements Serializable {
     private ArrayList<Location> route;
@@ -18,6 +20,7 @@ public class Session implements Serializable {
     private long startTimeMillis;
     private boolean isRunning;
     private final LocalDate sessionDate;
+    private String speedDisplayMode = "kmh";
 
     public Session(double selectedSpeed){
         this.sessionDate = LocalDate.now();
@@ -81,8 +84,26 @@ public class Session implements Serializable {
         return selectedSpeed;
     }
 
-    public double getCurrentSpeed(){
-        return currentSpeed * setConversionUnit;
+//    public double getCurrentSpeed(){
+//        System.out.println("Speed in ms: " + currentSpeed);
+//        return currentSpeed * setConversionUnit;
+//    }
+
+    public String getCurrentSpeed(){
+        if (speedDisplayMode.equals("kmh")){
+            System.out.println("current speed kmh" +currentSpeed * setConversionUnit);
+            return Double.toString(currentSpeed*setConversionUnit);
+        }
+        else{
+            System.out.println("current speed m/s: " + currentSpeed);
+            System.out.println("current speed min/km: "+ (1000/currentSpeed)/60);
+            return DateUtils.formatElapsedTime((long)(1000/currentSpeed)) + "min/km";
+        }
+    }
+
+
+    public double getCurrentSpeedMinPerKm(){
+        return (1000/currentSpeed)/60;
     }
 
     public double getDistance(){
@@ -99,6 +120,10 @@ public class Session implements Serializable {
 
     public ArrayList<Location> getRoute(){
         return route;
+    }
+
+    public void setSpeedDisplayMode(String mode){
+        speedDisplayMode = mode;
     }
 
     public double calculateAverageSpeed(){

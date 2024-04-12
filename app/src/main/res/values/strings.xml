@@ -36,5 +36,11 @@
     <string name="route">Route \n -------------------------</string>
     <string name="session_comment_title">Session Comment \n -------------------------</string>
     <string name="session_comment">Ran around the park. Had only eaten a banana. </string>
+    <string name="display_settings">Display speed in</string>
+    <string name="display_speed_preference">Display speed preference</string>
+    <string name="speed_min_km">min/km</string>
+    <string name="speed_km_h">km/h</string>
+    <string name="autosave_session">Automatically save finished sessions</string>
+    <string name="sessions_textView">Session</string>
 
 </resources>
