@@ -141,7 +141,6 @@ public class RunnerView extends Fragment {
             else{
                 speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
             }
-
             /*if(roundedSpeed == currentSession.getSelectedSpeed() ||
                     (roundedSpeed >= currentSession.getSelectedSpeed() -1
                             && roundedSpeed <= currentSession.getSelectedSpeed() +1)){
@@ -175,5 +174,4 @@ public class RunnerView extends Fragment {
         currentSession.setSpeedDisplayMode(speedDisplayMode);
         feedback.runFeedback(currentSession.getSelectedSpeed());
     }
-
 }
