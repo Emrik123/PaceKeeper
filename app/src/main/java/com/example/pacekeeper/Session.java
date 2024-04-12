@@ -8,7 +8,6 @@ import org.apache.commons.lang3.time.StopWatch;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class Session implements Serializable {
     private ArrayList<Location> route;
@@ -18,23 +17,24 @@ public class Session implements Serializable {
     private double selectedSpeed;
     private double currentSpeed;
     private double setConversionUnit = 3.6;
-    private long startTimeMillis;
     private boolean isRunning;
     private final LocalDate sessionDate;
     private String speedDisplayMode = "kmh";
-    private StopWatch stopwatch;
+    private final StopWatch stopwatch;
+    private Boolean discardLocation = false;
 
     public Session(double selectedSpeed){
         this.sessionDate = LocalDate.now();
         this.selectedSpeed = selectedSpeed;
-        startTimeMillis = System.currentTimeMillis();
         this.isRunning = true;
         route = new ArrayList<>();
         storedSpeedArray = new ArrayList<>();
+        stopwatch = new StopWatch();
+        stopwatch.start();
     }
 
     public String updateTime(){
-        long currentTimeMillis = System.currentTimeMillis()-startTimeMillis;
+        long currentTimeMillis = stopwatch.getTime();
 
         int hours = (int) (currentTimeMillis / (1000 * 60 * 60)) % 24;
         int minutes = (int) ((currentTimeMillis / (1000 * 60)) % 60);
@@ -42,10 +42,6 @@ public class Session implements Serializable {
 
         @SuppressLint("DefaultLocale") String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         return timeString;
-    }
-
-    public void startSessionTime() {
-
     }
 
     public void setSelectedSpeed(double speed){
@@ -58,20 +54,28 @@ public class Session implements Serializable {
 
     public void pauseSession(){
         isRunning = false;
+        discardLocation = true;
+        stopwatch.suspend();
     }
 
     public void continueSession(){
         isRunning = true;
+        stopwatch.resume();
     }
 
     public void killSession(){
         isRunning = false;
     }
 
-    public void updateLocation(Location location){
-        if(currentSpeed > 1 && isRunning){
-            distance+= location.distanceTo(currentLocation);
-            route.add(currentLocation);
+    public void updateLocation(Location location) {
+        System.out.println("isRunning: " + isRunning);
+        if(currentSpeed > 1 && isRunning) {
+            if (!discardLocation) {
+                distance += location.distanceTo(currentLocation);
+                route.add(currentLocation);
+            } else {
+                discardLocation = false;
+            }
         }
         this.currentLocation = location;
         this.currentSpeed = currentLocation.getSpeed();

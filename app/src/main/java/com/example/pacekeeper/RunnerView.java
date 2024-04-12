@@ -37,6 +37,7 @@ public class RunnerView extends Fragment {
     private TextView timeDisplay;
     private TextView distanceDisplay;
     private ImageButton pauseButton;
+    private ImageButton resumeButton;
     private LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
@@ -79,6 +80,8 @@ public class RunnerView extends Fragment {
         speedDisplay = rootView.findViewById(R.id.speedDisplay);
         distanceDisplay = rootView.findViewById(R.id.distanceDisplay);
         pauseButton = rootView.findViewById(R.id.pauseButtonLogo);
+        resumeButton = rootView.findViewById(R.id.playButtonLogo);
+        resumeButton.setVisibility(View.INVISIBLE);
         Intent intent = getActivity().getIntent();
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
@@ -98,15 +101,22 @@ public class RunnerView extends Fragment {
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (currentSession.getRunning()) {
-                    currentSession.pauseSession();
-                    feedback.stopFeedback();
-                    stopLocationUpdates();
-                } else {
-                    currentSession.continueSession();
-                    startLocationUpdates();
-                    feedback.runFeedback(currentSession.getSelectedSpeed());
-                }
+                pauseButton.setVisibility(View.INVISIBLE);
+                resumeButton.setVisibility(View.VISIBLE);
+                currentSession.pauseSession();
+                feedback.stopFeedback();
+                stopLocationUpdates();
+            }
+        });
+
+        resumeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pauseButton.setVisibility(View.VISIBLE);
+                resumeButton.setVisibility(View.INVISIBLE);
+                currentSession.continueSession();
+                startLocationUpdates();
+                feedback.runFeedback(currentSession.getSelectedSpeed());
             }
         });
 
@@ -118,6 +128,7 @@ public class RunnerView extends Fragment {
                     //Location rawLocation = locationResult.getLastLocation(); <- Icke Kalman-filtrerad location med noise
                     //Location filteredLocation = kalman.predictAndCorrect(rawLocation); <- Kalman filtrerad location utan noise
                     Location lastLocation = locationResult.getLastLocation();
+                    // discard location
                     currentSession.updateLocation(lastLocation);
                     feedback.setRunning(currentSession.getRunning());
                     feedback.setCurrentSpeed(currentSession.getCurrentSpeed());

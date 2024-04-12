@@ -146,5 +146,16 @@
         android:scaleType="centerCrop"
         android:background="@drawable/round_button"
        />
+    <ImageButton
+            android:id="@+id/playButtonLogo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/playlogo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/guideline_vertical_icon"
+            android:scaleType="centerCrop"
+            android:background="@drawable/round_button"
+    />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
