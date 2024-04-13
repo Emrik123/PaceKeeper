@@ -31,9 +31,11 @@ public class FeedbackHandler implements Serializable {
         if (isRunning || currentSpeed > AVG_WALKING_SPEED_MPS) {
             if (audioAllowed) {
                 if (movingTooFast()) {
+                    System.out.println("TOO FAST: Selected speed: " + selectedSpeed + "current speed: " + currentSpeed);
                     audioPlayer.decreaseSound();
                 }
                 if (movingTooSlow()) {
+                    System.out.println("TOO SLOW: Selected speed: " + selectedSpeed + "current speed: " + currentSpeed);
                     audioPlayer.increaseSound();
                 }
             }

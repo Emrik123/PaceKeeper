@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         settingsButton = findViewById(R.id.settingsButton);
         leftNPicker = findViewById(R.id.leftNPicker);
         rightNPicker = findViewById(R.id.rightNPicker);
-        setPickerStyle("minPerKm");
+        setPickerStyle("km");
         feedback = new FeedbackHandler(getApplicationContext());
         setFeedbackPreferences();
         sessions = findViewById(R.id.historyButton);

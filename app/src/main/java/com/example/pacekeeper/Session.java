@@ -25,7 +25,7 @@ public class Session implements Serializable {
 
     public Session(double selectedSpeed){
         this.sessionDate = LocalDate.now();
-        this.selectedSpeed = selectedSpeed;
+        this.selectedSpeed = (selectedSpeed / 3.6);
         this.isRunning = true;
         route = new ArrayList<>();
         storedSpeedArray = new ArrayList<>();
@@ -68,7 +68,6 @@ public class Session implements Serializable {
     }
 
     public void updateLocation(Location location) {
-        System.out.println("isRunning: " + isRunning);
         if(currentSpeed > 1 && isRunning) {
             if (!discardLocation) {
                 distance += location.distanceTo(currentLocation);
