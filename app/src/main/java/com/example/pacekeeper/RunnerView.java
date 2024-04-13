@@ -62,7 +62,6 @@ public class RunnerView extends Fragment {
     public RunnerView() {
         // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
         // Ignore for now
-        sessionManager = new SessionManager();
         kalman = new Kalman(UPDATE_INTERVAL_MS, MEASUREMENT_NOISE_M, ACCEL_NOISE_MS);
         sessionHistory = new ArrayList<>();
         kmDistance = 1000;
@@ -104,7 +103,7 @@ public class RunnerView extends Fragment {
             speed = args.getInt("speed", 0);
         }
         if (mainActivity != null) {
-            mainActivity.setSessionManager(sessionManager);
+            sessionManager = mainActivity.getSessionManager();
         }
         locationRequest = new LocationRequest();
         locationRequest.setInterval((long) UPDATE_INTERVAL_MS);

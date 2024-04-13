@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,6 +78,7 @@ public class SessionFragment extends Fragment {
         List<Session> sessionsList = sessionManager.getSavedSessions();
 
         for (Session session : sessionsList) {
+            System.out.println("Size sessionList" + sessionsList.size()); //bara för debugging
             View sessionView = LayoutInflater.from(getContext()).inflate(R.layout.session_item, null);
 
             TextView sessionOverview = sessionView.findViewById(R.id.summary_text_view1);
@@ -87,7 +89,10 @@ public class SessionFragment extends Fragment {
             TextView sessionComment = sessionView.findViewById(R.id.detail_text_view_session_comment_text);
             ImageButton expandButton = sessionView.findViewById(R.id.expand_button);
 
-            sessionOverview.setText(session.getSessionDate() + "|" + session.getTotalSessionTime() + "|" + (int) session.getDistance() + " km");
+
+            String formattedDistance = String.format(Locale.forLanguageTag("Swedish"),"%.1f", session.getDistance()/1000);
+
+            sessionOverview.setText(session.getSessionDate() + "|" + session.getTotalSessionTime() + "|" + formattedDistance + " km");
             StringBuilder allKmTime = new StringBuilder();
             for(int i=0; i<session.getTimePerKm().size(); i++){
                allKmTime.append("km ").append(i + 1).append(" ").append(session.getTimePerKm().get(i)).append("\n ");
@@ -134,9 +139,9 @@ public class SessionFragment extends Fragment {
 
 
     public void setSessionManager(SessionManager sessionManager){
-        if(sessionManager==null){
-            sessionManager = new SessionManager();
+        if(this.sessionManager == null && sessionManager != null){
+            this.sessionManager = sessionManager;
         }
-        this.sessionManager = sessionManager;
     }
+
 }

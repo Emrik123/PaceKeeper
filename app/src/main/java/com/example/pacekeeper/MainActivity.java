@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
     private int speed;
+    private SessionManager sessionManager;
     private Button confirm;
     private NumberPicker leftNPicker;
     private NumberPicker rightNPicker;
@@ -27,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences preferences;
     private FeedbackHandler feedback;
     private ImageButton sessions;
-    private SessionManager sessionManager;
     private FragmentManager fragmentManager;
     private TextView unitTextView;
 
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sessionManager = new SessionManager();
         //FragmentManager fragmentManager = getSupportFragmentManager();
         loadSharedPreferences();
         setContentView(R.layout.activity_main);
@@ -176,8 +177,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setSessionManager(SessionManager sessionManager){
-        this.sessionManager = sessionManager;
+    public SessionManager getSessionManager(){
+        return sessionManager;
     }
 
 }
