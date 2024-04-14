@@ -32,6 +32,8 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class RunnerView extends Fragment {
+    private MainActivity mainActivity;
+    private SessionManager sessionManager;
     private NumberPicker speedInput;
     private TextView speedDisplay;
     private TextView timeDisplay;
@@ -54,20 +56,25 @@ public class RunnerView extends Fragment {
     private ArrayList<Session> sessionHistory; // For storing session when you stop a current one, also for loading up existing sessions from file.
     private FeedbackHandler feedback;
     private String speedDisplayMode;
+    private int kmDistance;
+    private String kmTime;
 
     public RunnerView() {
         // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
         // Ignore for now
         kalman = new Kalman(UPDATE_INTERVAL_MS, MEASUREMENT_NOISE_M, ACCEL_NOISE_MS);
         sessionHistory = new ArrayList<>();
+        kmDistance = 1000;
     }
 
-    public static RunnerView newInstance(double speed) {
+
+    public static RunnerView newInstance(MainActivity mainActivity, int speed) {
         RunnerView fragment = new RunnerView();
         Bundle args = new Bundle();
         // You can pass arguments if needed
         args.putDouble("speed", speed);
         fragment.setArguments(args);
+        fragment.setMainActivity(mainActivity);
         return fragment;
     }
 
@@ -95,6 +102,9 @@ public class RunnerView extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             speed = args.getDouble("speed", 0);
+        }
+        if (mainActivity != null) {
+            sessionManager = mainActivity.getSessionManager();
         }
         locationRequest = new LocationRequest();
         locationRequest.setInterval((long) UPDATE_INTERVAL_MS);
@@ -126,6 +136,18 @@ public class RunnerView extends Fragment {
             }
         });
 
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sessionManager.add(currentSession);
+              currentSession.killSession();
+                getParentFragmentManager().popBackStackImmediate();
+            }
+        });
+
+
+
+
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NotNull LocationResult locationResult) {
@@ -156,6 +178,13 @@ public class RunnerView extends Fragment {
             }
             else{
                 speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
+            }
+
+            if(roundedDistance>=kmDistance){
+                long time = currentSession.getTotalTime()-currentSession.getTimeExceptCurrentKm();
+                currentSession.addTimePerKm(time);
+                currentSession.addTime(time);
+                kmDistance+=1000;
             }
             /*if(roundedSpeed == currentSession.getSelectedSpeed() ||
                     (roundedSpeed >= currentSession.getSelectedSpeed() -1
@@ -189,5 +218,9 @@ public class RunnerView extends Fragment {
         currentSession = new Session(speed);
         currentSession.setSpeedDisplayMode(speedDisplayMode);
         feedback.runFeedback(currentSession.getSelectedSpeed());
+    }
+
+    public void setMainActivity(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
     }
 }

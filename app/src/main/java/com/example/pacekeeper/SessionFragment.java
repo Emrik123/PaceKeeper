@@ -1,5 +1,6 @@
 package com.example.pacekeeper;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,6 +13,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +32,7 @@ public class SessionFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private SessionManager sessionManager;
 
     public SessionFragment() {
         // Required empty public constructor
@@ -37,17 +42,15 @@ public class SessionFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment SessionFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SessionFragment newInstance(String param1, String param2) {
+    public static SessionFragment newInstance(SessionManager sessionManager) {
         SessionFragment fragment = new SessionFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
+        fragment.setSessionManager(sessionManager);
+
         return fragment;
     }
 
@@ -63,36 +66,66 @@ public class SessionFragment extends Fragment {
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_session, container, false);
 
         ImageButton returnButton = rootView.findViewById(R.id.return_button);
-        ImageButton expandButton =rootView.findViewById(R.id.expand_button);
-        TextView allKmInSession = rootView.findViewById(R.id.detail_text_view_km);
-        TextView routeText = rootView.findViewById(R.id.detail_text_view_route);
-        ImageView routeAsImage = rootView.findViewById(R.id.route_image);
-        TextView sessionCommentTitle = rootView.findViewById(R.id.detail_text_view_session_comment_title);
-        TextView sessionComment = rootView.findViewById(R.id.detail_text_view_session_comment_text);
-        expandButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (allKmInSession.getVisibility() == View.VISIBLE) {
-                    allKmInSession.setVisibility(View.GONE);
-                    routeText.setVisibility(View.GONE);
-                    routeAsImage.setVisibility(View.GONE);
-                    sessionCommentTitle.setVisibility(View.GONE);
-                    sessionComment.setVisibility(View.GONE);
-                } else {
-                    allKmInSession.setVisibility(View.VISIBLE);
-                    routeText.setVisibility(View.VISIBLE);
-                    routeAsImage.setVisibility(View.VISIBLE);
-                    sessionCommentTitle.setVisibility(View.VISIBLE);
-                    sessionComment.setVisibility(View.VISIBLE);
-                }
+        LinearLayout sessionContainer = rootView.findViewById(R.id.session_layout);
+
+        List<Session> sessionsList = sessionManager.getSavedSessions();
+
+        for (Session session : sessionsList) {
+            System.out.println("Size sessionList" + sessionsList.size()); //bara för debugging
+            View sessionView = LayoutInflater.from(getContext()).inflate(R.layout.session_item, null);
+
+            TextView sessionOverview = sessionView.findViewById(R.id.summary_text_view1);
+            TextView allKmInSession = sessionView.findViewById(R.id.detail_text_view_km);
+            TextView routeText = sessionView.findViewById(R.id.detail_text_view_route);
+            ImageView routeAsImage = sessionView.findViewById(R.id.route_image);
+            TextView sessionCommentTitle = sessionView.findViewById(R.id.detail_text_view_session_comment_title);
+            TextView sessionComment = sessionView.findViewById(R.id.detail_text_view_session_comment_text);
+            ImageButton expandButton = sessionView.findViewById(R.id.expand_button);
+
+
+            String formattedDistance = String.format(Locale.forLanguageTag("Swedish"),"%.1f", session.getDistance()/1000);
+
+            sessionOverview.setText(session.getSessionDate() + "|" + session.getTotalSessionTime() + "|" + formattedDistance + " km");
+            StringBuilder allKmTime = new StringBuilder();
+            for(int i=0; i<session.getTimePerKm().size(); i++){
+               allKmTime.append("km ").append(i + 1).append(" ").append(session.getTimePerKm().get(i)).append("\n ");
             }
-        });
+            allKmInSession.setText(allKmTime);
+            
+            
+           // routeText.setText(session.getRoute());
+           // routeAsImage.setImageResource(session.getRouteImage());
+           // sessionComment.setText(session.getCommentText());
+            
+
+            expandButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (allKmInSession.getVisibility() == View.VISIBLE) {
+                        allKmInSession.setVisibility(View.GONE);
+                        routeText.setVisibility(View.GONE);
+                        routeAsImage.setVisibility(View.GONE);
+                        sessionCommentTitle.setVisibility(View.GONE);
+                        sessionComment.setVisibility(View.GONE);
+                    } else {
+                        allKmInSession.setVisibility(View.VISIBLE);
+                        routeText.setVisibility(View.VISIBLE);
+                        routeAsImage.setVisibility(View.VISIBLE);
+                        sessionCommentTitle.setVisibility(View.VISIBLE);
+                        sessionComment.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+            sessionContainer.addView(sessionView);
+        }
 
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,4 +136,12 @@ public class SessionFragment extends Fragment {
 
         return rootView;
     }
+
+
+    public void setSessionManager(SessionManager sessionManager){
+        if(this.sessionManager == null && sessionManager != null){
+            this.sessionManager = sessionManager;
+        }
+    }
+
 }
