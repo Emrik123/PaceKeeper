@@ -209,6 +209,7 @@ public class Session implements Serializable {
         private final double totalDistance;
         private final String totalTime;
         private int sessionID;
+        private static final long serialVersionUID = 0L;
 
         public StoredSession(ArrayList<StoredLocation> route, LocalDate dateStamp, double distance, String time){
             this.totalTime = time;
