@@ -47,13 +47,12 @@ public class MainActivity extends AppCompatActivity {
         settingsButton = findViewById(R.id.settingsButton);
         leftNPicker = findViewById(R.id.leftNPicker);
         rightNPicker = findViewById(R.id.rightNPicker);
-        setPickerStyle("km");
         feedback = new FeedbackHandler(getApplicationContext());
-        setFeedbackPreferences();
         sessions = findViewById(R.id.historyButton);
         unitTextView = findViewById(R.id.unitTextView);
         setFeedbackPreferences();
         setUnit();
+        setPickerStyle(speedDisplayMode);
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
