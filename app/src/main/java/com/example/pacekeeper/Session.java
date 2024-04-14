@@ -9,7 +9,9 @@ import android.widget.Toast;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -68,7 +70,8 @@ public class Session implements Serializable {
     public void updateLocation(Location location){
         if(currentSpeed > 1 && isRunning){
             distance+= location.distanceTo(currentLocation);
-            route.add(new StoredLocation(currentLocation.getLongitude(), currentLocation.getLatitude(), currentLocation.getSpeed(), updateTime()));
+            route.add(new StoredLocation(currentLocation.getLongitude(), currentLocation.getLatitude(), currentLocation.getSpeed(),
+                    updateTime(), location.distanceTo(currentLocation)));
         }
         this.currentLocation = location;
         this.currentSpeed = currentLocation.getSpeed();
@@ -131,16 +134,71 @@ public class Session implements Serializable {
         }
     }
 
+    public static class Generator{
+        private ArrayList<StoredSession> storedSessions;
+
+        public Generator(){
+            storedSessions = new ArrayList<>();
+        }
+        public void loadAndPrint(){
+            ArrayList<StoredSession> temp = readFile();
+            ArrayList<StoredLocation> locationList = temp.get(0).route;
+            ArrayList<StoredLocation> locationList2 = temp.get(1).route;
+
+            int sessionID=1;
+            System.out.println("Session : " + sessionID);
+            for (StoredLocation location : locationList) {
+                System.out.println("Time: " + location.timeStamp + " ||     Speed: " + location.speed);
+            }
+            System.out.println("Session : " + sessionID+1);
+            for (StoredLocation storedLocation : locationList2) {
+                System.out.println("Time: " + storedLocation.timeStamp + " ||     Speed: " + storedLocation.speed);
+            }
+        }
+
+        public ArrayList<StoredSession> readFile(){
+            LocalDate date = LocalDate.of(2024, Month.APRIL, 11);
+            LocalDate date2 = LocalDate.of(2024, Month.APRIL, 12);
+            try{
+                ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get("app/src/DataSet/testDataFile_" + date + "_" + 2 + ".dat")));
+                ObjectInputStream ois2 = new ObjectInputStream(Files.newInputStream(Paths.get("app/src/DataSet/testDataFile_" + date2 + "_" + 1 + ".dat")));
+                storedSessions.add((StoredSession) ois.readObject());
+                storedSessions.add((StoredSession) ois2.readObject());
+                ois.close();
+                ois2.close();
+
+            }catch (IOException | ClassNotFoundException e){
+                e.printStackTrace();
+            }
+            return storedSessions;
+        }
+    }
+
+
     public static class StoredLocation implements Serializable{
         private final double longitude;
         private final double latitude;
         private final double speed;
         private final String timeStamp;
-        public StoredLocation(double longitude, double latitude, double speed, String timeStamp){
+        private double deltaDistance;
+        public StoredLocation(double longitude, double latitude, double speed, String timeStamp, double dD){
             this.timeStamp = timeStamp;
             this.longitude = longitude;
             this.latitude = latitude;
             this.speed = speed;
+            this.deltaDistance = dD;
+        }
+
+        public double getSpeed() {
+            return speed;
+        }
+
+        public double getDeltaDistance() {
+            return deltaDistance;
+        }
+
+        public String getTimeStamp() {
+            return timeStamp;
         }
     }
 
@@ -158,6 +216,18 @@ public class Session implements Serializable {
             this.route = route;
             this.dateStamp = dateStamp;
             this.sessionID = idCount.incrementAndGet();
+        }
+
+        public ArrayList<StoredLocation> getRoute() {
+            return route;
+        }
+
+        public double getTotalDistance() {
+            return totalDistance;
+        }
+
+        public String getTotalTime() {
+            return totalTime;
         }
     }
 }
