@@ -27,7 +27,7 @@ public class Session implements Serializable {
 
     public Session(double selectedSpeed){
         this.sessionDate = LocalDate.now();
-        this.selectedSpeed = (selectedSpeed / 3.6);
+        this.selectedSpeed = selectedSpeed;
         this.isRunning = true;
         route = new ArrayList<>();
         storedSpeedArray = new ArrayList<>();

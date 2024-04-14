@@ -14,8 +14,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
-    private int speed;
+
     private SessionManager sessionManager;
+    private double speed;
+
     private Button confirm;
     private NumberPicker leftNPicker;
     private NumberPicker rightNPicker;
@@ -56,11 +58,11 @@ public class MainActivity extends AppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                speed = leftNPicker.getValue();
+                setSpeed(speedDisplayMode);
+                System.out.println(speed);
                 if (speed != 0) {
                     Toast.makeText(MainActivity.this, "Speed stored.", Toast.LENGTH_SHORT).show();
                     displayRunnerView(speed);
-
                 } else {
                     Toast.makeText(MainActivity.this, "Please enter a valid speed.", Toast.LENGTH_SHORT).show();
                 }
@@ -86,6 +88,22 @@ public class MainActivity extends AppCompatActivity {
             });
 
 
+    }
+
+    public void setSpeed(String speedDisplayMode) {
+        switch (speedDisplayMode) {
+            case "km":
+            default:
+                speed = leftNPicker.getValue();
+                speed += (rightNPicker.getValue() / 10.0);
+                speed /= 3.6;
+                break;
+            case "minPerKm":
+                speed = leftNPicker.getValue();
+                speed += (rightNPicker.getValue() / 60.0);
+                speed = 16.67 / speed;
+                break;
+        }
     }
 
     public void updateSettings(){
@@ -134,14 +152,14 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private void displayRunnerView(int speed) {
+    private void displayRunnerView(double speed) {
         loadSharedPreferences();
         setFeedbackPreferences();
         // Create a new instance of RunnerView fragment with the selected speed
         RunnerView runnerView = RunnerView.newInstance(this, speed);
 
         Bundle bundle = new Bundle();
-        bundle.putInt("speed", speed);
+        bundle.putDouble("speed", speed);
         getIntent().putExtra("feedbackHandler", feedback);
         getIntent().putExtra("speedDisplayMode", speedDisplayMode);
 

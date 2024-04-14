@@ -67,11 +67,12 @@ public class RunnerView extends Fragment {
         kmDistance = 1000;
     }
 
+
     public static RunnerView newInstance(MainActivity mainActivity, int speed) {
         RunnerView fragment = new RunnerView();
         Bundle args = new Bundle();
         // You can pass arguments if needed
-        args.putInt("speed", speed);
+        args.putDouble("speed", speed);
         fragment.setArguments(args);
         fragment.setMainActivity(mainActivity);
         return fragment;
@@ -100,7 +101,7 @@ public class RunnerView extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            speed = args.getInt("speed", 0);
+            speed = args.getDouble("speed", 0);
         }
         if (mainActivity != null) {
             sessionManager = mainActivity.getSessionManager();
