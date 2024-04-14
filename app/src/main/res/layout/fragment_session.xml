@@ -34,7 +34,7 @@
             android:fontFamily="sans-serif-black"
             android:text="Sessions"
             android:textAlignment="center"
-            android:textColor="#BFFFFFFF"
+            android:textColor="#4F6D7A"
             android:textSize="34sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
