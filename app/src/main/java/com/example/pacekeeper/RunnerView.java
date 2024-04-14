@@ -68,7 +68,7 @@ public class RunnerView extends Fragment {
     }
 
 
-    public static RunnerView newInstance(MainActivity mainActivity, int speed) {
+    public static RunnerView newInstance(MainActivity mainActivity, double speed) {
         RunnerView fragment = new RunnerView();
         Bundle args = new Bundle();
         // You can pass arguments if needed
