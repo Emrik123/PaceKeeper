@@ -62,11 +62,11 @@ public class RunnerView extends Fragment {
         sessionHistory = new ArrayList<>();
     }
 
-    public static RunnerView newInstance(int speed) {
+    public static RunnerView newInstance(double speed) {
         RunnerView fragment = new RunnerView();
         Bundle args = new Bundle();
         // You can pass arguments if needed
-        args.putInt("speed", speed);
+        args.putDouble("speed", speed);
         fragment.setArguments(args);
         return fragment;
     }
@@ -94,7 +94,7 @@ public class RunnerView extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            speed = args.getInt("speed", 0);
+            speed = args.getDouble("speed", 0);
         }
         locationRequest = new LocationRequest();
         locationRequest.setInterval((long) UPDATE_INTERVAL_MS);
