@@ -1,6 +1,7 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.Button;
@@ -10,11 +11,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Activity mainActivity;
     private SessionManager sessionManager;
     private double speed;
 
@@ -37,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainActivity = this;
         sessionManager = new SessionManager();
         //FragmentManager fragmentManager = getSupportFragmentManager();
         loadSharedPreferences();

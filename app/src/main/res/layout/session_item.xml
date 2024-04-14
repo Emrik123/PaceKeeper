@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1C8399">
+    >
     <LinearLayout
         android:id="@+id/session_layout"
         android:layout_width="match_parent"
@@ -34,7 +34,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:adjustViewBounds="false"
-                android:backgroundTint="#009999"
+                android:backgroundTint="#00c6ff"
                 android:scaleType="centerCrop"
                 android:src="@drawable/expandlogopng" />
 
@@ -59,7 +59,6 @@
             android:visibility="gone"
             android:layout_marginLeft="1dp"
             android:layout_marginRight="1dp"
-            android:background="#009999"
             />
 
         <ImageView
@@ -80,7 +79,6 @@
             android:layout_height="wrap_content"
             android:text="@string/session_comment_title"
             android:textSize="24sp"
-            android:background="#009999"
             android:visibility="gone"
             android:layout_marginLeft="1dp"
             android:layout_marginRight="1dp"/>
