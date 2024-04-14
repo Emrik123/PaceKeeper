@@ -32,18 +32,12 @@ public class FeedbackHandler implements Serializable {
 
     public void giveFeedback() {
         final double AVG_WALKING_SPEED_MPS = 3 / 3.6;
-        if (currentSpeed <= AVG_WALKING_SPEED_MPS) {
-            // For visual confirmation when testing, remove if not useful.
-            ContextCompat.getMainExecutor(context).execute(() -> Toast.makeText(context, "Moving slower than limit: " + currentSpeed, Toast.LENGTH_SHORT).show());
-        }
         if (isRunning && currentSpeed > AVG_WALKING_SPEED_MPS) {
             if (audioAllowed) {
                 if (movingTooFast()) {
-                    System.out.println("TOO FAST: Selected speed: " + selectedSpeed + "current speed: " + currentSpeed);
                     audioPlayer.decreaseSound();
                 }
                 if (movingTooSlow()) {
-                    System.out.println("TOO SLOW: Selected speed: " + selectedSpeed + "current speed: " + currentSpeed);
                     audioPlayer.increaseSound();
                 }
             }
