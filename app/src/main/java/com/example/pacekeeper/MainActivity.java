@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
     private int speed;
+    private SessionManager sessionManager;
     private Button confirm;
     private NumberPicker leftNPicker;
     private NumberPicker rightNPicker;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sessionManager = new SessionManager();
         //FragmentManager fragmentManager = getSupportFragmentManager();
         loadSharedPreferences();
         setContentView(R.layout.activity_main);
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         sessions.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick (View v){
-                displaySessionsView("test", "test");
+                displaySessionsView();
                 }
             });
 
@@ -118,8 +120,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void displaySessionsView(String arg1, String arg2){
-        SessionFragment sessionFragment = SessionFragment.newInstance(arg1, arg2);
+    private void displaySessionsView(){
+        SessionFragment sessionFragment = SessionFragment.newInstance(sessionManager);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, sessionFragment); // Replace fragment_container with the id of your container layout
         transaction.addToBackStack(null); // Optional: Add transaction to back stack
@@ -136,12 +138,13 @@ public class MainActivity extends AppCompatActivity {
         loadSharedPreferences();
         setFeedbackPreferences();
         // Create a new instance of RunnerView fragment with the selected speed
-        RunnerView runnerView = RunnerView.newInstance(speed);
+        RunnerView runnerView = RunnerView.newInstance(this, speed);
 
         Bundle bundle = new Bundle();
         bundle.putInt("speed", speed);
         getIntent().putExtra("feedbackHandler", feedback);
         getIntent().putExtra("speedDisplayMode", speedDisplayMode);
+
 
         // Replace the current fragment with the RunnerView fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -174,4 +177,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public SessionManager getSessionManager(){
+        return sessionManager;
+    }
+
 }
+

@@ -5,7 +5,7 @@
     android:id="@+id/fragment_blank"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1C8399"
+    android:background="#007BFF"
     android:visibility="visible"
     tools:context=".MainActivity"
     tools:visibility="visible">
@@ -49,14 +49,15 @@
         android:id="@+id/time_text"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/timeLogo"
-        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
         android:fontFamily="monospace"
         android:text="@string/timeS"
         android:textAlignment="textStart"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#333333"
         android:textSize="48sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
+        app:layout_constraintTop_toBottomOf="@+id/timeLogo" />
 
     <TextView
         android:id="@+id/time"
@@ -82,13 +83,14 @@
         android:id="@+id/distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
-        app:layout_constraintTop_toBottomOf="@+id/distanceLogo"
         android:text="@string/distance"
         android:textAlignment="textStart"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#333333"
         android:textSize="48sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
+        app:layout_constraintTop_toBottomOf="@+id/distanceLogo" />
 
     <TextView
         android:id="@+id/distanceDisplay"
@@ -114,13 +116,14 @@
         android:id="@+id/speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
-        app:layout_constraintTop_toBottomOf="@+id/speedLogo"
         android:text="@string/speed"
         android:textAlignment="textStart"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#333333"
         android:textSize="48sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
+        app:layout_constraintTop_toBottomOf="@+id/speedLogo" />
 
     <TextView
         android:id="@+id/speedDisplay"

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class Session implements Serializable {
     private ArrayList<Location> route;
     private ArrayList<Double> storedSpeedArray;
+    private ArrayList<String> timePerKm;
     private Location currentLocation;
     private double distance;
     private double selectedSpeed;
@@ -22,6 +23,7 @@ public class Session implements Serializable {
     private String speedDisplayMode = "kmh";
     private final StopWatch stopwatch;
     private Boolean discardLocation = false;
+    private long timeExceptCurrentKm;
 
     public Session(double selectedSpeed){
         this.sessionDate = LocalDate.now();
@@ -29,6 +31,7 @@ public class Session implements Serializable {
         this.isRunning = true;
         route = new ArrayList<>();
         storedSpeedArray = new ArrayList<>();
+        timePerKm = new ArrayList<>();
         stopwatch = new StopWatch();
         stopwatch.start();
     }
@@ -42,6 +45,14 @@ public class Session implements Serializable {
 
         @SuppressLint("DefaultLocale") String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         return timeString;
+    }
+
+    public void addTime(long kmTime){
+        timeExceptCurrentKm+=kmTime;
+    }
+
+    public long getTimeExceptCurrentKm(){
+        return timeExceptCurrentKm;
     }
 
     public void setSelectedSpeed(double speed){
@@ -119,6 +130,23 @@ public class Session implements Serializable {
         return sessionDate;
     }
 
+    public String getTotalSessionTime(){
+            long totalTimeMillis = stopwatch.getTime();
+            long hours = totalTimeMillis / (60 * 60 * 1000);
+            long minutes = (totalTimeMillis % (60 * 60 * 1000)) / (60 * 1000);
+
+            StringBuilder formattedTime = new StringBuilder();
+
+            if (hours > 0) {
+                formattedTime.append(hours).append("h ");
+            }
+            if (minutes > 0 || hours == 0) {
+                formattedTime.append(minutes).append("min");
+            }
+
+            return formattedTime.toString().trim();
+    }
+
     public double getSetConversionUnit(){
         return setConversionUnit;
     }
@@ -137,5 +165,30 @@ public class Session implements Serializable {
             avg+=d;
         }
         return avg/storedSpeedArray.size();
+    }
+
+    public long getTotalTime(){
+        return stopwatch.getTime();
+    }
+
+    public void addTimePerKm(long time){
+        long minutes = (time % (60 * 60 * 1000)) / (60 * 1000);
+        long seconds = (time % (60 * 1000)) / 1000; //
+
+        StringBuilder formattedTime = new StringBuilder();
+
+        if (minutes > 0) {
+            formattedTime.append(minutes).append("min ");
+        }
+        if (seconds > 0) {
+            formattedTime.append(seconds).append("s");
+        }
+
+        timePerKm.add(formattedTime.toString());
+    }
+
+
+    public ArrayList<String> getTimePerKm(){
+        return timePerKm;
     }
 }
