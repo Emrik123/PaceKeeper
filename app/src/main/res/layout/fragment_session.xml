@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#008dff">
+    android:background="#4EAFB9">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fragment_session"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#008dff"
         tools:context=".MainActivity">
 
 
@@ -19,7 +18,7 @@
             android:id="@+id/return_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:backgroundTint="#008dff"
+            android:backgroundTint="#4EAFB9"
             android:scaleType="centerCrop"
             android:src="@drawable/backarrow"
             app:layout_constraintStart_toStartOf="parent"

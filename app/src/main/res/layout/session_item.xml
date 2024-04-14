@@ -34,7 +34,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:adjustViewBounds="false"
-                android:backgroundTint="#00c6ff"
+                android:backgroundTint="#CCFBFE"
                 android:scaleType="centerCrop"
                 android:src="@drawable/expandlogopng" />
 
@@ -95,6 +95,23 @@
             android:layout_marginRight="1dp"
             android:layout_marginBottom="1dp"
             />
+
+
+            <ImageButton
+                android:id="@+id/compress_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:adjustViewBounds="false"
+                android:scaleType="centerCrop"
+                android:src="@drawable/expandlogopng"
+                android:layout_gravity="end"
+                android:backgroundTint="#CCFBFE"
+                android:visibility="gone"
+                android:rotation="180"
+                />
+
+
+
 
 
     </LinearLayout>

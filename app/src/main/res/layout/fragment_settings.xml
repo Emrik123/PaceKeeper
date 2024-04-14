@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DD008DFF"
+    android:background="#4EAFB9"
     android:clickable="true"
     android:orientation="vertical"
     tools:context=".SettingsFragment">
@@ -29,7 +29,7 @@
             android:id="@+id/return_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:backgroundTint="#AE008DFF"
+            android:backgroundTint="#17BEBB"
             android:scaleType="centerCrop"
             android:src="@drawable/backarrow"
             app:layout_constraintStart_toStartOf="parent"

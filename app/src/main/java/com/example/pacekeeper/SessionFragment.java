@@ -88,6 +88,7 @@ public class SessionFragment extends Fragment {
             TextView sessionCommentTitle = sessionView.findViewById(R.id.detail_text_view_session_comment_title);
             TextView sessionComment = sessionView.findViewById(R.id.detail_text_view_session_comment_text);
             ImageButton expandButton = sessionView.findViewById(R.id.expand_button);
+            ImageButton compressButton = sessionView.findViewById(R.id.compress_button);
 
 
             String formattedDistance = String.format(Locale.forLanguageTag("Swedish"),"%.1f", session.getDistance()/1000);
@@ -108,21 +109,33 @@ public class SessionFragment extends Fragment {
             expandButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (allKmInSession.getVisibility() == View.GONE) {
+                        allKmInSession.setVisibility(View.VISIBLE);
+                        routeText.setVisibility(View.VISIBLE);
+                        routeAsImage.setVisibility(View.VISIBLE);
+                        sessionCommentTitle.setVisibility(View.VISIBLE);
+                        sessionComment.setVisibility(View.VISIBLE);
+                        expandButton.setVisibility(View.GONE);
+                        compressButton.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+            compressButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     if (allKmInSession.getVisibility() == View.VISIBLE) {
                         allKmInSession.setVisibility(View.GONE);
                         routeText.setVisibility(View.GONE);
                         routeAsImage.setVisibility(View.GONE);
                         sessionCommentTitle.setVisibility(View.GONE);
                         sessionComment.setVisibility(View.GONE);
-                    } else {
-                        allKmInSession.setVisibility(View.VISIBLE);
-                        routeText.setVisibility(View.VISIBLE);
-                        routeAsImage.setVisibility(View.VISIBLE);
-                        sessionCommentTitle.setVisibility(View.VISIBLE);
-                        sessionComment.setVisibility(View.VISIBLE);
+                        expandButton.setVisibility(View.VISIBLE);
+                        compressButton.setVisibility(View.GONE);
                     }
                 }
             });
+
 
             sessionContainer.addView(sessionView);
         }
