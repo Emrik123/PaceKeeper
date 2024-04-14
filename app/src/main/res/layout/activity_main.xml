@@ -5,7 +5,7 @@
     android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#17BEBB"
+    android:background="@drawable/mainactivity"
     android:visibility="visible"
     tools:context=".MainActivity"
     tools:visibility="visible">
@@ -18,17 +18,18 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.70" />
 
-    <Button
+    <ImageButton
         android:id="@+id/confirmButton"
-        style="@style/Widget.Material3.Button.Icon"
-        android:layout_width="113dp"
+        android:layout_width="140dp"
         android:layout_height="121dp"
-        android:backgroundTint="#D8382D"
+        android:scaleType="centerCrop"
+        android:src="@drawable/startlogo"
+        android:backgroundTint="#e16028"
         android:text="@string/confirm"
         android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@+id/guideline_vertical_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:visibility="visible" />
 
     <LinearLayout
@@ -78,7 +79,7 @@
         android:id="@+id/settingsButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:backgroundTint="#17BEBB"
+        android:backgroundTint="#cc112c"
         android:scaleType="centerCrop"
         android:src="@drawable/settinglogo"
         app:layout_constraintEnd_toEndOf="@id/fragment_container"
@@ -88,7 +89,7 @@
         android:id="@+id/historyButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:backgroundTint="#17BEBB"
+        android:backgroundTint="#d3232d"
         android:scaleType="centerCrop"
         android:src="@drawable/history"
         app:layout_constraintStart_toStartOf="@id/fragment_container"

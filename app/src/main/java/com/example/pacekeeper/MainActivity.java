@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private double speed;
 
-    private Button confirm;
+    private ImageButton confirm;
     private NumberPicker leftNPicker;
     private NumberPicker rightNPicker;
     private ImageButton settingsButton;
