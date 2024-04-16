@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -41,6 +42,7 @@ public class RunnerView extends Fragment {
     private ImageButton pauseButton;
     private ImageButton resumeButton;
     private ImageButton stopButton;
+    private ImageButton settingsButton;
     private LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
@@ -58,6 +60,7 @@ public class RunnerView extends Fragment {
     private String speedDisplayMode;
     private int kmDistance;
     private String kmTime;
+    private FragmentManager fragmentManager;
 
     public RunnerView() {
         // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
@@ -90,9 +93,11 @@ public class RunnerView extends Fragment {
         pauseButton = rootView.findViewById(R.id.pauseButtonLogo);
         resumeButton = rootView.findViewById(R.id.playButtonLogo);
         stopButton = rootView.findViewById(R.id.stopButtonLogo);
+        settingsButton = rootView.findViewById(R.id.settingsButton);
         stopButton.setVisibility(View.INVISIBLE);
         resumeButton.setVisibility(View.INVISIBLE);
-
+        settingsButton.setVisibility(View.INVISIBLE);
+        fragmentManager = mainActivity.getSupportFragmentManager();
         Intent intent = getActivity().getIntent();
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
@@ -118,6 +123,7 @@ public class RunnerView extends Fragment {
                 pauseButton.setVisibility(View.INVISIBLE);
                 resumeButton.setVisibility(View.VISIBLE);
                 stopButton.setVisibility(View.VISIBLE);
+                settingsButton.setVisibility(View.VISIBLE);
                 currentSession.pauseSession();
                 feedback.stopFeedback();
                 stopLocationUpdates();
@@ -130,9 +136,17 @@ public class RunnerView extends Fragment {
                 pauseButton.setVisibility(View.VISIBLE);
                 resumeButton.setVisibility(View.INVISIBLE);
                 stopButton.setVisibility(View.INVISIBLE);
+                settingsButton.setVisibility(View.INVISIBLE);
                 currentSession.continueSession();
                 startLocationUpdates();
                 feedback.runFeedback(currentSession.getSelectedSpeed());
+            }
+        });
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displaySettingsView();
             }
         });
 
@@ -167,6 +181,11 @@ public class RunnerView extends Fragment {
         };
         start();
         return rootView;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+//        mainActivity.updateSettingsRunnersView();
     }
 
     @SuppressLint("SetTextI18n")
@@ -219,6 +238,25 @@ public class RunnerView extends Fragment {
         currentSession = new Session(speed);
         currentSession.setSpeedDisplayMode(speedDisplayMode);
         feedback.runFeedback(currentSession.getSelectedSpeed());
+    }
+
+    public void setSpeedDisplayMode(String speedDisplayMode){
+        this.speedDisplayMode = speedDisplayMode;
+    }
+
+
+    private void displaySettingsView(){
+        fragmentManager.beginTransaction().add(R.id.fragment_container, SettingsFragment.class, null)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public Session getCurrentSession(){
+        return currentSession;
+    }
+
+    public TextView getSpeedDisplay(){
+        return speedDisplay;
     }
 
     public void setMainActivity(MainActivity mainActivity) {

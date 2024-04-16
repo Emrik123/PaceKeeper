@@ -159,6 +159,10 @@ public class Session implements Serializable {
         speedDisplayMode = mode;
     }
 
+    public String getSpeedDisplayMode(){
+        return speedDisplayMode;
+    }
+
     public double calculateAverageSpeed(){
         double avg = 0;
         for(Double d : storedSpeedArray){
