@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class Session implements Serializable {
+public class Session {
     private ArrayList<Location> route;
     private ArrayList<Double> storedSpeedArray;
     private ArrayList<String> timePerKm;

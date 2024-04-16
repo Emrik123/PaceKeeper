@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mainActivity = this;
         sessionManager = new SessionManager();
+        sessionManager.readFile();
         //FragmentManager fragmentManager = getSupportFragmentManager();
         loadSharedPreferences();
         setContentView(R.layout.activity_main);

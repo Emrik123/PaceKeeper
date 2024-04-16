@@ -140,6 +140,7 @@ public class RunnerView extends Fragment {
             @Override
             public void onClick(View v) {
                 sessionManager.add(currentSession);
+                sessionManager.storeSessionToMemory(mainActivity);
               currentSession.killSession();
                 getParentFragmentManager().popBackStackImmediate();
             }
