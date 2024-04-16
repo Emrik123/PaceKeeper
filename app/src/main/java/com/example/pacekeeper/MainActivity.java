@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayRunnerView(double speed) {
+        disableAllButtons();
         loadSharedPreferences();
         setFeedbackPreferences();
         // Create a new instance of RunnerView fragment with the selected speed
@@ -198,5 +199,16 @@ public class MainActivity extends AppCompatActivity {
         return sessionManager;
     }
 
+    public void disableAllButtons(){
+        sessions.setEnabled(false);
+        settingsButton.setEnabled(false);
+        confirm.setEnabled(false);
+    }
+    public void enableAllButtons(){
+        sessions.setEnabled(true);
+        settingsButton.setEnabled(true);
+        confirm.setEnabled(true);
+
+    }
 }
 

@@ -139,6 +139,7 @@ public class RunnerView extends Fragment {
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                enableAllMainActivityButtons();
                 sessionManager.add(currentSession);
               currentSession.killSession();
                 getParentFragmentManager().popBackStackImmediate();
@@ -222,5 +223,9 @@ public class RunnerView extends Fragment {
 
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
+    }
+
+    public void enableAllMainActivityButtons(){
+        mainActivity.enableAllButtons();
     }
 }
