@@ -138,6 +138,7 @@ public class SettingsFragment extends Fragment {
         preferenceEditor.putBoolean("autoSaveSessions", autoSaveSessions);
         preferenceEditor.apply();
         ((MainActivity) getActivity()).updateSettings();
+        ((MainActivity) getActivity()).updateSettingsRunnersView();
     }
 
     private void loadAndSetCurrentSettings(){

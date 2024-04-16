@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:background="#007BFF"
     android:visibility="visible"
+    android:clickable="true"
     tools:context=".MainActivity"
     tools:visibility="visible">
 <!--For some reason all horizontal placement is set using orientation vertical and vice versa for vertical-->
@@ -44,6 +45,15 @@
         android:layout_marginTop="30dp"
         android:src="@drawable/stopwatch"
         android:contentDescription="Stopwatch" />
+
+    <ImageButton
+            android:id="@+id/settingsButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:backgroundTint="#007BFF"
+            android:scaleType="centerCrop"
+            android:src="@drawable/settinglogo" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/time_text"

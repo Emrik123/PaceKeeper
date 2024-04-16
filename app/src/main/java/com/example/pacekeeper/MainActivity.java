@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton sessions;
     private FragmentManager fragmentManager;
     private TextView unitTextView;
+    private RunnerView runnerView;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -58,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setSpeed(speedDisplayMode);
-                System.out.println(speed);
                 if (speed != 0) {
                     Toast.makeText(MainActivity.this, "Speed stored.", Toast.LENGTH_SHORT).show();
                     displayRunnerView(speed);
@@ -111,6 +111,14 @@ public class MainActivity extends AppCompatActivity {
         setPickerStyle(speedDisplayMode);
     }
 
+    public void updateSettingsRunnersView(){
+        if(runnerView != null){
+            setFeedbackPreferences();
+            runnerView.setSpeedDisplayMode(speedDisplayMode);
+            runnerView.getCurrentSession().setSpeedDisplayMode(speedDisplayMode);
+        }
+    }
+
     public void loadSharedPreferences(){
         preferences = getSharedPreferences("preferences", MODE_PRIVATE);
         vibration = preferences.getBoolean("vibrationFeedback", true);
@@ -128,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     public void setUnit(){
-        System.out.println(speedDisplayMode);
         if(speedDisplayMode.equals("minPerKm")){
             unitTextView.setText("min/km");
         }
@@ -155,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         loadSharedPreferences();
         setFeedbackPreferences();
         // Create a new instance of RunnerView fragment with the selected speed
-        RunnerView runnerView = RunnerView.newInstance(this, speed);
+        runnerView = RunnerView.newInstance(this, speed);
 
         Bundle bundle = new Bundle();
         bundle.putDouble("speed", speed);
@@ -197,6 +204,5 @@ public class MainActivity extends AppCompatActivity {
     public SessionManager getSessionManager(){
         return sessionManager;
     }
-
 }
 
