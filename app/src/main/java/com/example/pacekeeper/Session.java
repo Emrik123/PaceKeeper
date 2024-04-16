@@ -8,6 +8,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Session {
     private ArrayList<Location> route;
@@ -76,6 +77,11 @@ public class Session {
 
     public void killSession(){
         isRunning = false;
+
+    }
+
+    public StoredSession getSerializableSession(){
+        return new StoredSession(getSessionDate(), getDistance(), getTotalSessionTime(), getTimePerKm());
     }
 
     public void updateLocation(Location location) {
@@ -190,5 +196,41 @@ public class Session {
 
     public ArrayList<String> getTimePerKm(){
         return timePerKm;
+    }
+
+
+    public static class StoredSession implements Serializable{
+
+        private static final AtomicInteger idCount = new AtomicInteger(0);
+        private final double totalDistance;
+        private final String totalTime;
+        private int sessionID;
+        private static final long serialVersionUID = 0L;
+        LocalDate date;
+
+        ArrayList<String> timePerKm;
+
+        public StoredSession( LocalDate date, double distance, String time, ArrayList<String> timePerKm){
+            this.totalTime = time;
+            this.totalDistance = distance;
+            this.date = date;
+            this.timePerKm = timePerKm;
+        }
+
+        public double getTotalDistance() {
+            return totalDistance;
+        }
+
+        public String getTotalTime() {
+            return totalTime;
+        }
+
+        public ArrayList<String> getTimePerKm(){
+            return timePerKm;
+        }
+
+        public LocalDate getDate(){
+            return date;
+        }
     }
 }

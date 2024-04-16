@@ -75,9 +75,9 @@ public class SessionFragment extends Fragment {
         ImageButton returnButton = rootView.findViewById(R.id.return_button);
         LinearLayout sessionContainer = rootView.findViewById(R.id.session_layout);
 
-        List<Session> sessionsList = sessionManager.getSavedSessions();
+        List<Session.StoredSession> sessionsList = sessionManager.getSavedSessions();
 
-        for (Session session : sessionsList) {
+        for (Session.StoredSession session : sessionsList) {
             System.out.println("Size sessionList" + sessionsList.size()); //bara för debugging
             View sessionView = LayoutInflater.from(getContext()).inflate(R.layout.session_item, null);
 
@@ -91,14 +91,16 @@ public class SessionFragment extends Fragment {
             ImageButton compressButton = sessionView.findViewById(R.id.compress_button);
 
 
-            String formattedDistance = String.format(Locale.forLanguageTag("Swedish"),"%.1f", session.getDistance()/1000);
+            String formattedDistance = String.format(Locale.forLanguageTag("Swedish"),"%.1f", session.getTotalDistance()/1000);
 
-            sessionOverview.setText(session.getSessionDate() + "|" + session.getTotalSessionTime() + "|" + formattedDistance + " km");
+            sessionOverview.setText(session.getDate() + "|" + session.getTotalTime() + "|" + formattedDistance + " km");
             StringBuilder allKmTime = new StringBuilder();
-            for(int i=0; i<session.getTimePerKm().size(); i++){
-               allKmTime.append("km ").append(i + 1).append(" ").append(session.getTimePerKm().get(i)).append("\n ");
+            if(session.getTimePerKm()!=null) {
+                for (int i = 0; i < session.getTimePerKm().size(); i++) {
+                    allKmTime.append("km ").append(i + 1).append(" ").append(session.getTimePerKm().get(i)).append("\n ");
+                }
+                allKmInSession.setText(allKmTime);
             }
-            allKmInSession.setText(allKmTime);
             
             
            // routeText.setText(session.getRoute());

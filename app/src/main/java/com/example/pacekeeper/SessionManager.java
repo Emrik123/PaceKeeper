@@ -18,17 +18,17 @@ import java.util.ArrayList;
 
 public class SessionManager {
 
-    private ArrayList<Session> sessions;
+    private ArrayList<Session.StoredSession> sessions;
     public SessionManager(){
         sessions = new ArrayList<>();
     }
 
 
-    public void add(Session session){
+    public void add(Session.StoredSession session){
         sessions.add(session);
     }
 
-    public ArrayList<Session> getSavedSessions(){
+    public ArrayList<Session.StoredSession> getSavedSessions(){
         return sessions;
     }
 
@@ -52,7 +52,7 @@ public class SessionManager {
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
                     "testDataFile.dat");
             ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get(file.getAbsolutePath())));
-            sessions = (ArrayList<Session>) ois.readObject();
+            sessions = (ArrayList<Session.StoredSession>) ois.readObject();
             ois.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

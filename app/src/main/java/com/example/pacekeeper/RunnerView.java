@@ -139,7 +139,7 @@ public class RunnerView extends Fragment {
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sessionManager.add(currentSession);
+                sessionManager.add(currentSession.getSerializableSession());
                 sessionManager.storeSessionToMemory(mainActivity);
               currentSession.killSession();
                 getParentFragmentManager().popBackStackImmediate();
