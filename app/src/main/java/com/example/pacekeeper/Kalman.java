@@ -1,79 +1,77 @@
 package com.example.pacekeeper;
 
-import android.location.Location;
-import org.apache.commons.math3.filter.*;
 import org.apache.commons.math3.linear.*;
 
 public class Kalman {
-    private KalmanFilter kalmanFilter;
-    private ProcessModel processModel;
-    private MeasurementModel measurementModel;
-    private double timeInterval;
-    private double mNoise;
-    private double aNoise;
+    /**
+     * A Basic Kalman filter implementation used to filter noise from GPS signal when evaluating velocity.
+     * The filter follows the standard model for estimating two variables related through a linear state model.
+     *  A - State transition matrix describing how the "measured state" changes over time. Acceleration is ignored in the measurement.
+     *      [1 dt] - Where dt is the time interval of change, averaged to about 0.5.
+     *      [0  1]
+     * <p>
+     *  H - Observation matrix determining which variables we observe. In this case velocity.
+     *      [0  1]
+     * <p>
+     *  Q - Process noise matrix. Sensor noise is determined to be low (ranging from 0.1-0.4)
+     *      [0.25*dt^4 0.5*dt^3]  * 0.01
+     *      [0.5*dt^3      dt^2]
+     * <p>
+     *  R - Measurement noise covariance
+     * <p>
+     *  P - Identity matrix for noise covariance (2x2)
+     *      [1  0]
+     *      [0  1]
+     */
+    private RealMatrix A, H, Q, R, P, K;
 
-    public Kalman(double tInterval, double mNoise, double aNoise){
-        this.timeInterval = tInterval;
-        this.mNoise = mNoise;
-        this.aNoise = aNoise;
-        processModel = initProcessModel();
-        measurementModel = initMeasurementModel();
-        kalmanFilter = new KalmanFilter(processModel, measurementModel);
+    private RealVector x, xp;
+
+    public Kalman() {
+        initMatrices();
     }
 
-    public ProcessModel initProcessModel(){
-        double dt = timeInterval;
-        double sigmaA2 = Math.pow(aNoise, 2);
+    /**
+     * This method updates the current estimate based on the last measurement z.
+     * @param z the last measurement update representing velocity.
+     * @return the updated prediction of the velocity.
+     */
+    public double[] update(double z) {
 
-        RealMatrix A = new Array2DRowRealMatrix(new double[][]{
-                {1, dt, 0, 0},
-                {0, 1, 0, 0},
-                {0, 0, 1, dt},
-                {0, 0, 0, 1}
-        });
+        /*
+         * Here the model predicts the next measurement
+         */
+        xp = A.operate(x);
+        P = A.multiply(P).multiply(A.transpose()).add(Q);
 
-        RealMatrix B = new Array2DRowRealMatrix(new double[][]{
-                {0},
-                {0},
-                {0},
-                {0}
-        });
+        /*
+         * Here the model updates the current weighting on the previous measurements to more accurately
+         * predict the next value.
+         */
+        RealMatrix S = H.multiply(P).multiply(H.transpose()).add(R);
+        K = P.multiply(H.transpose()).multiply(MatrixUtils.inverse(S));
+        x = xp.add(K.operate(new ArrayRealVector(new double[]{z}).subtract(H.operate(xp))));
+        P = P.subtract(K.multiply(H).multiply(P));
 
-        RealVector x = new ArrayRealVector(new double[]{0, 0, 0, 0});
-
-        RealMatrix Q = new Array2DRowRealMatrix(new double[][]{
-                {Math.pow(dt, 4) / 4, Math.pow(dt, 3) / 2, 0, 0},
-                {Math.pow(dt, 3) / 2, Math.pow(dt, 2), 0, 0},
-                {0, 0, Math.pow(dt, 4) / 4, Math.pow(dt, 3) / 2},
-                {0, 0, Math.pow(dt, 3) / 2, Math.pow(dt, 2)}
-        }).scalarMultiply(sigmaA2);
-
-        RealMatrix P0 = MatrixUtils.createRealIdentityMatrix(4).scalarMultiply(1000);
-
-        return new DefaultProcessModel(A, B, Q, x, P0);
+        /*
+         * The returned value is the predicted values in a 2x1 matrix
+         * [position, velocity]
+         */
+        return new double[]{x.getEntry(0), x.getEntry(1)};
     }
 
-    public MeasurementModel initMeasurementModel(){
-
-        RealMatrix H = new Array2DRowRealMatrix(new double[][] { {1d, 0, 0, 0}, {0, 0, 1d, 0} });
-
-        RealMatrix R = new Array2DRowRealMatrix(new double[][] { {Math.pow(mNoise, 2), 0}, {0, Math.pow(mNoise, 2)} });
-
-        return new DefaultMeasurementModel(H, R);
-    }
-
-
-    public Location predictAndCorrect(Location location){
-        if(kalmanFilter != null && location!= null){
-            double[] m = new double[]{location.getLatitude(), location.getLongitude()};
-            kalmanFilter.predict();
-            kalmanFilter.correct(m);
-            double[] mCorrected = kalmanFilter.getStateEstimation();
-            if(mCorrected[0] < 5000 && mCorrected[1] < 5000){
-                location.setLatitude(mCorrected[0]/1000);
-                location.setLongitude(mCorrected[1]/1000);
-            }
-        }
-        return location;
+    /**
+     * Initializes the matrices with determined values of model found above.
+     */
+    private void initMatrices() {
+        double dt = 0.5;
+        A = MatrixUtils.createRealMatrix(new double[][]{{1, dt}, {0, 1}});
+        H = MatrixUtils.createRealMatrix(new double[][]{{0, 1}});
+        Q = MatrixUtils.createRealMatrix(new double[][]{
+                {0.25 * Math.pow(dt, 4), 0.5 * Math.pow(dt, 3)},
+                {0.5 * Math.pow(dt, 3), dt * dt}}).scalarMultiply(0.01);
+        x = new ArrayRealVector(new double[]{0, 0});
+        R = MatrixUtils.createRealMatrix(new double[][]{{0.12}});
+        P = MatrixUtils.createRealIdentityMatrix(2);
     }
 }

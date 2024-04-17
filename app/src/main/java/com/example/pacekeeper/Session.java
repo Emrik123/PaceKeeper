@@ -25,8 +25,10 @@ public class Session implements Serializable {
     private Boolean discardLocation = false;
     private long timeExceptCurrentKm;
     private int kmDistance;
+    private Kalman kalmanFilter;
 
     public Session(double selectedSpeed){
+        kalmanFilter = new Kalman();
         this.sessionDate = LocalDate.now();
         this.selectedSpeed = selectedSpeed;
         this.isRunning = true;
@@ -99,7 +101,8 @@ public class Session implements Serializable {
             }
         }
         this.currentLocation = location;
-        this.currentSpeed = currentLocation.getSpeed();
+        double[] result = kalmanFilter.update(currentLocation.getSpeed());
+        this.currentSpeed = result[1];
         storedSpeedArray.add(currentSpeed);
     }
 

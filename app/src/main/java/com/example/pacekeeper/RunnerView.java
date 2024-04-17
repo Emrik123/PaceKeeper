@@ -49,11 +49,8 @@ public class RunnerView extends Fragment {
     private LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
-    private Kalman kalman;
     private double speed;
-    private final double UPDATE_INTERVAL_MS = 500;
-    private final double MEASUREMENT_NOISE_M = 5;
-    private final double ACCEL_NOISE_MS = 0.1;
+    private final double UPDATE_INTERVAL_MS = 250;
     private Bundle savedInstance;
     private MediaPlayer tooSlowAlert;
     private MediaPlayer tooFastAlert;
@@ -68,9 +65,6 @@ public class RunnerView extends Fragment {
     private Runnable uiUpdates;
 
     public RunnerView() {
-        // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
-        // Ignore for now
-        kalman = new Kalman(UPDATE_INTERVAL_MS, MEASUREMENT_NOISE_M, ACCEL_NOISE_MS);
         sessionHistory = new ArrayList<>();
         kmDistance = 1000;
     }
@@ -171,7 +165,6 @@ public class RunnerView extends Fragment {
             @Override
             public void run() {
                 updateUI();
-
                 interfaceUpdateHandler.postDelayed(uiUpdates, (long) UPDATE_INTERVAL_MS);
             }
         };
@@ -184,11 +177,8 @@ public class RunnerView extends Fragment {
             public void onLocationResult(@NotNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 if (locationResult.getLastLocation() != null) {
-                    //Location rawLocation = locationResult.getLastLocation(); <- Icke Kalman-filtrerad location med noise
-                    //Location filteredLocation = kalman.predictAndCorrect(rawLocation); <- Kalman filtrerad location utan noise
-                    Location lastLocation = locationResult.getLastLocation();
-                    // discard location
-                    currentSession.updateLocation(lastLocation);
+                    currentSession.updateLocation(locationResult.getLastLocation());
+                    //discard location
                     feedback.setRunning(currentSession.getRunning());
                     feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
                     currentSession.updateSessionData();
