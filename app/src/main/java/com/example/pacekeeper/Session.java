@@ -222,6 +222,10 @@ public class Session {
 
         }
 
+        public void setSessionComment(String sessionComment){
+            this.sessionComment = sessionComment;
+        }
+
         public double getTotalDistance() {
             return totalDistance;
         }
