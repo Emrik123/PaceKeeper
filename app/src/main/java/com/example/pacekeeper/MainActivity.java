@@ -98,9 +98,9 @@ public class MainActivity extends AppCompatActivity {
                 speed /= 3.6;
                 break;
             case "minPerKm":
-                speed = leftNPicker.getValue();
-                speed += (rightNPicker.getValue() / 60.0);
-                speed = 16.67 / speed;
+                double seconds = (leftNPicker.getValue() * 60);
+                seconds += rightNPicker.getValue();
+                speed = 1000 / seconds;
                 break;
         }
     }
