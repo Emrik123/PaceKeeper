@@ -26,6 +26,7 @@ import com.google.android.gms.location.LocationServices;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -98,7 +99,7 @@ public class RunnerView extends Fragment {
         resumeButton.setVisibility(View.INVISIBLE);
         settingsButton.setVisibility(View.INVISIBLE);
         fragmentManager = mainActivity.getSupportFragmentManager();
-        Intent intent = getActivity().getIntent();
+        Intent intent = requireActivity().getIntent();
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
             speedDisplayMode = intent.getStringExtra("speedDisplayMode");
@@ -175,7 +176,8 @@ public class RunnerView extends Fragment {
                     currentSession.updateLocation(lastLocation);
                     feedback.setRunning(currentSession.getRunning());
                     feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
-                    updateUI();
+                    currentSession.updateSessionData();
+                    //updateUI();
                 }
             }
         };
@@ -199,13 +201,14 @@ public class RunnerView extends Fragment {
             else{
                 speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
             }
+            timeDisplay.setText(currentSession.updateTime());
 
-            if(roundedDistance>=kmDistance){
+            /*if(roundedDistance>=kmDistance){
                 long time = currentSession.getTotalTime()-currentSession.getTimeExceptCurrentKm();
                 currentSession.addTimePerKm(time);
                 currentSession.addTime(time);
                 kmDistance+=1000;
-            }
+            }*/
             /*if(roundedSpeed == currentSession.getSelectedSpeed() ||
                     (roundedSpeed >= currentSession.getSelectedSpeed() -1
                             && roundedSpeed <= currentSession.getSelectedSpeed() +1)){
@@ -217,8 +220,15 @@ public class RunnerView extends Fragment {
                 speedDisplay.setTextColor(Color.parseColor("blue"));
                 tooSlowAlert.start();
             }*/
-            timeDisplay.setText(currentSession.updateTime());
         }
+    }
+
+    public void runUiUpdates() {
+        new Thread(() -> {
+            while (!Thread.interrupted()) {
+                requireActivity().runOnUiThread(this::updateUI);
+            }
+        }).start();
     }
 
     public void startLocationUpdates() {
@@ -238,6 +248,7 @@ public class RunnerView extends Fragment {
         currentSession = new Session(speed);
         currentSession.setSpeedDisplayMode(speedDisplayMode);
         feedback.runFeedback(currentSession.getSelectedSpeed());
+        runUiUpdates();
     }
 
     public void setSpeedDisplayMode(String speedDisplayMode){

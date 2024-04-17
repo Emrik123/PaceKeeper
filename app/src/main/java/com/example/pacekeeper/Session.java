@@ -24,6 +24,7 @@ public class Session implements Serializable {
     private final StopWatch stopwatch;
     private Boolean discardLocation = false;
     private long timeExceptCurrentKm;
+    private int kmDistance;
 
     public Session(double selectedSpeed){
         this.sessionDate = LocalDate.now();
@@ -45,6 +46,16 @@ public class Session implements Serializable {
 
         @SuppressLint("DefaultLocale") String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         return timeString;
+    }
+
+    public void updateSessionData() {
+        int roundedDistance = (int) getDistance();
+        if(roundedDistance>=kmDistance){
+            long time = getTotalTime() - getTimeExceptCurrentKm();
+            addTimePerKm(time);
+            addTime(time);
+            kmDistance+=1000;
+        }
     }
 
     public void addTime(long kmTime){
