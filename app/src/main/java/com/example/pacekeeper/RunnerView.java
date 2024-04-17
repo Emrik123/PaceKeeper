@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -121,6 +122,7 @@ public class RunnerView extends Fragment {
                 currentSession.pauseSession();
                 feedback.stopFeedback();
                 stopLocationUpdates();
+
             }
         });
 
@@ -139,10 +141,11 @@ public class RunnerView extends Fragment {
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sessionManager.add(currentSession.getSerializableSession());
-                sessionManager.storeSessionToMemory(mainActivity);
-              currentSession.killSession();
-                getParentFragmentManager().popBackStackImmediate();
+                displaySessionOverview();
+               // sessionManager.add(currentSession.getSerializableSession());
+               // sessionManager.storeSessionToMemory(mainActivity);
+             // currentSession.killSession();
+               // getParentFragmentManager().popBackStackImmediate();
             }
         });
 
@@ -223,5 +226,17 @@ public class RunnerView extends Fragment {
 
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
+    }
+
+
+    private void displaySessionOverview() {
+        SessionOverview sessionOverview = SessionOverview.newInstance(currentSession, sessionManager);
+
+        Bundle bundle = new Bundle();
+
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, sessionOverview);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

@@ -14,7 +14,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="timeS">Time</string>
-    <string name="distanceS">0.00 km</string>
+    <string name="distanceS">0.00 km/h</string>
     <string name="speed">Speed</string>
     <string name="settings_header">Settings</string>
     <string name="feedback_method">Feedback method</string>
@@ -45,5 +45,6 @@
     <string name="minutes_tag">Minutes</string>
     <string name="seconds_tag">Seconds</string>
     <string name="add_session_comment_button">Add session comment</string>
+    <string name="edit_comment_text">Add text here.</string>
 
 </resources>

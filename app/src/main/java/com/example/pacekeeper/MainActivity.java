@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         // Replace the current fragment with the RunnerView fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, runnerView); // Replace fragment_container with the id of your container layout
-        transaction.addToBackStack(null); // Optional: Add transaction to back stack
+        transaction.addToBackStack("mainActivity"); // Optional: Add transaction to back stack
         transaction.commit();
     }
 

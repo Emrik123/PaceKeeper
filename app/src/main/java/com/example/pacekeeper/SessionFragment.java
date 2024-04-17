@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -71,6 +73,10 @@ public class SessionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_session, container, false);
+        View sessionItemView = inflater.inflate(R.layout.session_item, container, false);
+
+        EditText editCommentText = sessionItemView.findViewById(R.id.edit_comment);
+        ImageButton editCommentIcon = sessionItemView.findViewById(R.id.edit_comment_icon);
 
         ImageButton returnButton = rootView.findViewById(R.id.return_button);
         LinearLayout sessionContainer = rootView.findViewById(R.id.session_layout);
@@ -89,6 +95,7 @@ public class SessionFragment extends Fragment {
             TextView sessionComment = sessionView.findViewById(R.id.detail_text_view_session_comment_text);
             ImageButton expandButton = sessionView.findViewById(R.id.expand_button);
             ImageButton compressButton = sessionView.findViewById(R.id.compress_button);
+
 
 
             String formattedDistance = String.format(Locale.forLanguageTag("Swedish"),"%.1f", session.getTotalDistance()/1000);
@@ -138,6 +145,13 @@ public class SessionFragment extends Fragment {
                 }
             });
 
+            editCommentIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    editCommentText.setVisibility(View.VISIBLE);
+                }
+            });
+
 
             sessionContainer.addView(sessionView);
         }
@@ -145,6 +159,7 @@ public class SessionFragment extends Fragment {
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sessionManager.storeSessionToMemory(requireContext());
                 requireActivity().onBackPressed();
             }
         });
@@ -158,5 +173,7 @@ public class SessionFragment extends Fragment {
             this.sessionManager = sessionManager;
         }
     }
+
+
 
 }

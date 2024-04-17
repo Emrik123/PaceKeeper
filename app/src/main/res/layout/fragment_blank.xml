@@ -47,9 +47,9 @@
 
     <TextView
         android:id="@+id/time_text"
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
+        android:layout_marginStart="52dp"
         android:fontFamily="monospace"
         android:text="@string/timeS"
         android:textAlignment="textStart"
@@ -62,12 +62,12 @@
 
     <TextView
         android:id="@+id/time"
-        android:layout_width="236dp"
-        android:layout_height="79dp"
-        android:layout_marginStart="64dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="92dp"
         android:text="@string/time"
         android:textColor="#444054"
-        android:textSize="50sp"
+        android:textSize="40sp"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
         app:layout_constraintTop_toBottomOf="@+id/time_text"
@@ -86,7 +86,7 @@
         android:id="@+id/distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
+        android:layout_marginStart="52dp"
         android:text="@string/distance"
         android:textAlignment="textStart"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -94,16 +94,16 @@
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
-        tools:layout_editor_absoluteY="160dp" />
+        tools:layout_editor_absoluteY="124dp" />
 
     <TextView
         android:id="@+id/distanceDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="68dp"
+        android:layout_marginStart="100dp"
         android:text="@string/distanceS"
         android:textColor="#444054"
-        android:textSize="50sp"
+        android:textSize="40sp"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
         app:layout_constraintTop_toBottomOf="@+id/distance"
@@ -129,8 +129,10 @@
         android:textColor="#2B2D42"
         android:textSize="48sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
-        tools:layout_editor_absoluteY="280dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.345"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/speedLogo" />
 
     <TextView
         android:id="@+id/speedDisplay"
@@ -141,9 +143,22 @@
         android:textColor="#444054"
         android:textSize="60sp"
         android:visibility="visible"
-        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
         app:layout_constraintTop_toBottomOf="@+id/speed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:visibility="visible" />
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/circle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/speedDisplay" />
 
     <ImageButton
         android:id="@+id/pauseButtonLogo"
@@ -188,13 +203,5 @@
         app:layout_constraintStart_toEndOf="@+id/pauseButtonLogo"
         app:layout_constraintTop_toBottomOf="@id/speedDisplay"
         app:layout_constraintVertical_bias="1.0" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="213dp"
-        android:layout_height="110dp"
-        tools:layout_editor_absoluteX="107dp"
-        tools:layout_editor_absoluteY="447dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -206,15 +206,20 @@ public class Session {
         private final String totalTime;
         private int sessionID;
         private static final long serialVersionUID = 0L;
-        LocalDate date;
+       private LocalDate date;
 
-        ArrayList<String> timePerKm;
+        private ArrayList<String> timePerKm;
+
+        private String sessionComment;
+
+
 
         public StoredSession( LocalDate date, double distance, String time, ArrayList<String> timePerKm){
             this.totalTime = time;
             this.totalDistance = distance;
             this.date = date;
             this.timePerKm = timePerKm;
+
         }
 
         public double getTotalDistance() {
@@ -231,6 +236,10 @@ public class Session {
 
         public LocalDate getDate(){
             return date;
+        }
+
+        public String getSessionComment(){
+            return sessionComment;
         }
     }
 }
