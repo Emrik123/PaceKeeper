@@ -24,7 +24,7 @@
         android:layout_height="100dp"
         android:background="@drawable/round_button"
         android:scaleType="centerCrop"
-        android:src="@drawable/starbuttongreen"
+        android:src="@drawable/startbutton"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/guideline_vertical_icon"
         app:layout_constraintEnd_toEndOf="parent"
@@ -89,6 +89,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:backgroundTint="@color/transparent"
+
         android:scaleType="centerCrop"
         android:src="@drawable/history"
         app:layout_constraintStart_toStartOf="@id/fragment_container"
