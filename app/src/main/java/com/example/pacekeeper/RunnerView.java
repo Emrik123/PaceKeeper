@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.speech.tts.TextToSpeech;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -28,6 +29,7 @@ import com.google.android.gms.location.LocationServices;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -66,6 +68,7 @@ public class RunnerView extends Fragment {
     private FragmentManager fragmentManager;
     private Handler interfaceUpdateHandler;
     private Runnable uiUpdates;
+    private TextToSpeech textToSpeech;
 
     public RunnerView() {
         // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
@@ -147,6 +150,8 @@ public class RunnerView extends Fragment {
                 currentSession.continueSession();
                 startLocationUpdates();
                 feedback.runFeedback(currentSession.getSelectedSpeed());
+                CharSequence lego = "Kom igen daa Britt-Marie, schör för faaaan";
+                textToSpeech.speak(lego, TextToSpeech.QUEUE_FLUSH, null, null);
             }
         });
 
@@ -175,6 +180,16 @@ public class RunnerView extends Fragment {
                 interfaceUpdateHandler.postDelayed(uiUpdates, (long) UPDATE_INTERVAL_MS);
             }
         };
+
+        textToSpeech = new TextToSpeech(requireActivity().getApplicationContext(), new TextToSpeech.OnInitListener() {
+
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    textToSpeech.setLanguage(Locale.US);
+                }
+            }
+        });
 
 
 
@@ -208,6 +223,15 @@ public class RunnerView extends Fragment {
     public void onPause() {
         super.onPause();
         interfaceUpdateHandler.removeCallbacks(uiUpdates);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -249,6 +273,7 @@ public class RunnerView extends Fragment {
         currentSession.setSpeedDisplayMode(speedDisplayMode);
         feedback.runFeedback(currentSession.getSelectedSpeed());
         runUiUpdates();
+
     }
 
     public void setSpeedDisplayMode(String speedDisplayMode){
