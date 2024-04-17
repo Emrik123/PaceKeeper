@@ -114,6 +114,15 @@ public class Session {
         return currentSpeed;
     }
 
+    public String getFormattedSelectedSpeed(){
+        if (speedDisplayMode.equals("kmh")){
+            return Double.toString(selectedSpeed*setConversionUnit) + " km/h";
+        }
+        else {
+            return ((long)(1000/selectedSpeed)) + "min/km";
+        }
+    }
+
     public String getFormattedSpeed(){
         if (speedDisplayMode.equals("kmh")){
             return Double.toString(currentSpeed*setConversionUnit);

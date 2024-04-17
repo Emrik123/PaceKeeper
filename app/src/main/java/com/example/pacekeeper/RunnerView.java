@@ -3,11 +3,15 @@ package com.example.pacekeeper;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -15,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -59,6 +64,11 @@ public class RunnerView extends Fragment {
     private String speedDisplayMode;
     private int kmDistance;
     private String kmTime;
+    TextView desiredSpeedText;
+    ImageView speedCircle;
+    Drawable slowCircle;
+    Drawable fastCircle;
+    Drawable goodSpeedCircle;
 
     public RunnerView() {
         // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
@@ -79,6 +89,7 @@ public class RunnerView extends Fragment {
         return fragment;
     }
 
+
     @SuppressLint("VisibleForTests")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,6 +104,11 @@ public class RunnerView extends Fragment {
         stopButton = rootView.findViewById(R.id.stopButtonLogo);
         stopButton.setVisibility(View.INVISIBLE);
         resumeButton.setVisibility(View.INVISIBLE);
+        speedCircle = rootView.findViewById(R.id.speed_circle);
+        desiredSpeedText = rootView.findViewById(R.id.desired_speed_text);
+        slowCircle = ContextCompat.getDrawable(getContext(),R.drawable.circle);
+        fastCircle = ContextCompat.getDrawable(getContext(),R.drawable.redcircle);
+        goodSpeedCircle = ContextCompat.getDrawable(getContext(),R.drawable.greencircle);
 
         Intent intent = getActivity().getIntent();
         if (intent != null) {
@@ -169,6 +185,8 @@ public class RunnerView extends Fragment {
             }
         };
         start();
+        desiredSpeedText.setText(desiredSpeedText.getText() + currentSession.getFormattedSelectedSpeed());
+
         return rootView;
     }
 
@@ -190,17 +208,18 @@ public class RunnerView extends Fragment {
                 currentSession.addTime(time);
                 kmDistance+=1000;
             }
-            /*if(roundedSpeed == currentSession.getSelectedSpeed() ||
-                    (roundedSpeed >= currentSession.getSelectedSpeed() -1
-                            && roundedSpeed <= currentSession.getSelectedSpeed() +1)){
-                speedDisplay.setTextColor(Color.parseColor("green"));
-            }else if(roundedSpeed > currentSession.getSelectedSpeed()+1){
-                speedDisplay.setTextColor(Color.parseColor("red"));
-                tooFastAlert.start();
-            }else if(roundedSpeed < currentSession.getSelectedSpeed()-1){
-                speedDisplay.setTextColor(Color.parseColor("blue"));
-                tooSlowAlert.start();
-            }*/
+            double currentSpeed =currentSession.getCurrentSpeed();
+            System.out.println("Current speed:" + currentSpeed);
+            System.out.println("Selected speed: " + currentSession.getSelectedSpeed());
+            if(currentSession.getCurrentSpeed() == currentSession.getSelectedSpeed() ||
+                    (currentSpeed >= currentSession.getSelectedSpeed() -1
+                            && currentSpeed <= currentSession.getSelectedSpeed() +1)){
+                speedCircle.setBackground(goodSpeedCircle);
+            }else if(currentSpeed > currentSession.getSelectedSpeed()+1){
+                speedCircle.setBackground(fastCircle);
+            }else if(currentSpeed < currentSession.getSelectedSpeed()-1){
+                speedCircle.setBackground(slowCircle);
+            }
             timeDisplay.setText(currentSession.updateTime());
         }
     }
