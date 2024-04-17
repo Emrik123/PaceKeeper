@@ -7,6 +7,8 @@ import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.os.Looper;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -62,6 +64,8 @@ public class RunnerView extends Fragment {
     private int kmDistance;
     private String kmTime;
     private FragmentManager fragmentManager;
+    private Handler interfaceUpdateHandler;
+    private Runnable uiUpdates;
 
     public RunnerView() {
         // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
@@ -100,6 +104,8 @@ public class RunnerView extends Fragment {
         settingsButton.setVisibility(View.INVISIBLE);
         fragmentManager = mainActivity.getSupportFragmentManager();
         Intent intent = requireActivity().getIntent();
+        interfaceUpdateHandler = new Handler(Looper.getMainLooper());
+
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
             speedDisplayMode = intent.getStringExtra("speedDisplayMode");
@@ -161,6 +167,15 @@ public class RunnerView extends Fragment {
             }
         });
 
+        uiUpdates = new Runnable() {
+            @Override
+            public void run() {
+                updateUI();
+
+                interfaceUpdateHandler.postDelayed(uiUpdates, (long) UPDATE_INTERVAL_MS);
+            }
+        };
+
 
 
 
@@ -177,7 +192,6 @@ public class RunnerView extends Fragment {
                     feedback.setRunning(currentSession.getRunning());
                     feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
                     currentSession.updateSessionData();
-                    //updateUI();
                 }
             }
         };
@@ -190,45 +204,31 @@ public class RunnerView extends Fragment {
 //        mainActivity.updateSettingsRunnersView();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        interfaceUpdateHandler.removeCallbacks(uiUpdates);
+    }
+
     @SuppressLint("SetTextI18n")
     public void updateUI(){
         if(currentSession.getRunning()){
             int roundedDistance = (int) currentSession.getDistance();
             distanceDisplay.setText(Integer.toString(roundedDistance));
+
             if(speedDisplayMode.equals("kmh")){
                 speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(".")+2));
             }
             else{
                 speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
             }
-            timeDisplay.setText(currentSession.updateTime());
 
-            /*if(roundedDistance>=kmDistance){
-                long time = currentSession.getTotalTime()-currentSession.getTimeExceptCurrentKm();
-                currentSession.addTimePerKm(time);
-                currentSession.addTime(time);
-                kmDistance+=1000;
-            }*/
-            /*if(roundedSpeed == currentSession.getSelectedSpeed() ||
-                    (roundedSpeed >= currentSession.getSelectedSpeed() -1
-                            && roundedSpeed <= currentSession.getSelectedSpeed() +1)){
-                speedDisplay.setTextColor(Color.parseColor("green"));
-            }else if(roundedSpeed > currentSession.getSelectedSpeed()+1){
-                speedDisplay.setTextColor(Color.parseColor("red"));
-                tooFastAlert.start();
-            }else if(roundedSpeed < currentSession.getSelectedSpeed()-1){
-                speedDisplay.setTextColor(Color.parseColor("blue"));
-                tooSlowAlert.start();
-            }*/
+            timeDisplay.setText(currentSession.updateTime());
         }
     }
 
     public void runUiUpdates() {
-        new Thread(() -> {
-            while (!Thread.interrupted()) {
-                requireActivity().runOnUiThread(this::updateUI);
-            }
-        }).start();
+        interfaceUpdateHandler.post(uiUpdates);
     }
 
     public void startLocationUpdates() {
