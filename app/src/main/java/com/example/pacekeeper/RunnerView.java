@@ -186,7 +186,7 @@ public class RunnerView extends Fragment {
             @Override
             public void onInit(int status) {
                 if (status == TextToSpeech.SUCCESS) {
-                    textToSpeech.setLanguage(Locale.US);
+                    textToSpeech.setLanguage(Locale.GERMAN);
                 }
             }
         });
