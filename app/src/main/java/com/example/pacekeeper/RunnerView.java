@@ -203,9 +203,16 @@ public class RunnerView extends Fragment {
     @SuppressLint("SetTextI18n")
     public void updateUI(){
         if(currentSession.getRunning()){
-            int roundedDistance = (int) currentSession.getDistance();
-            distanceDisplay.setText(Integer.toString(roundedDistance));
 
+            double distance = currentSession.getDistance();
+            String distanceString = Double.toString(distance);
+            if(distance < 1000){
+                distanceDisplay.setText(distanceString.substring(0,distanceString.indexOf("."))+" m");
+            }
+            else{
+                String kmDistance = Double.toString(distance/1000);
+                distanceDisplay.setText(kmDistance.substring(0, kmDistance.indexOf(".")+3) + " km");
+            }
             if(speedDisplayMode.equals("kmh")){
                 speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(".")+2));
             }
