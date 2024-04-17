@@ -150,7 +150,7 @@ public class RunnerView extends Fragment {
                 currentSession.continueSession();
                 startLocationUpdates();
                 feedback.runFeedback(currentSession.getSelectedSpeed());
-                CharSequence lego = "Kom igen daa Britt-Marie, schör för faaaan";
+                CharSequence lego = "Koom igen da Britt-Marie, schör för faaaan";
                 textToSpeech.speak(lego, TextToSpeech.QUEUE_FLUSH, null, null);
             }
         });
@@ -273,7 +273,6 @@ public class RunnerView extends Fragment {
         currentSession.setSpeedDisplayMode(speedDisplayMode);
         feedback.runFeedback(currentSession.getSelectedSpeed());
         runUiUpdates();
-
     }
 
     public void setSpeedDisplayMode(String speedDisplayMode){
