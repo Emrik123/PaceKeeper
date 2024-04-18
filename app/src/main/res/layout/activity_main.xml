@@ -5,7 +5,7 @@
     android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#007BFF"
+    android:background="@drawable/runnerview"
     android:visibility="visible"
     tools:context=".MainActivity"
     tools:visibility="visible">
@@ -18,17 +18,17 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.70" />
 
-    <Button
+    <ImageButton
         android:id="@+id/confirmButton"
-        style="@style/Widget.Material3.Button.Icon"
-        android:layout_width="113dp"
-        android:layout_height="121dp"
-        android:backgroundTint="#F44336"
-        android:text="@string/confirm"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/round_button"
+        android:scaleType="centerCrop"
+        android:src="@drawable/starbuttongreen"
         android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@+id/guideline_vertical_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:visibility="visible" />
 
     <LinearLayout
@@ -37,7 +37,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/confirmButton"
+        app:layout_constraintBottom_toTopOf="@id/confirmButton"
 
             android:id="@+id/linearLayout2">
 
@@ -47,7 +47,7 @@
                 android:layout_height="211dp"
                 android:visibility="visible"
                 android:layout_marginEnd="5dp"
-                tools:layout_editor_absoluteY="102dp"
+            tools:layout_editor_absoluteY="102dp"
                 tools:visibility="visible"/>
 
         <TextView
@@ -64,7 +64,7 @@
                 android:id="@+id/rightNPicker"
                 android:layout_width="102dp"
                 android:layout_height="211dp"
-                android:layout_marginStart="5dp"
+            android:layout_marginStart="5dp"
                 android:visibility="visible"
                 tools:visibility="visible"/>
 
@@ -78,7 +78,7 @@
         android:id="@+id/settingsButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:backgroundTint="#007BFF"
+        android:backgroundTint="@color/transparent"
         android:scaleType="centerCrop"
         android:src="@drawable/settinglogo"
         app:layout_constraintEnd_toEndOf="@id/fragment_container"
@@ -88,7 +88,8 @@
         android:id="@+id/historyButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:backgroundTint="#007BFF"
+        android:backgroundTint="@color/transparent"
+
         android:scaleType="centerCrop"
         android:src="@drawable/history"
         app:layout_constraintStart_toStartOf="@id/fragment_container"
@@ -100,25 +101,44 @@
             app:layout_constraintStart_toEndOf="@+id/linearLayout2" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.578" app:layout_constraintVertical_bias="0.51"
             app:layout_constraintTop_toTopOf="@+id/linearLayout2"
-            app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"/>
+        android:textColor="#FFFFFF"
+
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"/>
+
     <TextView
-            android:text="@string/minutes_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/minutesTag"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="64dp" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="116dp" android:layout_marginBottom="7dp"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout2" app:layout_constraintEnd_toStartOf="@+id/secondsTag"
-            android:layout_marginEnd="67dp"/>
+        android:id="@+id/minutesTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="116dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="67dp"
+        android:layout_marginBottom="7dp"
+        android:text="@string/minutes_tag"
+        android:textColor="#FFFFFF"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toStartOf="@+id/secondsTag"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
     <TextView
-            android:text="@string/seconds_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/secondsTag"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="64dp"
-            app:layout_constraintStart_toEndOf="@+id/minutesTag" android:layout_marginBottom="7dp"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout2" android:layout_marginEnd="114dp"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintVertical_bias="0.51"/>
+        android:id="@+id/secondsTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="114dp"
+        android:layout_marginBottom="7dp"
+
+        android:text="@string/seconds_tag"
+        android:textColor="#FFFFFF"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/minutesTag"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.51"
+        tools:visibility="visible" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

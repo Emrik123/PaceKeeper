@@ -1,6 +1,7 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.Button;
@@ -10,15 +11,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Activity mainActivity;
     private SessionManager sessionManager;
     private double speed;
 
-    private Button confirm;
+    private ImageButton confirm;
     private NumberPicker leftNPicker;
     private NumberPicker rightNPicker;
     private ImageButton settingsButton;
@@ -38,7 +43,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainActivity = this;
         sessionManager = new SessionManager();
+        sessionManager.readFile(this);
         //FragmentManager fragmentManager = getSupportFragmentManager();
         loadSharedPreferences();
         setContentView(R.layout.activity_main);
@@ -174,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         // Replace the current fragment with the RunnerView fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, runnerView); // Replace fragment_container with the id of your container layout
-        transaction.addToBackStack(null); // Optional: Add transaction to back stack
+        transaction.addToBackStack("mainActivity"); // Optional: Add transaction to back stack
         transaction.commit();
     }
 

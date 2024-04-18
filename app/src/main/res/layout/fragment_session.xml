@@ -4,58 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#D3D3D3">
+    android:background="#4EAFB9">
 
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/fragment_session"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#1C8399"
-    tools:context=".MainActivity">
-
-
-    <ImageButton
-        android:id="@+id/return_button"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:backgroundTint="#1C8399"
-        android:scaleType="centerCrop"
-        android:src="@drawable/backarrow"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-
-        />
-
-
-
-    <TextView
-        android:id="@+id/titleSession"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:fontFamily="sans-serif-black"
-        android:text="Sessions"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <LinearLayout
-        android:id="@+id/session_layout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_session"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/titleSession"
-        android:background="@drawable/border"
-        >
+        tools:context=".MainActivity">
 
 
+        <ImageButton
+            android:id="@+id/return_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:backgroundTint="#4EAFB9"
+            android:scaleType="centerCrop"
+            android:src="@drawable/backarrow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
 
-    </LinearLayout>
+            />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/titleSession"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:fontFamily="sans-serif-black"
+            android:text="Sessions"
+            android:textAlignment="center"
+            android:textColor="#4F6D7A"
+            android:textSize="34sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <LinearLayout
+            android:id="@+id/session_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/titleSession">
+
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

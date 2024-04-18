@@ -8,8 +8,9 @@ import org.apache.commons.lang3.time.StopWatch;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class Session implements Serializable {
+public class Session {
     private ArrayList<Location> route;
     private ArrayList<Double> storedSpeedArray;
     private ArrayList<String> timePerKm;
@@ -89,6 +90,11 @@ public class Session implements Serializable {
 
     public void killSession(){
         isRunning = false;
+
+    }
+
+    public StoredSession getSerializableSession(){
+        return new StoredSession(getSessionDate(), getDistance(), getTotalSessionTime(), getTimePerKm());
     }
 
     public void updateLocation(Location location) {
@@ -120,6 +126,15 @@ public class Session implements Serializable {
 
     public double getCurrentSpeed() {
         return currentSpeed;
+    }
+
+    public String getFormattedSelectedSpeed(){
+        if (speedDisplayMode.equals("kmh")){
+            return Double.toString(selectedSpeed*setConversionUnit) + " km/h";
+        }
+        else {
+            return ((long)(1000/selectedSpeed)) + "min/km";
+        }
     }
 
     public String getFormattedSpeed(){
@@ -208,5 +223,54 @@ public class Session implements Serializable {
 
     public ArrayList<String> getTimePerKm(){
         return timePerKm;
+    }
+
+
+    public static class StoredSession implements Serializable{
+
+        private static final AtomicInteger idCount = new AtomicInteger(0);
+        private final double totalDistance;
+        private final String totalTime;
+        private int sessionID;
+        private static final long serialVersionUID = 0L;
+       private LocalDate date;
+
+        private ArrayList<String> timePerKm;
+
+        private String sessionComment;
+
+
+
+        public StoredSession( LocalDate date, double distance, String time, ArrayList<String> timePerKm){
+            this.totalTime = time;
+            this.totalDistance = distance;
+            this.date = date;
+            this.timePerKm = timePerKm;
+
+        }
+
+        public void setSessionComment(String sessionComment){
+            this.sessionComment = sessionComment;
+        }
+
+        public double getTotalDistance() {
+            return totalDistance;
+        }
+
+        public String getTotalTime() {
+            return totalTime;
+        }
+
+        public ArrayList<String> getTimePerKm(){
+            return timePerKm;
+        }
+
+        public LocalDate getDate(){
+            return date;
+        }
+
+        public String getSessionComment(){
+            return sessionComment;
+        }
     }
 }

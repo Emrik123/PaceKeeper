@@ -3,6 +3,9 @@ package com.example.pacekeeper;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -10,12 +13,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -64,6 +70,12 @@ public class RunnerView extends Fragment {
     private Handler interfaceUpdateHandler;
     private Runnable uiUpdates;
 
+    TextView desiredSpeedText;
+    ImageView speedCircle;
+    Drawable slowCircle;
+    Drawable fastCircle;
+    Drawable goodSpeedCircle;
+
     public RunnerView() {
         sessionHistory = new ArrayList<>();
         kmDistance = 1000;
@@ -80,6 +92,7 @@ public class RunnerView extends Fragment {
         return fragment;
     }
 
+
     @SuppressLint("VisibleForTests")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,10 +108,18 @@ public class RunnerView extends Fragment {
         settingsButton = rootView.findViewById(R.id.settingsButton);
         stopButton.setVisibility(View.INVISIBLE);
         resumeButton.setVisibility(View.INVISIBLE);
+
         settingsButton.setVisibility(View.INVISIBLE);
         fragmentManager = mainActivity.getSupportFragmentManager();
         Intent intent = requireActivity().getIntent();
         interfaceUpdateHandler = new Handler(Looper.getMainLooper());
+
+        speedCircle = rootView.findViewById(R.id.speed_circle);
+        desiredSpeedText = rootView.findViewById(R.id.desired_speed_text);
+        slowCircle = ContextCompat.getDrawable(getContext(),R.drawable.circle);
+        fastCircle = ContextCompat.getDrawable(getContext(),R.drawable.redcircle);
+        goodSpeedCircle = ContextCompat.getDrawable(getContext(),R.drawable.greencircle);
+
 
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
@@ -128,6 +149,7 @@ public class RunnerView extends Fragment {
                 currentSession.pauseSession();
                 feedback.stopFeedback();
                 stopLocationUpdates();
+
             }
         });
 
@@ -154,10 +176,11 @@ public class RunnerView extends Fragment {
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                enableAllMainActivityButtons();
-                sessionManager.add(currentSession);
-              currentSession.killSession();
-                getParentFragmentManager().popBackStackImmediate();
+                displaySessionOverview();
+               // sessionManager.add(currentSession.getSerializableSession());
+               // sessionManager.storeSessionToMemory(mainActivity);
+             // currentSession.killSession();
+               // getParentFragmentManager().popBackStackImmediate();
             }
         });
 
@@ -186,6 +209,8 @@ public class RunnerView extends Fragment {
             }
         };
         start();
+        desiredSpeedText.setText(desiredSpeedText.getText() + currentSession.getFormattedSelectedSpeed());
+
         return rootView;
     }
     @Override
@@ -220,6 +245,17 @@ public class RunnerView extends Fragment {
                 speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
             }
 
+            double currentSpeed =currentSession.getCurrentSpeed();
+
+            if(currentSession.getCurrentSpeed() == currentSession.getSelectedSpeed() ||
+                    (currentSpeed >= currentSession.getSelectedSpeed() -1
+                            && currentSpeed <= currentSession.getSelectedSpeed() +1)){
+                speedCircle.setBackground(goodSpeedCircle);
+            }else if(currentSpeed > currentSession.getSelectedSpeed()+1){
+                speedCircle.setBackground(fastCircle);
+            }else if(currentSpeed < currentSession.getSelectedSpeed()-1){
+                speedCircle.setBackground(slowCircle);
+            }
             timeDisplay.setText(currentSession.updateTime());
         }
     }
@@ -271,7 +307,16 @@ public class RunnerView extends Fragment {
         this.mainActivity = mainActivity;
     }
 
-    public void enableAllMainActivityButtons(){
-        mainActivity.enableAllButtons();
+
+    private void displaySessionOverview() {
+        SessionOverview sessionOverview = SessionOverview.newInstance(currentSession, sessionManager);
+
+        Bundle bundle = new Bundle();
+
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, sessionOverview);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
     }
 }
