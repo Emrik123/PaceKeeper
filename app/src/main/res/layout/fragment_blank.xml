@@ -45,6 +45,16 @@
         app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_icon"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/settingsButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:backgroundTint="@color/transparent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/settinglogo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <TextView
         android:id="@+id/time_text"
         android:layout_width="wrap_content"
