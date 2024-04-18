@@ -115,8 +115,8 @@
         android:id="@+id/speedLogo"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="36dp"
         android:src="@drawable/pngwing"
         app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_icon"
         app:layout_constraintTop_toBottomOf="@+id/distanceDisplay" />

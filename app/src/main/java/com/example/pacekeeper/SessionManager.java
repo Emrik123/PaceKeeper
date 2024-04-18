@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -34,24 +35,21 @@ public class SessionManager {
 
     public void storeSessionToMemory(Context context) {
         try {
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-                    "testDataFile.dat");
-            ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file.toPath()));
+            FileOutputStream fos = context.openFileOutput("testDataFile.dat", Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(sessions);
-            oos.flush();
             oos.close();
             Toast.makeText(context, "File stored", Toast.LENGTH_SHORT).show();
-            Log.i("Store session", "File successfully created and stored in: " + file.getPath());
+            Log.i("Store session", "File successfully created and stored");
         } catch (IOException e) {
             Log.e("Store session", "Error storing file: " + e.getMessage());
         }
     }
 
-    public void readFile() {
+    public void readFile(Context context) {
         try {
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-                    "testDataFile.dat");
-            ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get(file.getAbsolutePath())));
+            FileInputStream fis = context.openFileInput("testDataFile.dat");
+            ObjectInputStream ois = new ObjectInputStream(fis);
             sessions = (ArrayList<Session.StoredSession>) ois.readObject();
             ois.close();
         } catch (IOException | ClassNotFoundException e) {

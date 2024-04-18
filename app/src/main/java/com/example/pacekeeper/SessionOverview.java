@@ -1,7 +1,10 @@
 package com.example.pacekeeper;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -25,6 +28,9 @@ public class SessionOverview extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE = 1;
+    private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 2;
+
 
     private SessionManager sessionManager;
     private Session currentSession;
