@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayRunnerView(double speed) {
-        disableAllButtons();
+       // disableAllButtons();
         loadSharedPreferences();
         setFeedbackPreferences();
         // Create a new instance of RunnerView fragment with the selected speed

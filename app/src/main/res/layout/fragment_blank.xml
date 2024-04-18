@@ -39,8 +39,6 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginTop="16dp"
-        android:contentDescription="Stopwatch"
-
         android:src="@drawable/stopwatch"
         app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_icon"
         app:layout_constraintTop_toTopOf="parent" />
@@ -218,7 +216,7 @@
         android:layout_marginBottom="56dp"
         android:background="@drawable/round_button"
         android:scaleType="centerCrop"
-        android:src="@drawable/stoplogo"
+        android:src="@drawable/t"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/pauseButtonLogo"

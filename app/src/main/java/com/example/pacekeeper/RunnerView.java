@@ -116,9 +116,9 @@ public class RunnerView extends Fragment {
 
         speedCircle = rootView.findViewById(R.id.speed_circle);
         desiredSpeedText = rootView.findViewById(R.id.desired_speed_text);
-        slowCircle = ContextCompat.getDrawable(getContext(),R.drawable.circle);
-        fastCircle = ContextCompat.getDrawable(getContext(),R.drawable.redcircle);
-        goodSpeedCircle = ContextCompat.getDrawable(getContext(),R.drawable.greencircle);
+        slowCircle = ContextCompat.getDrawable(requireContext(),R.drawable.circle);
+        fastCircle = ContextCompat.getDrawable(requireContext(),R.drawable.redcircle);
+        goodSpeedCircle = ContextCompat.getDrawable(requireContext(),R.drawable.greencircle);
 
 
         if (intent != null) {
