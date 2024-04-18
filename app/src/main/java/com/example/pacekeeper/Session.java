@@ -25,8 +25,11 @@ public class Session {
     private final StopWatch stopwatch;
     private Boolean discardLocation = false;
     private long timeExceptCurrentKm;
+    private int kmDistance;
+    private Kalman kalmanFilter;
 
     public Session(double selectedSpeed){
+        kalmanFilter = new Kalman();
         this.sessionDate = LocalDate.now();
         this.selectedSpeed = selectedSpeed;
         this.isRunning = true;
@@ -46,6 +49,16 @@ public class Session {
 
         @SuppressLint("DefaultLocale") String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         return timeString;
+    }
+
+    public void updateSessionData() {
+        int roundedDistance = (int) getDistance();
+        if(roundedDistance>=kmDistance){
+            long time = getTotalTime() - getTimeExceptCurrentKm();
+            addTimePerKm(time);
+            addTime(time);
+            kmDistance+=1000;
+        }
     }
 
     public void addTime(long kmTime){
@@ -94,7 +107,8 @@ public class Session {
             }
         }
         this.currentLocation = location;
-        this.currentSpeed = currentLocation.getSpeed();
+        double[] result = kalmanFilter.update(currentLocation.getSpeed());
+        this.currentSpeed = result[1];
         storedSpeedArray.add(currentSpeed);
     }
 
@@ -172,6 +186,10 @@ public class Session {
 
     public void setSpeedDisplayMode(String mode){
         speedDisplayMode = mode;
+    }
+
+    public String getSpeedDisplayMode(){
+        return speedDisplayMode;
     }
 
     public double calculateAverageSpeed(){

@@ -10,6 +10,8 @@ import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.os.Looper;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -23,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -31,6 +34,7 @@ import com.google.android.gms.location.LocationServices;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,14 +51,12 @@ public class RunnerView extends Fragment {
     private ImageButton pauseButton;
     private ImageButton resumeButton;
     private ImageButton stopButton;
+    private ImageButton settingsButton;
     private LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
-    private Kalman kalman;
     private double speed;
-    private final double UPDATE_INTERVAL_MS = 500;
-    private final double MEASUREMENT_NOISE_M = 5;
-    private final double ACCEL_NOISE_MS = 0.1;
+    private final double UPDATE_INTERVAL_MS = 250;
     private Bundle savedInstance;
     private MediaPlayer tooSlowAlert;
     private MediaPlayer tooFastAlert;
@@ -64,6 +66,10 @@ public class RunnerView extends Fragment {
     private String speedDisplayMode;
     private int kmDistance;
     private String kmTime;
+    private FragmentManager fragmentManager;
+    private Handler interfaceUpdateHandler;
+    private Runnable uiUpdates;
+
     TextView desiredSpeedText;
     ImageView speedCircle;
     Drawable slowCircle;
@@ -71,9 +77,6 @@ public class RunnerView extends Fragment {
     Drawable goodSpeedCircle;
 
     public RunnerView() {
-        // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
-        // Ignore for now
-        kalman = new Kalman(UPDATE_INTERVAL_MS, MEASUREMENT_NOISE_M, ACCEL_NOISE_MS);
         sessionHistory = new ArrayList<>();
         kmDistance = 1000;
     }
@@ -102,15 +105,22 @@ public class RunnerView extends Fragment {
         pauseButton = rootView.findViewById(R.id.pauseButtonLogo);
         resumeButton = rootView.findViewById(R.id.playButtonLogo);
         stopButton = rootView.findViewById(R.id.stopButtonLogo);
+        settingsButton = rootView.findViewById(R.id.settingsButton);
         stopButton.setVisibility(View.INVISIBLE);
         resumeButton.setVisibility(View.INVISIBLE);
+
+        settingsButton.setVisibility(View.INVISIBLE);
+        fragmentManager = mainActivity.getSupportFragmentManager();
+        Intent intent = requireActivity().getIntent();
+        interfaceUpdateHandler = new Handler(Looper.getMainLooper());
+
         speedCircle = rootView.findViewById(R.id.speed_circle);
         desiredSpeedText = rootView.findViewById(R.id.desired_speed_text);
         slowCircle = ContextCompat.getDrawable(getContext(),R.drawable.circle);
         fastCircle = ContextCompat.getDrawable(getContext(),R.drawable.redcircle);
         goodSpeedCircle = ContextCompat.getDrawable(getContext(),R.drawable.greencircle);
 
-        Intent intent = getActivity().getIntent();
+
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
             speedDisplayMode = intent.getStringExtra("speedDisplayMode");
@@ -135,6 +145,7 @@ public class RunnerView extends Fragment {
                 pauseButton.setVisibility(View.INVISIBLE);
                 resumeButton.setVisibility(View.VISIBLE);
                 stopButton.setVisibility(View.VISIBLE);
+                settingsButton.setVisibility(View.VISIBLE);
                 currentSession.pauseSession();
                 feedback.stopFeedback();
                 stopLocationUpdates();
@@ -148,9 +159,17 @@ public class RunnerView extends Fragment {
                 pauseButton.setVisibility(View.VISIBLE);
                 resumeButton.setVisibility(View.INVISIBLE);
                 stopButton.setVisibility(View.INVISIBLE);
+                settingsButton.setVisibility(View.INVISIBLE);
                 currentSession.continueSession();
                 startLocationUpdates();
                 feedback.runFeedback(currentSession.getSelectedSpeed());
+            }
+        });
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displaySettingsView();
             }
         });
 
@@ -165,6 +184,14 @@ public class RunnerView extends Fragment {
             }
         });
 
+        uiUpdates = new Runnable() {
+            @Override
+            public void run() {
+                updateUI();
+                interfaceUpdateHandler.postDelayed(uiUpdates, (long) UPDATE_INTERVAL_MS);
+            }
+        };
+
 
 
 
@@ -173,14 +200,11 @@ public class RunnerView extends Fragment {
             public void onLocationResult(@NotNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 if (locationResult.getLastLocation() != null) {
-                    //Location rawLocation = locationResult.getLastLocation(); <- Icke Kalman-filtrerad location med noise
-                    //Location filteredLocation = kalman.predictAndCorrect(rawLocation); <- Kalman filtrerad location utan noise
-                    Location lastLocation = locationResult.getLastLocation();
-                    // discard location
-                    currentSession.updateLocation(lastLocation);
+                    currentSession.updateLocation(locationResult.getLastLocation());
+                    //discard location
                     feedback.setRunning(currentSession.getRunning());
                     feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
-                    updateUI();
+                    currentSession.updateSessionData();
                 }
             }
         };
@@ -189,12 +213,31 @@ public class RunnerView extends Fragment {
 
         return rootView;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+//        mainActivity.updateSettingsRunnersView();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        interfaceUpdateHandler.removeCallbacks(uiUpdates);
+    }
 
     @SuppressLint("SetTextI18n")
     public void updateUI(){
         if(currentSession.getRunning()){
-            int roundedDistance = (int) currentSession.getDistance();
-            distanceDisplay.setText(Integer.toString(roundedDistance));
+
+            double distance = currentSession.getDistance();
+            String distanceString = Double.toString(distance);
+            if(distance < 1000){
+                distanceDisplay.setText(distanceString.substring(0,distanceString.indexOf("."))+" m");
+            }
+            else{
+                String kmDistance = Double.toString(distance/1000);
+                distanceDisplay.setText(kmDistance.substring(0, kmDistance.indexOf(".")+3) + " km");
+            }
             if(speedDisplayMode.equals("kmh")){
                 speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(".")+2));
             }
@@ -202,15 +245,8 @@ public class RunnerView extends Fragment {
                 speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
             }
 
-            if(roundedDistance>=kmDistance){
-                long time = currentSession.getTotalTime()-currentSession.getTimeExceptCurrentKm();
-                currentSession.addTimePerKm(time);
-                currentSession.addTime(time);
-                kmDistance+=1000;
-            }
             double currentSpeed =currentSession.getCurrentSpeed();
-            System.out.println("Current speed:" + currentSpeed);
-            System.out.println("Selected speed: " + currentSession.getSelectedSpeed());
+
             if(currentSession.getCurrentSpeed() == currentSession.getSelectedSpeed() ||
                     (currentSpeed >= currentSession.getSelectedSpeed() -1
                             && currentSpeed <= currentSession.getSelectedSpeed() +1)){
@@ -222,6 +258,10 @@ public class RunnerView extends Fragment {
             }
             timeDisplay.setText(currentSession.updateTime());
         }
+    }
+
+    public void runUiUpdates() {
+        interfaceUpdateHandler.post(uiUpdates);
     }
 
     public void startLocationUpdates() {
@@ -241,6 +281,26 @@ public class RunnerView extends Fragment {
         currentSession = new Session(speed);
         currentSession.setSpeedDisplayMode(speedDisplayMode);
         feedback.runFeedback(currentSession.getSelectedSpeed());
+        runUiUpdates();
+    }
+
+    public void setSpeedDisplayMode(String speedDisplayMode){
+        this.speedDisplayMode = speedDisplayMode;
+    }
+
+
+    private void displaySettingsView(){
+        fragmentManager.beginTransaction().add(R.id.fragment_container, SettingsFragment.class, null)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public Session getCurrentSession(){
+        return currentSession;
+    }
+
+    public TextView getSpeedDisplay(){
+        return speedDisplay;
     }
 
     public void setMainActivity(MainActivity mainActivity) {
@@ -257,5 +317,6 @@ public class RunnerView extends Fragment {
         transaction.replace(R.id.fragment_container, sessionOverview);
         transaction.addToBackStack(null);
         transaction.commit();
+
     }
 }

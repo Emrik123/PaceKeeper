@@ -6,6 +6,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.content.Context;
+import android.widget.Toast;
+import androidx.core.content.ContextCompat;
 
 public class FeedbackHandler implements Serializable {
     private Vibrator vibrator;
@@ -20,22 +22,22 @@ public class FeedbackHandler implements Serializable {
     private long initialDelayMillis = 2000;
     private Timer timer;
     private TimerTask timerTask;
+    private Context context;
 
     public FeedbackHandler(Context context) {
+        this.context = context;
         audioPlayer = new AudioPlayer(context);
         vibrator = new Vibrator(context);
     }
 
     public void giveFeedback() {
-        final double AVG_WALKING_SPEED_MPS = 2 / 3.6;
-        if (isRunning || currentSpeed > AVG_WALKING_SPEED_MPS) {
+        final double AVG_WALKING_SPEED_MPS = 3 / 3.6;
+        if (isRunning && currentSpeed > AVG_WALKING_SPEED_MPS) {
             if (audioAllowed) {
                 if (movingTooFast()) {
-                    System.out.println("TOO FAST: Selected speed: " + selectedSpeed + "current speed: " + currentSpeed);
                     audioPlayer.decreaseSound();
                 }
                 if (movingTooSlow()) {
-                    System.out.println("TOO SLOW: Selected speed: " + selectedSpeed + "current speed: " + currentSpeed);
                     audioPlayer.increaseSound();
                 }
             }

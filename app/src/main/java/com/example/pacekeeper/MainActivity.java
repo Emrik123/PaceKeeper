@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton sessions;
     private FragmentManager fragmentManager;
     private TextView unitTextView;
+    private RunnerView runnerView;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -54,19 +55,17 @@ public class MainActivity extends AppCompatActivity {
         settingsButton = findViewById(R.id.settingsButton);
         leftNPicker = findViewById(R.id.leftNPicker);
         rightNPicker = findViewById(R.id.rightNPicker);
-        setPickerStyle("km");
         feedback = new FeedbackHandler(getApplicationContext());
-        setFeedbackPreferences();
         sessions = findViewById(R.id.historyButton);
         unitTextView = findViewById(R.id.unitTextView);
         setFeedbackPreferences();
         setUnit();
+        setPickerStyle(speedDisplayMode);
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setSpeed(speedDisplayMode);
-                System.out.println(speed);
                 if (speed != 0) {
                     Toast.makeText(MainActivity.this, "Speed stored.", Toast.LENGTH_SHORT).show();
                     displayRunnerView(speed);
@@ -106,9 +105,9 @@ public class MainActivity extends AppCompatActivity {
                 speed /= 3.6;
                 break;
             case "minPerKm":
-                speed = leftNPicker.getValue();
-                speed += (rightNPicker.getValue() / 60.0);
-                speed = 16.67 / speed;
+                double seconds = (leftNPicker.getValue() * 60);
+                seconds += rightNPicker.getValue();
+                speed = 1000 / seconds;
                 break;
         }
     }
@@ -117,6 +116,14 @@ public class MainActivity extends AppCompatActivity {
         loadSharedPreferences();
         setUnit();
         setPickerStyle(speedDisplayMode);
+    }
+
+    public void updateSettingsRunnersView(){
+        if(runnerView != null){
+            setFeedbackPreferences();
+            runnerView.setSpeedDisplayMode(speedDisplayMode);
+            runnerView.getCurrentSession().setSpeedDisplayMode(speedDisplayMode);
+        }
     }
 
     public void loadSharedPreferences(){
@@ -136,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     public void setUnit(){
-        System.out.println(speedDisplayMode);
         if(speedDisplayMode.equals("minPerKm")){
             unitTextView.setText("min/km");
         }
@@ -160,10 +166,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayRunnerView(double speed) {
+        disableAllButtons();
         loadSharedPreferences();
         setFeedbackPreferences();
         // Create a new instance of RunnerView fragment with the selected speed
-        RunnerView runnerView = RunnerView.newInstance(this, speed);
+        runnerView = RunnerView.newInstance(this, speed);
 
         Bundle bundle = new Bundle();
         bundle.putDouble("speed", speed);
@@ -204,6 +211,19 @@ public class MainActivity extends AppCompatActivity {
 
     public SessionManager getSessionManager(){
         return sessionManager;
+    }
+
+
+    public void disableAllButtons(){
+        sessions.setEnabled(false);
+        settingsButton.setEnabled(false);
+        confirm.setEnabled(false);
+    }
+    public void enableAllButtons(){
+        sessions.setEnabled(true);
+        settingsButton.setEnabled(true);
+        confirm.setEnabled(true);
+
     }
 
 }
