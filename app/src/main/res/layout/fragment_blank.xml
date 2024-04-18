@@ -116,7 +116,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="60dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:src="@drawable/pngwing"
         app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_icon"
         app:layout_constraintTop_toBottomOf="@+id/distanceDisplay" />
@@ -126,7 +126,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="24dp"
         android:text="@string/speed"
         android:textAlignment="textStart"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -224,6 +224,7 @@
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/relative_layout"
         app:layout_constraintTop_toBottomOf="@id/speed"
  />
 
