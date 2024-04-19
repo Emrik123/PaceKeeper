@@ -25,7 +25,7 @@ public class Session {
     private final StopWatch stopwatch;
     private Boolean discardLocation = false;
     private long timeExceptCurrentKm;
-    private int kmDistance;
+    private int kmDistance = 1000;
     private Kalman kalmanFilter;
 
     public Session(double selectedSpeed){
