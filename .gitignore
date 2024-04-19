@@ -380,3 +380,4 @@ obj/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,java,windows,jetbrains,intellij,androidstudio
 .idea/deploymentTargetDropDown.xml
+.idea/deploymentTargetDropDown.xml
