@@ -14,7 +14,7 @@ public class Kalman {
      *      [0  1]
      * <p>
      *  Q - Process noise matrix. Sensor noise is determined to be low (ranging from 0.1-0.4)
-     *      [0.25*dt^4 0.5*dt^3]  * 0.01
+     *      [0.25*dt^4 0.5*dt^3]  * 0.04
      *      [0.5*dt^3      dt^2]
      * <p>
      *  R - Measurement noise covariance
@@ -26,6 +26,7 @@ public class Kalman {
     private RealMatrix A, H, Q, R, P, K;
 
     private RealVector x, xp;
+    private double dt;
 
     public Kalman() {
         initMatrices();
@@ -36,8 +37,10 @@ public class Kalman {
      * @param z the last measurement update representing velocity.
      * @return the updated prediction of the velocity.
      */
-    public double[] update(double z) {
-
+    public double[] update(double z, long dt) {
+        if(dt != 0){
+            this.dt = dt;
+        }
         /*
          * Here the model predicts the next measurement
          */
@@ -64,12 +67,12 @@ public class Kalman {
      * Initializes the matrices with determined values of model found above.
      */
     private void initMatrices() {
-        double dt = 0.5;
+        dt = 0.5;
         A = MatrixUtils.createRealMatrix(new double[][]{{1, dt}, {0, 1}});
         H = MatrixUtils.createRealMatrix(new double[][]{{0, 1}});
         Q = MatrixUtils.createRealMatrix(new double[][]{
                 {0.25 * Math.pow(dt, 4), 0.5 * Math.pow(dt, 3)},
-                {0.5 * Math.pow(dt, 3), dt * dt}}).scalarMultiply(0.01);
+                {0.5 * Math.pow(dt, 3), dt * dt}}).scalarMultiply(0.04);
         x = new ArrayRealVector(new double[]{0, 0});
         R = MatrixUtils.createRealMatrix(new double[][]{{0.12}});
         P = MatrixUtils.createRealIdentityMatrix(2);

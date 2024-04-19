@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Session {
-    private ArrayList<Location> route;
-    private ArrayList<Double> storedSpeedArray;
-    private ArrayList<String> timePerKm;
+    private final ArrayList<Location> route;
+    private final ArrayList<Double> storedSpeedArray;
+    private final ArrayList<String> timePerKm;
     private Location currentLocation;
     private double distance;
     private double selectedSpeed;
@@ -23,10 +23,10 @@ public class Session {
     private final LocalDate sessionDate;
     private String speedDisplayMode = "kmh";
     private final StopWatch stopwatch;
-    private Boolean discardLocation = false;
     private long timeExceptCurrentKm;
     private int kmDistance = 1000;
-    private Kalman kalmanFilter;
+    private final Kalman kalmanFilter;
+    private long timeDelta;
 
     public Session(double selectedSpeed){
         kalmanFilter = new Kalman();
@@ -52,8 +52,7 @@ public class Session {
     }
 
     public void updateSessionData() {
-        int roundedDistance = (int) getDistance();
-        if(roundedDistance>=kmDistance){
+        if(getDistance()>=kmDistance){
             long time = getTotalTime() - getTimeExceptCurrentKm();
             addTimePerKm(time);
             addTime(time);
@@ -78,15 +77,16 @@ public class Session {
     }
 
     public void pauseSession(){
-        isRunning = false;
-        discardLocation = true;
+        this.isRunning = false;
         stopwatch.suspend();
     }
 
     public void continueSession(){
         isRunning = true;
+        currentLocation = null;
         stopwatch.resume();
     }
+
 
     public void killSession(){
         isRunning = false;
@@ -97,23 +97,40 @@ public class Session {
         return new StoredSession(getSessionDate(), getDistance(), getTotalSessionTime(), getTimePerKm());
     }
 
-    public void updateLocation(Location location) {
-        if(currentSpeed > 1 && isRunning) {
-            if (!discardLocation) {
-                distance += location.distanceTo(currentLocation);
-                route.add(currentLocation);
-            } else {
-                discardLocation = false;
+    public void updateLocation(Location location, int size) {
+        if(isRunning) {
+            Location lastLocation = null;
+            if(currentLocation != null) {
+                lastLocation = currentLocation;
+            }
+            this.currentLocation = location;
+            long tempTime;
+            if(timeDelta != 0){
+                tempTime = stopwatch.getTime() - timeDelta;
+                tempTime /= size;
+            }else{
+                tempTime = 0;
+            }
+            this.timeDelta = stopwatch.getTime();
+            double[] result = kalmanFilter.update(currentLocation.getSpeed(), tempTime/1000);
+            route.add(currentLocation);
+
+            // Kalman filter works shit with acceleration (doesn't consider it, assumes constant).
+            // It's on TODO
+
+            if(currentLocation.getSpeed() < 2 && result[1] > 2){
+                this.currentSpeed = currentLocation.getSpeed();
+            }else{
+                this.currentSpeed = result[1];
+            }
+            if(currentSpeed > 1 && lastLocation!= null){
+                distance += lastLocation.distanceTo(currentLocation);
             }
         }
-        this.currentLocation = location;
-        double[] result = kalmanFilter.update(currentLocation.getSpeed());
-        this.currentSpeed = result[1];
-        storedSpeedArray.add(currentSpeed);
     }
 
     public boolean getRunning(){
-        return isRunning;
+        return this.isRunning;
     }
 
     public Location getCurrentLocation(){
@@ -137,12 +154,13 @@ public class Session {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     public String getFormattedSpeed(){
         if (speedDisplayMode.equals("kmh")){
-            return Double.toString(currentSpeed*setConversionUnit);
+            return String.format("%.2f", currentSpeed*setConversionUnit) + " km/h";
         }
         else {
-            return DateUtils.formatElapsedTime((long)(1000/currentSpeed)) + "min/km";
+            return DateUtils.formatElapsedTime((long)(1000/currentSpeed)) + " min/km";
         }
     }
 
@@ -153,6 +171,15 @@ public class Session {
 
     public double getDistance(){
         return distance;
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String getFormattedDistance(){
+        if(getDistance() > 1000){
+            return String.format("%.2f", distance/1000) + " km";
+        }else{
+            return String.format("%.2f", distance) + " m";
+        }
     }
 
     public LocalDate getSessionDate(){
@@ -233,7 +260,7 @@ public class Session {
         private final String totalTime;
         private int sessionID;
         private static final long serialVersionUID = 0L;
-       private LocalDate date;
+        private LocalDate date;
 
         private ArrayList<String> timePerKm;
 
@@ -246,7 +273,7 @@ public class Session {
             this.totalDistance = distance;
             this.date = date;
             this.timePerKm = timePerKm;
-
+            this.sessionID = idCount.incrementAndGet();
         }
 
         public void setSessionComment(String sessionComment){
