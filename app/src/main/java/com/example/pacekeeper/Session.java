@@ -150,17 +150,18 @@ public class Session {
             case KM_PER_HOUR:
                 return selectedSpeed * conversionUnit + unitOfVelocity.toString();
             case MIN_PER_KM:
-                return ((long) (1000 / selectedSpeed)) + unitOfVelocity.toString();
+                return android.text.format.DateUtils.formatElapsedTime((Math.round(3600 / (selectedSpeed * conversionUnit)))) + unitOfVelocity.toString();
         }
         return null;
     }
 
+    @SuppressLint("DefaultLocale")
     public String getFormattedSpeed(){
         switch (unitOfVelocity) {
             case KM_PER_HOUR:
-                return String.valueOf(currentSpeed * conversionUnit);
+                return String.format("%.2f", currentSpeed * conversionUnit) + unitOfVelocity.toString();
             case MIN_PER_KM:
-                return android.text.format.DateUtils.formatElapsedTime((long)(1000 / currentSpeed)) + unitOfVelocity.toString();
+                return android.text.format.DateUtils.formatElapsedTime((long) (1000 / currentSpeed)) + unitOfVelocity.toString();
         }
         return null;
     }

@@ -126,14 +126,16 @@ public class RunnerView extends Fragment {
             //speedDisplayMode = intent.getStringExtra("speedDisplayMode");
             unitOfVelocity = (UnitOfVelocity) intent.getSerializableExtra("unitOfVelocity");
         }
-
         Bundle args = getArguments();
+
         if (args != null) {
             speed = args.getDouble("speed", 0);
         }
+
         if (mainActivity != null) {
             sessionManager = mainActivity.getSessionManager();
         }
+
         locationRequest = LocationRequest.create();
         locationRequest.setInterval((long) UPDATE_INTERVAL_MS);
         locationRequest.setFastestInterval((long) UPDATE_INTERVAL_MS);
@@ -192,9 +194,6 @@ public class RunnerView extends Fragment {
             }
         };
 
-
-
-
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NotNull LocationResult locationResult) {
@@ -205,12 +204,12 @@ public class RunnerView extends Fragment {
                     feedback.setRunning(currentSession.getRunning());
                     feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
                     currentSession.updateSessionData();
+                    updateUI();
                 }
             }
         };
         start();
         desiredSpeedText.setText(desiredSpeedText.getText() + currentSession.getFormattedSelectedSpeed());
-
         return rootView;
     }
     @Override
@@ -234,26 +233,15 @@ public class RunnerView extends Fragment {
     @SuppressLint("SetTextI18n")
     public void updateUI(){
         if(currentSession.getRunning()){
-
             distanceDisplay.setText(currentSession.getFormattedDistance());
-
-            switch (unitOfVelocity) {
-                case KM_PER_HOUR:
-                    speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(".")+2));
-                    break;
-                case MIN_PER_KM:
-                    if (currentSession.getCurrentSpeed() > 0.5) {
-                        speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
-                    } else {
-                        speedDisplay.setText(getResources().getString(R.string.null_speed));
-                    }
-                    break;
+            if(currentSession.getCurrentSpeed() > 1){
+                speedDisplay.setText(currentSession.getFormattedSpeed());
+            }else{
+                speedDisplay.setText(getResources().getString(R.string.null_speed));
             }
-
             double velocity = currentSession.getCurrentSpeed();
             final double delta = feedback.getVelocityDelta();
             double selectedVelocity = currentSession.getSelectedSpeed();
-
             if (velocity < selectedVelocity + delta && velocity > selectedVelocity - delta) {
                 speedCircle.setBackground(goodSpeedCircle);
             } else if (velocity > selectedVelocity + delta) {
@@ -261,7 +249,6 @@ public class RunnerView extends Fragment {
             } else if (velocity < selectedVelocity - delta) {
                 speedCircle.setBackground(slowCircle);
             }
-
             timeDisplay.setText(currentSession.updateTime());
         }
     }
@@ -295,6 +282,7 @@ public class RunnerView extends Fragment {
         this.unitOfVelocity = unitOfVelocity;
     }
 
+
     private void displaySettingsView(){
         fragmentManager.beginTransaction().add(R.id.fragment_container, SettingsFragment.class, null)
                 .addToBackStack(null)
@@ -313,16 +301,12 @@ public class RunnerView extends Fragment {
         this.mainActivity = mainActivity;
     }
 
-
     private void displaySessionOverview() {
         SessionOverview sessionOverview = SessionOverview.newInstance(currentSession, sessionManager);
-
         Bundle bundle = new Bundle();
-
         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, sessionOverview);
         transaction.addToBackStack(null);
         transaction.commit();
-
     }
 }

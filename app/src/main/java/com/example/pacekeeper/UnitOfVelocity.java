@@ -8,9 +8,9 @@ public enum UnitOfVelocity {
     public String toString() {
         switch (this.ordinal()) {
             case 0:
-                return "km/h";
+                return " km/h";
             case 1:
-                return "min/km";
+                return " min/km";
             default:
                 return null;
         }
