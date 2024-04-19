@@ -2,12 +2,13 @@ package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
 import android.location.Location;
-import android.text.format.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Session {
@@ -18,10 +19,10 @@ public class Session {
     private double distance;
     private double selectedSpeed;
     private double currentSpeed;
-    private double setConversionUnit = 3.6;
+    private double conversionUnit = 3.6;
     private boolean isRunning;
     private final LocalDate sessionDate;
-    private String speedDisplayMode = "kmh";
+    private UnitOfVelocity unitOfVelocity;
     private final StopWatch stopwatch;
     private long timeExceptCurrentKm;
     private int kmDistance = 1000;
@@ -52,11 +53,11 @@ public class Session {
     }
 
     public void updateSessionData() {
-        if(getDistance()>=kmDistance){
+        if (getDistance() >= kmDistance) {
             long time = getTotalTime() - getTimeExceptCurrentKm();
             addTimePerKm(time);
             addTime(time);
-            kmDistance+=1000;
+            kmDistance += 1000;
         }
     }
 
@@ -73,7 +74,7 @@ public class Session {
     }
 
     public void setConversionUnit(double value){
-        this.setConversionUnit = value;
+        this.conversionUnit = value;
     }
 
     public void pauseSession(){
@@ -86,7 +87,6 @@ public class Session {
         currentLocation = null;
         stopwatch.resume();
     }
-
 
     public void killSession(){
         isRunning = false;
@@ -146,22 +146,23 @@ public class Session {
     }
 
     public String getFormattedSelectedSpeed(){
-        if (speedDisplayMode.equals("kmh")){
-            return Double.toString(selectedSpeed*setConversionUnit) + " km/h";
+        switch (unitOfVelocity) {
+            case KM_PER_HOUR:
+                return selectedSpeed * conversionUnit + unitOfVelocity.toString();
+            case MIN_PER_KM:
+                return ((long) (1000 / selectedSpeed)) + unitOfVelocity.toString();
         }
-        else {
-            return ((long)(1000/selectedSpeed)) + "min/km";
-        }
+        return null;
     }
 
-    @SuppressLint("DefaultLocale")
     public String getFormattedSpeed(){
-        if (speedDisplayMode.equals("kmh")){
-            return String.format("%.2f", currentSpeed*setConversionUnit) + " km/h";
+        switch (unitOfVelocity) {
+            case KM_PER_HOUR:
+                return String.valueOf(currentSpeed * conversionUnit);
+            case MIN_PER_KM:
+                return android.text.format.DateUtils.formatElapsedTime((long)(1000 / currentSpeed)) + unitOfVelocity.toString();
         }
-        else {
-            return DateUtils.formatElapsedTime((long)(1000/currentSpeed)) + " min/km";
-        }
+        return null;
     }
 
 
@@ -203,20 +204,16 @@ public class Session {
             return formattedTime.toString().trim();
     }
 
-    public double getSetConversionUnit(){
-        return setConversionUnit;
+    public double getConversionUnit(){
+        return conversionUnit;
     }
 
     public ArrayList<Location> getRoute(){
         return route;
     }
 
-    public void setSpeedDisplayMode(String mode){
-        speedDisplayMode = mode;
-    }
-
-    public String getSpeedDisplayMode(){
-        return speedDisplayMode;
+    public void setUnitOfVelocity(UnitOfVelocity unitOfVelocity){
+        this.unitOfVelocity = unitOfVelocity;
     }
 
     public double calculateAverageSpeed(){

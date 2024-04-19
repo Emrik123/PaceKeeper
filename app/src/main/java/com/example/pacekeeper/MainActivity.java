@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -12,8 +11,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -31,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private Boolean audio;
     private Boolean autoSaveSession;
     private String feedbackFrequency;
-    private String speedDisplayMode;
+    private UnitOfVelocity unitOfVelocity;
     private SharedPreferences preferences;
     private FeedbackHandler feedback;
     private ImageButton sessions;
@@ -50,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         loadSharedPreferences();
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
-        loadSharedPreferences();
         confirm = findViewById(R.id.confirmButton);
         settingsButton = findViewById(R.id.settingsButton);
         leftNPicker = findViewById(R.id.leftNPicker);
@@ -60,12 +56,12 @@ public class MainActivity extends AppCompatActivity {
         unitTextView = findViewById(R.id.unitTextView);
         setFeedbackPreferences();
         setUnit();
-        setPickerStyle(speedDisplayMode);
+        setPickerStyle(unitOfVelocity);
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setSpeed(speedDisplayMode);
+                setSpeed(unitOfVelocity);
                 if (speed != 0) {
                     Toast.makeText(MainActivity.this, "Speed stored.", Toast.LENGTH_SHORT).show();
                     displayRunnerView(speed);
@@ -96,15 +92,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void setSpeed(String speedDisplayMode) {
-        switch (speedDisplayMode) {
-            case "kmh":
+    public void setSpeed(UnitOfVelocity unitOfVelocity) {
+        switch (unitOfVelocity) {
+            case KM_PER_HOUR:
             default:
                 speed = leftNPicker.getValue();
                 speed += (rightNPicker.getValue() / 10.0);
                 speed /= 3.6;
                 break;
-            case "minPerKm":
+            case MIN_PER_KM:
                 double seconds = (leftNPicker.getValue() * 60);
                 seconds += rightNPicker.getValue();
                 speed = 1000 / seconds;
@@ -115,14 +111,15 @@ public class MainActivity extends AppCompatActivity {
     public void updateSettings(){
         loadSharedPreferences();
         setUnit();
-        setPickerStyle(speedDisplayMode);
+        setPickerStyle(unitOfVelocity);
     }
 
     public void updateSettingsRunnersView(){
         if(runnerView != null){
             setFeedbackPreferences();
-            runnerView.setSpeedDisplayMode(speedDisplayMode);
-            runnerView.getCurrentSession().setSpeedDisplayMode(speedDisplayMode);
+            //runnerView.setSpeedDisplayMode(speedDisplayMode);
+            runnerView.setUnitOfVelocity(unitOfVelocity);
+            runnerView.getCurrentSession().setUnitOfVelocity(unitOfVelocity);
         }
     }
 
@@ -132,24 +129,28 @@ public class MainActivity extends AppCompatActivity {
         audio = preferences.getBoolean("audioFeedback", true);
         feedbackFrequency = preferences.getString("feedbackFrequency", "medium");
         autoSaveSession = preferences.getBoolean("autoSaveSessions", false);
-        speedDisplayMode = preferences.getString("speedDisplayMode", "minPerKm");
+
+        String unit = preferences.getString("speedDisplayMode", "minPerKm");
+        switch (unit) {
+            case "kmh":
+                unitOfVelocity = UnitOfVelocity.KM_PER_HOUR;
+                break;
+            case "minPerKm":
+                unitOfVelocity = UnitOfVelocity.MIN_PER_KM;
+                break;
+        }
     }
 
     public void setFeedbackPreferences() {
         feedback.setVibrationAllowed(vibration);
         feedback.setAudioAllowed(audio);
         feedback.setFeedbackFrequency(feedbackFrequency);
-        feedback.setVelocityUnit(speedDisplayMode);
+        feedback.setUnitOfVelocity(unitOfVelocity);
     }
 
     @SuppressLint("SetTextI18n")
     public void setUnit(){
-        if(speedDisplayMode.equals("minPerKm")){
-            unitTextView.setText("min/km");
-        }
-        else{
-            unitTextView.setText("km/h");
-        }
+        unitTextView.setText(unitOfVelocity.toString());
     }
 
     private void displaySessionsView(){
@@ -176,7 +177,8 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putDouble("speed", speed);
         getIntent().putExtra("feedbackHandler", feedback);
-        getIntent().putExtra("speedDisplayMode", speedDisplayMode);
+        //getIntent().putExtra("speedDisplayMode", speedDisplayMode);
+        getIntent().putExtra("unitOfVelocity", unitOfVelocity);
 
 
         // Replace the current fragment with the RunnerView fragment
@@ -186,9 +188,9 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    public void setPickerStyle(String speedDisplayMode) {
-        switch (speedDisplayMode) {
-            case "minPerKm":
+    public void setPickerStyle(UnitOfVelocity unitOfVelocity) {
+        switch (unitOfVelocity) {
+            case MIN_PER_KM:
                 leftNPicker.setMinValue(1);
                 leftNPicker.setMaxValue(59);
                 rightNPicker.setMaxValue(0);
@@ -197,8 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.minutesTag).setVisibility(View.VISIBLE);
                 findViewById(R.id.secondsTag).setVisibility(View.VISIBLE);
                 break;
-            case "kmh":
-            default:
+            case KM_PER_HOUR:
                 leftNPicker.setMinValue(4);
                 leftNPicker.setMaxValue(40);
                 rightNPicker.setMaxValue(0);
