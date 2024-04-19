@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.speech.tts.TextToSpeech;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -34,6 +35,7 @@ import com.google.android.gms.location.LocationServices;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -92,7 +94,6 @@ public class RunnerView extends Fragment {
         return fragment;
     }
 
-
     @SuppressLint("VisibleForTests")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,7 +109,6 @@ public class RunnerView extends Fragment {
         settingsButton = rootView.findViewById(R.id.settingsButton);
         stopButton.setVisibility(View.INVISIBLE);
         resumeButton.setVisibility(View.INVISIBLE);
-
         settingsButton.setVisibility(View.INVISIBLE);
         fragmentManager = mainActivity.getSupportFragmentManager();
         Intent intent = requireActivity().getIntent();
@@ -149,7 +149,6 @@ public class RunnerView extends Fragment {
                 currentSession.pauseSession();
                 feedback.stopFeedback();
                 stopLocationUpdates();
-
             }
         });
 
@@ -188,7 +187,7 @@ public class RunnerView extends Fragment {
             @Override
             public void run() {
                 updateUI();
-                interfaceUpdateHandler.postDelayed(uiUpdates, (long) UPDATE_INTERVAL_MS);
+                interfaceUpdateHandler.postDelayed(this, (long) UPDATE_INTERVAL_MS);
             }
         };
 
@@ -201,7 +200,6 @@ public class RunnerView extends Fragment {
                 super.onLocationResult(locationResult);
                 if (locationResult.getLastLocation() != null) {
                     currentSession.updateLocation(locationResult.getLastLocation());
-                    //discard location
                     feedback.setRunning(currentSession.getRunning());
                     feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
                     currentSession.updateSessionData();
@@ -225,6 +223,12 @@ public class RunnerView extends Fragment {
         interfaceUpdateHandler.removeCallbacks(uiUpdates);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        feedback.removeTextToSpeech();
+    }
+
     @SuppressLint("SetTextI18n")
     public void updateUI(){
         if(currentSession.getRunning()){
@@ -242,7 +246,11 @@ public class RunnerView extends Fragment {
                 speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(".")+2));
             }
             else{
-                speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
+                if (currentSession.getCurrentSpeed() > 0.5) {
+                    speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
+                } else {
+                    speedDisplay.setText(getResources().getString(R.string.null_speed));
+                }
             }
 
             double currentSpeed =currentSession.getCurrentSpeed();

@@ -1,11 +1,11 @@
 package com.example.pacekeeper;
 
 import java.io.Serializable;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import android.content.Context;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
@@ -23,22 +23,51 @@ public class FeedbackHandler implements Serializable {
     private Timer timer;
     private TimerTask timerTask;
     private Context context;
+    private TextToSpeech tts;
+    private final double LOWER_LIMIT_MPS = 3 / 3.6;
+    private boolean deviated = false;
+    private String velocityUnit;
 
     public FeedbackHandler(Context context) {
         this.context = context;
         audioPlayer = new AudioPlayer(context);
         vibrator = new Vibrator(context);
+
+        tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    tts.setLanguage(Locale.ROOT);
+                }
+            }
+        });
+
     }
 
     public void giveFeedback() {
-        final double AVG_WALKING_SPEED_MPS = 3 / 3.6;
-        if (isRunning && currentSpeed > AVG_WALKING_SPEED_MPS) {
+        String correctPrompt = "good pace";
+        String fasterPrompt = "speed up";
+        String slowerPrompt = "slow down";
+        CharSequence prompt = formattedVelocity();
+
+        if (isRunning && currentSpeed > LOWER_LIMIT_MPS) {
             if (audioAllowed) {
+                if (movingAtCorrectSpeed() && deviated) {
+                    prompt += correctPrompt;
+                    deviated = false;
+                    speak(prompt);
+                }
                 if (movingTooFast()) {
-                    audioPlayer.decreaseSound();
+                    //audioPlayer.decreaseSound();
+                    prompt += slowerPrompt;
+                    deviated = true;
+                    speak(prompt);
                 }
                 if (movingTooSlow()) {
-                    audioPlayer.increaseSound();
+                    prompt += fasterPrompt;
+                    //audioPlayer.increaseSound();
+                    deviated = true;
+                    speak(prompt);
                 }
             }
             if (vibrationAllowed) {
@@ -49,6 +78,36 @@ public class FeedbackHandler implements Serializable {
                     vibrator.vibrateFaster();
                 }
             }
+        }
+    }
+
+    private void speak(CharSequence seq) {
+        tts.speak(seq, TextToSpeech.QUEUE_FLUSH, null, null);
+    }
+
+    private CharSequence formattedVelocity() {
+        CharSequence seq = "";
+        switch (velocityUnit) {
+            case "kmh":
+                seq = String.format(Locale.US, "%.1f... ", currentSpeed * 3.6);
+                break;
+            case "minPerKm":
+                double minutesPerKm = currentSpeed * 60;
+                minutesPerKm /= 1000;
+                minutesPerKm = 1 / minutesPerKm;
+                int minutes = (int) Math.floor(minutesPerKm);
+                double decimal = minutesPerKm - minutes;
+                int seconds = (int) Math.floor(decimal * 60);
+                seq = String.format(Locale.US, "%d min, %d sec... ", minutes, seconds);
+                break;
+        }
+        return seq;
+    }
+
+    public void removeTextToSpeech() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
         }
     }
 
@@ -87,6 +146,17 @@ public class FeedbackHandler implements Serializable {
         return currentSpeed <= selectedSpeed - feedbackDeltaMPS;
     }
 
+    private boolean movingAtCorrectSpeed() {
+        return currentSpeed <= selectedSpeed + feedbackDeltaMPS && currentSpeed >= selectedSpeed - feedbackDeltaMPS;
+    }
+
+    public void setVelocityUnit(String unit) {
+        velocityUnit = unit;
+    }
+
+    public double getLowLimitVelocity() {
+        return LOWER_LIMIT_MPS;
+    }
 
     private void setFeedbackDelayMillis(long millis) {
         feedbackDelayMillis = millis;
