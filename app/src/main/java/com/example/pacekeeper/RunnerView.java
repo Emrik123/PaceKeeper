@@ -65,7 +65,7 @@ public class RunnerView extends Fragment {
     private Session currentSession;
     private ArrayList<Session> sessionHistory; // For storing session when you stop a current one, also for loading up existing sessions from file.
     private FeedbackHandler feedback;
-    private String speedDisplayMode;
+    private UnitOfVelocity unitOfVelocity;
     private int kmDistance;
     private String kmTime;
     private FragmentManager fragmentManager;
@@ -120,10 +120,10 @@ public class RunnerView extends Fragment {
         fastCircle = ContextCompat.getDrawable(requireContext(),R.drawable.redcircle);
         goodSpeedCircle = ContextCompat.getDrawable(requireContext(),R.drawable.greencircle);
 
-
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
-            speedDisplayMode = intent.getStringExtra("speedDisplayMode");
+            //speedDisplayMode = intent.getStringExtra("speedDisplayMode");
+            unitOfVelocity = (UnitOfVelocity) intent.getSerializableExtra("unitOfVelocity");
         }
 
         Bundle args = getArguments();
@@ -242,7 +242,9 @@ public class RunnerView extends Fragment {
                 String kmDistance = Double.toString(distance/1000);
                 distanceDisplay.setText(kmDistance.substring(0, kmDistance.indexOf(".")+3) + " km");
             }
-            if(speedDisplayMode.equals("kmh")){
+
+
+            /*if(speedDisplayMode.equals("kmh")){
                 speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(".")+2));
             }
             else{
@@ -251,19 +253,33 @@ public class RunnerView extends Fragment {
                 } else {
                     speedDisplay.setText(getResources().getString(R.string.null_speed));
                 }
+            }*/
+
+            switch (unitOfVelocity) {
+                case KM_PER_HOUR:
+                    speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(".")+2));
+                    break;
+                case MIN_PER_KM:
+                    if (currentSession.getCurrentSpeed() > 0.5) {
+                        speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
+                    } else {
+                        speedDisplay.setText(getResources().getString(R.string.null_speed));
+                    }
+                    break;
             }
 
-            double currentSpeed =currentSession.getCurrentSpeed();
+            double velocity = currentSession.getCurrentSpeed();
+            final double delta = feedback.getVelocityDelta();
+            double selectedVelocity = currentSession.getSelectedSpeed();
 
-            if(currentSession.getCurrentSpeed() == currentSession.getSelectedSpeed() ||
-                    (currentSpeed >= currentSession.getSelectedSpeed() -1
-                            && currentSpeed <= currentSession.getSelectedSpeed() +1)){
+            if (velocity < selectedVelocity + delta && velocity > selectedVelocity - delta) {
                 speedCircle.setBackground(goodSpeedCircle);
-            }else if(currentSpeed > currentSession.getSelectedSpeed()+1){
+            } else if (velocity > selectedVelocity + delta) {
                 speedCircle.setBackground(fastCircle);
-            }else if(currentSpeed < currentSession.getSelectedSpeed()-1){
+            } else if (velocity < selectedVelocity - delta) {
                 speedCircle.setBackground(slowCircle);
             }
+
             timeDisplay.setText(currentSession.updateTime());
         }
     }
@@ -287,15 +303,15 @@ public class RunnerView extends Fragment {
     private void start() {
         startLocationUpdates();
         currentSession = new Session(speed);
-        currentSession.setSpeedDisplayMode(speedDisplayMode);
+        //currentSession.setSpeedDisplayMode(speedDisplayMode);
+        currentSession.setUnitOfVelocity(unitOfVelocity);
         feedback.runFeedback(currentSession.getSelectedSpeed());
         runUiUpdates();
     }
 
-    public void setSpeedDisplayMode(String speedDisplayMode){
-        this.speedDisplayMode = speedDisplayMode;
+    public void setUnitOfVelocity(UnitOfVelocity unitOfVelocity) {
+        this.unitOfVelocity = unitOfVelocity;
     }
-
 
     private void displaySettingsView(){
         fragmentManager.beginTransaction().add(R.id.fragment_container, SettingsFragment.class, null)

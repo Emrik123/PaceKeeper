@@ -5,9 +5,6 @@ import java.util.*;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.Voice;
-import android.widget.Toast;
-import androidx.core.content.ContextCompat;
 
 public class FeedbackHandler implements Serializable {
     private Vibrator vibrator;
@@ -15,7 +12,7 @@ public class FeedbackHandler implements Serializable {
     private boolean audioAllowed = true;
     private boolean vibrationAllowed = true;
     private long feedbackDelayMillis;
-    private double feedbackDeltaMPS = 1 / 3.6;
+    private final double VELOCITY_DELTA_MPS = 1 / 3.6;
     private boolean isRunning = false;
     private double selectedSpeed;
     private double currentSpeed;
@@ -26,7 +23,7 @@ public class FeedbackHandler implements Serializable {
     private TextToSpeech tts;
     private final double LOWER_LIMIT_MPS = 3 / 3.6;
     private boolean deviated = false;
-    private String velocityUnit;
+    private UnitOfVelocity unitOfVelocity;
 
     public FeedbackHandler(Context context) {
         this.context = context;
@@ -87,11 +84,11 @@ public class FeedbackHandler implements Serializable {
 
     private CharSequence formattedVelocity() {
         CharSequence seq = "";
-        switch (velocityUnit) {
-            case "kmh":
+        switch (unitOfVelocity) {
+            case KM_PER_HOUR:
                 seq = String.format(Locale.US, "%.1f... ", currentSpeed * 3.6);
                 break;
-            case "minPerKm":
+            case MIN_PER_KM:
                 double minutesPerKm = currentSpeed * 60;
                 minutesPerKm /= 1000;
                 minutesPerKm = 1 / minutesPerKm;
@@ -139,23 +136,19 @@ public class FeedbackHandler implements Serializable {
     }
 
     private boolean movingTooFast() {
-        return currentSpeed >= selectedSpeed + feedbackDeltaMPS;
+        return currentSpeed >= selectedSpeed + VELOCITY_DELTA_MPS;
     }
 
     private boolean movingTooSlow() {
-        return currentSpeed <= selectedSpeed - feedbackDeltaMPS;
+        return currentSpeed <= selectedSpeed - VELOCITY_DELTA_MPS;
     }
 
     private boolean movingAtCorrectSpeed() {
-        return currentSpeed <= selectedSpeed + feedbackDeltaMPS && currentSpeed >= selectedSpeed - feedbackDeltaMPS;
+        return currentSpeed <= selectedSpeed + VELOCITY_DELTA_MPS && currentSpeed >= selectedSpeed - VELOCITY_DELTA_MPS;
     }
 
-    public void setVelocityUnit(String unit) {
-        velocityUnit = unit;
-    }
-
-    public double getLowLimitVelocity() {
-        return LOWER_LIMIT_MPS;
+    public void setUnitOfVelocity(UnitOfVelocity unitOfVelocity) {
+        this.unitOfVelocity = unitOfVelocity;
     }
 
     private void setFeedbackDelayMillis(long millis) {
@@ -172,6 +165,10 @@ public class FeedbackHandler implements Serializable {
 
     public long getFeedbackDelayMillis() {
         return feedbackDelayMillis;
+    }
+
+    public double getVelocityDelta() {
+        return VELOCITY_DELTA_MPS;
     }
 
     public void setRunning(boolean bool) {
