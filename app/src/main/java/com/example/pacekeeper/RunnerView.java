@@ -188,7 +188,7 @@ public class RunnerView extends Fragment {
             @Override
             public void run() {
                 updateUI();
-                interfaceUpdateHandler.postDelayed(uiUpdates, (long) UPDATE_INTERVAL_TIMER_MS);
+                interfaceUpdateHandler.postDelayed(this, UPDATE_INTERVAL_TIMER_MS);
             }
         };
 
@@ -205,7 +205,6 @@ public class RunnerView extends Fragment {
                     feedback.setRunning(currentSession.getRunning());
                     feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
                     currentSession.updateSessionData();
-                    updateUI();
                 }
             }
         };
