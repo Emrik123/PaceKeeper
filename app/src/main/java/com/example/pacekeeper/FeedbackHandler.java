@@ -48,26 +48,26 @@ public class FeedbackHandler implements Serializable {
         String correctPrompt = "good pace";
         String fasterPrompt = "speed up";
         String slowerPrompt = "slow down";
-        CharSequence speed = formattedVelocity();
+        CharSequence prompt = formattedVelocity();
 
         if (isRunning && currentSpeed > LOWER_LIMIT_MPS) {
             if (audioAllowed) {
                 if (movingAtCorrectSpeed() && deviated) {
-                    speed += correctPrompt;
+                    prompt += correctPrompt;
                     deviated = false;
-                    speak(speed);
+                    speak(prompt);
                 }
                 if (movingTooFast()) {
                     //audioPlayer.decreaseSound();
-                    speed += slowerPrompt;
+                    prompt += slowerPrompt;
                     deviated = true;
-                    speak(speed);
+                    speak(prompt);
                 }
                 if (movingTooSlow()) {
-                    speed += fasterPrompt;
+                    prompt += fasterPrompt;
                     //audioPlayer.increaseSound();
                     deviated = true;
-                    speak(speed);
+                    speak(prompt);
                 }
             }
             if (vibrationAllowed) {
@@ -85,11 +85,11 @@ public class FeedbackHandler implements Serializable {
         tts.speak(seq, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 
-    private String formattedVelocity() {
-        String str = "";
+    private CharSequence formattedVelocity() {
+        CharSequence seq = "";
         switch (velocityUnit) {
             case "kmh":
-                str = String.format(Locale.US, "%.1f... ", currentSpeed * 3.6);
+                seq = String.format(Locale.US, "%.1f... ", currentSpeed * 3.6);
                 break;
             case "minPerKm":
                 double minutesPerKm = currentSpeed * 60;
@@ -98,10 +98,10 @@ public class FeedbackHandler implements Serializable {
                 int minutes = (int) Math.floor(minutesPerKm);
                 double decimal = minutesPerKm - minutes;
                 int seconds = (int) Math.floor(decimal * 60);
-                str = String.format(Locale.US, "%d min, %d sec... ", minutes, seconds);
+                seq = String.format(Locale.US, "%d min, %d sec... ", minutes, seconds);
                 break;
         }
-        return str;
+        return seq;
     }
 
     public void removeTextToSpeech() {
@@ -152,6 +152,10 @@ public class FeedbackHandler implements Serializable {
 
     public void setVelocityUnit(String unit) {
         velocityUnit = unit;
+    }
+
+    public double getLowLimitVelocity() {
+        return LOWER_LIMIT_MPS;
     }
 
     private void setFeedbackDelayMillis(long millis) {
