@@ -68,7 +68,6 @@ public class RunnerView extends Fragment {
     private FragmentManager fragmentManager;
     private Handler interfaceUpdateHandler;
     private Runnable uiUpdates;
-    //private TextToSpeech textToSpeech;
 
     public RunnerView() {
         // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
@@ -150,8 +149,6 @@ public class RunnerView extends Fragment {
                 currentSession.continueSession();
                 startLocationUpdates();
                 feedback.runFeedback(currentSession.getSelectedSpeed());
-                /*CharSequence lego = "Koom igen da Britt-Marie, schör för faaaan";
-                textToSpeech.speak(lego, TextToSpeech.QUEUE_FLUSH, null, null);*/
             }
         });
 
@@ -176,8 +173,7 @@ public class RunnerView extends Fragment {
             @Override
             public void run() {
                 updateUI();
-
-                interfaceUpdateHandler.postDelayed(uiUpdates, (long) UPDATE_INTERVAL_MS);
+                interfaceUpdateHandler.postDelayed(this, (long) UPDATE_INTERVAL_MS);
             }
         };
 
@@ -231,7 +227,11 @@ public class RunnerView extends Fragment {
                 speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(".")+2));
             }
             else{
-                speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
+                if (currentSession.getCurrentSpeed() > 0.5) {
+                    speedDisplay.setText(currentSession.getFormattedSpeed().substring(0,currentSession.getFormattedSpeed().indexOf(":")+3));
+                } else {
+                    speedDisplay.setText(getResources().getString(R.string.null_speed));
+                }
             }
 
             timeDisplay.setText(currentSession.updateTime());

@@ -44,5 +44,6 @@
     <string name="sessions_textView">Session</string>
     <string name="minutes_tag">Minutes</string>
     <string name="seconds_tag">Seconds</string>
+    <string name="null_speed">- - : - -</string>
 
 </resources>

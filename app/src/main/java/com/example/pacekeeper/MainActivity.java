@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setSpeed(String speedDisplayMode) {
         switch (speedDisplayMode) {
-            case "km":
+            case "kmh":
             default:
                 speed = leftNPicker.getValue();
                 speed += (rightNPicker.getValue() / 10.0);
@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         feedback.setVibrationAllowed(vibration);
         feedback.setAudioAllowed(audio);
         feedback.setFeedbackFrequency(feedbackFrequency);
+        feedback.setVelocityUnit(speedDisplayMode);
     }
 
     @SuppressLint("SetTextI18n")
@@ -189,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.minutesTag).setVisibility(View.VISIBLE);
                 findViewById(R.id.secondsTag).setVisibility(View.VISIBLE);
                 break;
-            case "km":
+            case "kmh":
             default:
                 leftNPicker.setMinValue(4);
                 leftNPicker.setMaxValue(40);

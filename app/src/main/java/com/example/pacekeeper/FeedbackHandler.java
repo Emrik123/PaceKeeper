@@ -1,12 +1,11 @@
 package com.example.pacekeeper;
 
 import java.io.Serializable;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
@@ -27,6 +26,7 @@ public class FeedbackHandler implements Serializable {
     private TextToSpeech tts;
     private final double LOWER_LIMIT_MPS = 3 / 3.6;
     private boolean deviated = false;
+    private String velocityUnit;
 
     public FeedbackHandler(Context context) {
         this.context = context;
@@ -41,25 +41,30 @@ public class FeedbackHandler implements Serializable {
                 }
             }
         });
+
     }
 
     public void giveFeedback() {
-        CharSequence speed = String.format(Locale.US, "%.1f", currentSpeed * 3.6);
+        String correctPrompt = "good pace";
+        String fasterPrompt = "speed up";
+        String slowerPrompt = "slow down";
+        CharSequence speed = formattedVelocity();
+
         if (isRunning && currentSpeed > LOWER_LIMIT_MPS) {
             if (audioAllowed) {
                 if (movingAtCorrectSpeed() && deviated) {
-                    speed += "...good pace";
+                    speed += correctPrompt;
                     deviated = false;
                     speak(speed);
                 }
                 if (movingTooFast()) {
                     //audioPlayer.decreaseSound();
-                    speed += "...slow down ";
+                    speed += slowerPrompt;
                     deviated = true;
                     speak(speed);
                 }
                 if (movingTooSlow()) {
-                    speed += "...speed up ";
+                    speed += fasterPrompt;
                     //audioPlayer.increaseSound();
                     deviated = true;
                     speak(speed);
@@ -73,14 +78,30 @@ public class FeedbackHandler implements Serializable {
                     vibrator.vibrateFaster();
                 }
             }
-            //speak(speed);
-            /*speed += String.format(Locale.US, "%.1f", currentSpeed * 3.6);
-            speak(speed);*/
         }
     }
 
     private void speak(CharSequence seq) {
         tts.speak(seq, TextToSpeech.QUEUE_FLUSH, null, null);
+    }
+
+    private String formattedVelocity() {
+        String str = "";
+        switch (velocityUnit) {
+            case "kmh":
+                str = String.format(Locale.US, "%.1f... ", currentSpeed * 3.6);
+                break;
+            case "minPerKm":
+                double minutesPerKm = currentSpeed * 60;
+                minutesPerKm /= 1000;
+                minutesPerKm = 1 / minutesPerKm;
+                int minutes = (int) Math.floor(minutesPerKm);
+                double decimal = minutesPerKm - minutes;
+                int seconds = (int) Math.floor(decimal * 60);
+                str = String.format(Locale.US, "%d min, %d sec... ", minutes, seconds);
+                break;
+        }
+        return str;
     }
 
     public void removeTextToSpeech() {
@@ -129,6 +150,9 @@ public class FeedbackHandler implements Serializable {
         return currentSpeed <= selectedSpeed + feedbackDeltaMPS && currentSpeed >= selectedSpeed - feedbackDeltaMPS;
     }
 
+    public void setVelocityUnit(String unit) {
+        velocityUnit = unit;
+    }
 
     private void setFeedbackDelayMillis(long millis) {
         feedbackDelayMillis = millis;
