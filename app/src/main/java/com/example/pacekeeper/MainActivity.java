@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private double speed;
 
-    private ImageButton confirm;
+    private ImageButton startSessionButton;
     private NumberPicker leftNPicker;
     private NumberPicker rightNPicker;
     private ImageButton settingsButton;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private UnitOfVelocity unitOfVelocity;
     private SharedPreferences preferences;
     private FeedbackHandler feedback;
-    private ImageButton sessions;
+    private ImageButton previousSessionsButton;
     private FragmentManager fragmentManager;
     private TextView unitTextView;
     private RunnerView runnerView;
@@ -43,22 +43,21 @@ public class MainActivity extends AppCompatActivity {
         mainActivity = this;
         sessionManager = new SessionManager();
         sessionManager.readFile(this);
-        //FragmentManager fragmentManager = getSupportFragmentManager();
         loadSharedPreferences();
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
-        confirm = findViewById(R.id.confirmButton);
-        settingsButton = findViewById(R.id.settingsButton);
-        leftNPicker = findViewById(R.id.leftNPicker);
-        rightNPicker = findViewById(R.id.rightNPicker);
+        startSessionButton = findViewById(R.id.start_button);
+        settingsButton = findViewById(R.id.settings_button);
+        leftNPicker = findViewById(R.id.left_n_picker);
+        rightNPicker = findViewById(R.id.right_n_picker);
         feedback = new FeedbackHandler(getApplicationContext());
-        sessions = findViewById(R.id.historyButton);
+        previousSessionsButton = findViewById(R.id.previous_sessions_button);
         unitTextView = findViewById(R.id.unitTextView);
         setFeedbackPreferences();
         setUnit();
         setPickerStyle(unitOfVelocity);
 
-        confirm.setOnClickListener(new View.OnClickListener() {
+        startSessionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setSpeed(unitOfVelocity);
@@ -82,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        sessions.setOnClickListener(new View.OnClickListener(){
+        previousSessionsButton.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick (View v){
                 displaySessionsView();
@@ -156,8 +155,8 @@ public class MainActivity extends AppCompatActivity {
     private void displaySessionsView(){
         SessionFragment sessionFragment = SessionFragment.newInstance(sessionManager);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, sessionFragment); // Replace fragment_container with the id of your container layout
-        transaction.addToBackStack(null); // Optional: Add transaction to back stack
+        transaction.replace(R.id.fragment_container, sessionFragment);
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -171,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
        // disableAllButtons();
         loadSharedPreferences();
         setFeedbackPreferences();
-        // Create a new instance of RunnerView fragment with the selected speed
+
         runnerView = RunnerView.newInstance(this, speed);
 
         Bundle bundle = new Bundle();
@@ -181,10 +180,10 @@ public class MainActivity extends AppCompatActivity {
         getIntent().putExtra("unitOfVelocity", unitOfVelocity);
 
 
-        // Replace the current fragment with the RunnerView fragment
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, runnerView); // Replace fragment_container with the id of your container layout
-        transaction.addToBackStack("mainActivity"); // Optional: Add transaction to back stack
+        transaction.replace(R.id.fragment_container, runnerView);
+        transaction.addToBackStack("mainActivity");
         transaction.commit();
     }
 
@@ -196,8 +195,8 @@ public class MainActivity extends AppCompatActivity {
                 rightNPicker.setMaxValue(0);
                 rightNPicker.setMaxValue(59);
                 findViewById(R.id.dot).setVisibility(View.INVISIBLE);
-                findViewById(R.id.minutesTag).setVisibility(View.VISIBLE);
-                findViewById(R.id.secondsTag).setVisibility(View.VISIBLE);
+                findViewById(R.id.minutes_tag).setVisibility(View.VISIBLE);
+                findViewById(R.id.seconds_tag).setVisibility(View.VISIBLE);
                 break;
             case KM_PER_HOUR:
                 leftNPicker.setMinValue(4);
@@ -205,8 +204,8 @@ public class MainActivity extends AppCompatActivity {
                 rightNPicker.setMaxValue(0);
                 rightNPicker.setMaxValue(9);
                 findViewById(R.id.dot).setVisibility(View.VISIBLE);
-                findViewById(R.id.minutesTag).setVisibility(View.INVISIBLE);
-                findViewById(R.id.secondsTag).setVisibility(View.INVISIBLE);
+                findViewById(R.id.minutes_tag).setVisibility(View.INVISIBLE);
+                findViewById(R.id.seconds_tag).setVisibility(View.INVISIBLE);
                 break;
         }
     }
@@ -217,14 +216,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void disableAllButtons(){
-        sessions.setEnabled(false);
+        previousSessionsButton.setEnabled(false);
         settingsButton.setEnabled(false);
-        confirm.setEnabled(false);
+        startSessionButton.setEnabled(false);
     }
     public void enableAllButtons(){
-        sessions.setEnabled(true);
+        previousSessionsButton.setEnabled(true);
         settingsButton.setEnabled(true);
-        confirm.setEnabled(true);
+        startSessionButton.setEnabled(true);
 
     }
 

@@ -275,7 +275,6 @@ public class RunnerView extends Fragment {
     private void start() {
         startLocationUpdates();
         currentSession = new Session(speed);
-        //currentSession.setSpeedDisplayMode(speedDisplayMode);
         currentSession.setUnitOfVelocity(unitOfVelocity);
         feedback.runFeedback(currentSession.getSelectedSpeed());
         runUiUpdates();
