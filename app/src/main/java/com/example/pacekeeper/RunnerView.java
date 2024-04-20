@@ -206,7 +206,6 @@ public class RunnerView extends Fragment {
                     feedback.setRunning(currentSession.getRunning());
                     feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
                     currentSession.updateSessionData();
-                    updateUI();
                 }
             }
         };
