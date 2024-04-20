@@ -159,9 +159,9 @@ public class Session {
     public String getFormattedSpeed(){
         switch (unitOfVelocity) {
             case KM_PER_HOUR:
-                return String.format("%.2f", currentSpeed * conversionUnit) + unitOfVelocity.toString();
+                return String.format("%.2f", currentSpeed * conversionUnit) ;
             case MIN_PER_KM:
-                return android.text.format.DateUtils.formatElapsedTime((long) (1000 / currentSpeed)) + unitOfVelocity.toString();
+                return android.text.format.DateUtils.formatElapsedTime((long) (1000 / currentSpeed));
         }
         return null;
     }

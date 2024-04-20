@@ -121,6 +121,8 @@ public class RunnerView extends Fragment {
         fastCircle = ContextCompat.getDrawable(requireContext(),R.drawable.redcircle);
         goodSpeedCircle = ContextCompat.getDrawable(requireContext(),R.drawable.greencircle);
 
+        TextView unitOfVelocityDisplay = rootView.findViewById(R.id.unit_of_velocity);
+
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
             //speedDisplayMode = intent.getStringExtra("speedDisplayMode");
@@ -210,6 +212,7 @@ public class RunnerView extends Fragment {
         };
         start();
         desiredSpeedText.setText(desiredSpeedText.getText() + currentSession.getFormattedSelectedSpeed());
+        unitOfVelocityDisplay.setText(unitOfVelocity.toString());
         return rootView;
     }
     @Override
