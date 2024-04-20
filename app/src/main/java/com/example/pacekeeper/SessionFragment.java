@@ -35,6 +35,22 @@ public class SessionFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private SessionManager sessionManager;
+    LinearLayout sessionContainer;
+    private Runnable uiPopulation;
+    ImageButton compressButton;
+    ImageButton expandButton;
+    TextView sessionComment;
+    TextView sessionCommentTitle;
+    ImageView routeAsImage;
+
+    Button saveCommentButton;
+    EditText editCommentText;
+    ImageButton editCommentIcon;
+
+    TextView sessionOverview;
+    TextView allKmInSession;
+    TextView routeText;
+
 
     public SessionFragment() {
         // Required empty public constructor
@@ -74,101 +90,32 @@ public class SessionFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_session, container, false);
         ImageButton returnButton = rootView.findViewById(R.id.return_button);
-        LinearLayout sessionContainer = rootView.findViewById(R.id.session_layout);
+        sessionContainer = rootView.findViewById(R.id.session_layout);
 
-        List<Session.StoredSession> sessionsList = sessionManager.getSavedSessions();
+        View sessionView = LayoutInflater.from(getContext()).inflate(R.layout.session_item, null);
 
-        for (Session.StoredSession session : sessionsList) {
-            System.out.println("Size sessionList" + sessionsList.size()); //bara för debugging
-            View sessionView = LayoutInflater.from(getContext()).inflate(R.layout.session_item, null);
+         saveCommentButton = sessionView.findViewById(R.id.save_comment_button);
+        editCommentText = sessionView.findViewById(R.id.edit_comment);
+         editCommentIcon = sessionView.findViewById(R.id.edit_comment_icon);
 
-            Button saveCommentButton = sessionView.findViewById(R.id.save_comment_button);
-            EditText editCommentText = sessionView.findViewById(R.id.edit_comment);
-            ImageButton editCommentIcon = sessionView.findViewById(R.id.edit_comment_icon);
+         sessionOverview = sessionView.findViewById(R.id.summary_text_view1);
+         allKmInSession = sessionView.findViewById(R.id.detail_text_view_km);
+        routeText = sessionView.findViewById(R.id.detail_text_view_route);
+        routeAsImage = sessionView.findViewById(R.id.route_image);
+        sessionCommentTitle = sessionView.findViewById(R.id.detail_text_view_session_comment_title);
+        sessionComment = sessionView.findViewById(R.id.detail_text_view_session_comment_text);
+        expandButton = sessionView.findViewById(R.id.expand_button);
+        compressButton = sessionView.findViewById(R.id.compress_button);
 
-            TextView sessionOverview = sessionView.findViewById(R.id.summary_text_view1);
-            TextView allKmInSession = sessionView.findViewById(R.id.detail_text_view_km);
-            TextView routeText = sessionView.findViewById(R.id.detail_text_view_route);
-            ImageView routeAsImage = sessionView.findViewById(R.id.route_image);
-            TextView sessionCommentTitle = sessionView.findViewById(R.id.detail_text_view_session_comment_title);
-            TextView sessionComment = sessionView.findViewById(R.id.detail_text_view_session_comment_text);
-            ImageButton expandButton = sessionView.findViewById(R.id.expand_button);
-            ImageButton compressButton = sessionView.findViewById(R.id.compress_button);
-
-
-
-            String formattedDistance = String.format(Locale.forLanguageTag("Swedish"),"%.1f", session.getTotalDistance()/1000);
-
-            sessionOverview.setText(session.getDate() + "|" + session.getTotalTime() + "|" + formattedDistance + " km");
-            StringBuilder allKmTime = new StringBuilder();
-            if(session.getTimePerKm()!=null) {
-                for (int i = 0; i < session.getTimePerKm().size(); i++) {
-                    allKmTime.append("km ").append(i + 1).append(" ").append(session.getTimePerKm().get(i)).append("\n ");
-                }
-                allKmInSession.setText(allKmTime);
+        uiPopulation = new Runnable() {
+            @Override
+            public void run() {
+                updateUI();
             }
-            if(session.getSessionComment()!=null){
-                sessionComment.setText(session.getSessionComment());
-            }
+        };
 
-           // routeText.setText(session.getRoute());
-           // routeAsImage.setImageResource(session.getRouteImage());
-            
-
-            expandButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (allKmInSession.getVisibility() == View.GONE) {
-                        editCommentIcon.setVisibility(View.VISIBLE);
-                        allKmInSession.setVisibility(View.VISIBLE);
-                        routeText.setVisibility(View.VISIBLE);
-                        routeAsImage.setVisibility(View.VISIBLE);
-                        sessionCommentTitle.setVisibility(View.VISIBLE);
-                        if(session.getSessionComment()!=null){
-                            sessionComment.setVisibility(View.VISIBLE);
-                        }
-                        expandButton.setVisibility(View.GONE);
-                        compressButton.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
-
-            compressButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (allKmInSession.getVisibility() == View.VISIBLE) {
-                        allKmInSession.setVisibility(View.GONE);
-                        routeText.setVisibility(View.GONE);
-                        routeAsImage.setVisibility(View.GONE);
-                        sessionCommentTitle.setVisibility(View.GONE);
-                        sessionComment.setVisibility(View.GONE);
-                        expandButton.setVisibility(View.VISIBLE);
-                        compressButton.setVisibility(View.GONE);
-                    }
-                }
-            });
-
-            editCommentIcon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    editCommentText.setVisibility(View.VISIBLE);
-                    saveCommentButton.setVisibility(View.VISIBLE);
-                }
-            });
-
-            saveCommentButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    session.setSessionComment(String.valueOf(editCommentText.getText()));
-                    editCommentText.setVisibility(View.GONE);
-                    saveCommentButton.setVisibility(View.GONE);
-
-                }
-            });
-
-
-            sessionContainer.addView(sessionView);
-        }
+        Thread thread = new Thread(uiPopulation);
+        thread.start();
 
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,6 +126,87 @@ public class SessionFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void updateUI() {
+        List<Session.StoredSession> sessionsList = sessionManager.getSavedSessions();
+
+        if(sessionsList!=null) {
+            for (Session.StoredSession session : sessionsList) {
+
+                String formattedDistance = String.format(Locale.forLanguageTag("Swedish"), "%.1f", session.getTotalDistance() / 1000);
+
+                sessionOverview.setText(session.getDate() + "|" + session.getTotalTime() + "|" + formattedDistance + " km");
+                StringBuilder allKmTime = new StringBuilder();
+                if (session.getTimePerKm() != null) {
+                    for (int i = 0; i < session.getTimePerKm().size(); i++) {
+                        allKmTime.append("km ").append(i + 1).append(" ").append(session.getTimePerKm().get(i)).append("\n ");
+                    }
+                    allKmInSession.setText(allKmTime);
+                }
+                if (session.getSessionComment() != null) {
+                    sessionComment.setText(session.getSessionComment());
+                }
+
+                // routeText.setText(session.getRoute());
+                // routeAsImage.setImageResource(session.getRouteImage());
+
+
+                expandButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (allKmInSession.getVisibility() == View.GONE) {
+                            editCommentIcon.setVisibility(View.VISIBLE);
+                            allKmInSession.setVisibility(View.VISIBLE);
+                            routeText.setVisibility(View.VISIBLE);
+                            routeAsImage.setVisibility(View.VISIBLE);
+                            sessionCommentTitle.setVisibility(View.VISIBLE);
+                            if (session.getSessionComment() != null) {
+                                sessionComment.setVisibility(View.VISIBLE);
+                            }
+                            expandButton.setVisibility(View.GONE);
+                            compressButton.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+
+                compressButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (allKmInSession.getVisibility() == View.VISIBLE) {
+                            allKmInSession.setVisibility(View.GONE);
+                            routeText.setVisibility(View.GONE);
+                            routeAsImage.setVisibility(View.GONE);
+                            sessionCommentTitle.setVisibility(View.GONE);
+                            sessionComment.setVisibility(View.GONE);
+                            expandButton.setVisibility(View.VISIBLE);
+                            compressButton.setVisibility(View.GONE);
+                        }
+                    }
+                });
+
+                editCommentIcon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editCommentText.setVisibility(View.VISIBLE);
+                        saveCommentButton.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                saveCommentButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        session.setSessionComment(String.valueOf(editCommentText.getText()));
+                        editCommentText.setVisibility(View.GONE);
+                        saveCommentButton.setVisibility(View.GONE);
+
+                    }
+                });
+
+
+                sessionContainer.addView(sessionView);
+            }
+        }
     }
 
 

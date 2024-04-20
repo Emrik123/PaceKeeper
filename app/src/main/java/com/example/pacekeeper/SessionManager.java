@@ -26,6 +26,9 @@ public class SessionManager {
 
 
     public void add(Session.StoredSession session){
+        if(sessions==null){
+            sessions = new ArrayList<>();
+        }
         sessions.add(session);
     }
 
