@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,19 +39,10 @@ public class SessionFragment extends Fragment {
     private SessionManager sessionManager;
     LinearLayout sessionContainer;
     private Runnable uiPopulation;
-    ImageButton compressButton;
-    ImageButton expandButton;
-    TextView sessionComment;
-    TextView sessionCommentTitle;
-    ImageView routeAsImage;
+    private boolean fragmentIsPopulated = MainActivity.sessionFragmentHasBeenPopulated;
 
-    Button saveCommentButton;
-    EditText editCommentText;
-    ImageButton editCommentIcon;
-
-    TextView sessionOverview;
-    TextView allKmInSession;
-    TextView routeText;
+    View sessionView;
+    Handler uiHandler;
 
 
     public SessionFragment() {
@@ -72,6 +65,7 @@ public class SessionFragment extends Fragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,25 +81,12 @@ public class SessionFragment extends Fragment {
     @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        System.out.println("Fragment is populated (in onCreateView): " +fragmentIsPopulated);
+        uiHandler = new Handler(Looper.getMainLooper());
         View rootView = inflater.inflate(R.layout.fragment_session, container, false);
         ImageButton returnButton = rootView.findViewById(R.id.return_button);
         sessionContainer = rootView.findViewById(R.id.session_layout);
 
-        View sessionView = LayoutInflater.from(getContext()).inflate(R.layout.session_item, null);
-
-         saveCommentButton = sessionView.findViewById(R.id.save_comment_button);
-        editCommentText = sessionView.findViewById(R.id.edit_comment);
-         editCommentIcon = sessionView.findViewById(R.id.edit_comment_icon);
-
-         sessionOverview = sessionView.findViewById(R.id.summary_text_view1);
-         allKmInSession = sessionView.findViewById(R.id.detail_text_view_km);
-        routeText = sessionView.findViewById(R.id.detail_text_view_route);
-        routeAsImage = sessionView.findViewById(R.id.route_image);
-        sessionCommentTitle = sessionView.findViewById(R.id.detail_text_view_session_comment_title);
-        sessionComment = sessionView.findViewById(R.id.detail_text_view_session_comment_text);
-        expandButton = sessionView.findViewById(R.id.expand_button);
-        compressButton = sessionView.findViewById(R.id.compress_button);
 
         uiPopulation = new Runnable() {
             @Override
@@ -114,8 +95,9 @@ public class SessionFragment extends Fragment {
             }
         };
 
-        Thread thread = new Thread(uiPopulation);
-        thread.start();
+        if(!fragmentIsPopulated){
+            populateUI();
+        }
 
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,11 +110,31 @@ public class SessionFragment extends Fragment {
         return rootView;
     }
 
+    public void populateUI(){
+        uiHandler.post(uiPopulation);
+
+    }
+
     private void updateUI() {
         List<Session.StoredSession> sessionsList = sessionManager.getSavedSessions();
 
         if(sessionsList!=null) {
             for (Session.StoredSession session : sessionsList) {
+
+                sessionView = LayoutInflater.from(getContext()).inflate(R.layout.session_item, null);
+                ImageButton compressButton = sessionView.findViewById(R.id.compress_button);
+                ImageButton  expandButton = sessionView.findViewById(R.id.expand_button);
+                TextView sessionComment = sessionView.findViewById(R.id.detail_text_view_session_comment_text);
+                TextView sessionCommentTitle = sessionView.findViewById(R.id.detail_text_view_session_comment_title);
+                ImageView routeAsImage = sessionView.findViewById(R.id.route_image);
+
+                Button saveCommentButton = sessionView.findViewById(R.id.save_comment_button);
+                EditText editCommentText = sessionView.findViewById(R.id.edit_comment);
+                ImageButton editCommentIcon = sessionView.findViewById(R.id.edit_comment_icon);
+
+                TextView sessionOverview = sessionView.findViewById(R.id.summary_text_view1);
+                TextView allKmInSession = sessionView.findViewById(R.id.detail_text_view_km);
+                TextView routeText = sessionView.findViewById(R.id.detail_text_view_route);
 
                 String formattedDistance = String.format(Locale.forLanguageTag("Swedish"), "%.1f", session.getTotalDistance() / 1000);
 
@@ -206,8 +208,12 @@ public class SessionFragment extends Fragment {
 
                 sessionContainer.addView(sessionView);
             }
+            System.out.println("Fragment is populated (after update UI: " +fragmentIsPopulated);
         }
+
     }
+
+
 
 
     public void setSessionManager(SessionManager sessionManager){

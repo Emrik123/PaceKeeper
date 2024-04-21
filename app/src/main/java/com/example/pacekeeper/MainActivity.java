@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private TextView unitTextView;
     private RunnerView runnerView;
+    public static boolean sessionFragmentHasBeenPopulated;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -158,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, sessionFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+        sessionFragmentHasBeenPopulated = true;
     }
 
     private void displaySettingsView(){
@@ -213,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
     public SessionManager getSessionManager(){
         return sessionManager;
     }
+
 
 
     public void disableAllButtons(){
