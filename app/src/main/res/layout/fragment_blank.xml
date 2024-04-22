@@ -8,7 +8,10 @@
     android:background="@drawable/runnerview"
     android:visibility="visible"
     tools:context=".MainActivity"
-    tools:visibility="visible">
+    tools:visibility="visible"
+    android:clickable="true"
+    >
+
 <!--For some reason all horizontal placement is set using orientation vertical and vice versa for vertical-->
     <!--I don't know why-->
 
