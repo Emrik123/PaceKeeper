@@ -112,7 +112,7 @@ public class Session {
                 tempTime = 0;
             }
             this.timeDelta = stopwatch.getTime();
-            double[] result = kalmanFilter.update(currentLocation.getSpeed(), tempTime/1000);
+            double[] result = kalmanFilter.update(   currentLocation.getSpeed(), tempTime/1000);
             route.add(currentLocation);
 
             // Kalman filter works shit with acceleration (doesn't consider it, assumes constant).

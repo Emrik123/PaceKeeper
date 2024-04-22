@@ -31,10 +31,9 @@
     km1 | 5:35 \n
     km2 | 6:40 \n
     km3 | 5:45 \n
-    ---------------------------
     ]]>
     </string>
-    <string name="route">Route \n -------------------------</string>
+    <string name="route">Route</string>
     <string name="session_comment_title">Session Comment</string>
     <string name="session_comment"></string>
     <string name="display_settings">Display speed in</string>
