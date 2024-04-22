@@ -39,7 +39,7 @@ public class SessionFragment extends Fragment {
     private SessionManager sessionManager;
     LinearLayout sessionContainer;
     private Runnable uiPopulation;
-    private boolean fragmentIsPopulated = MainActivity.sessionFragmentHasBeenPopulated;
+
 
     View sessionView;
     Handler uiHandler;
@@ -81,7 +81,7 @@ public class SessionFragment extends Fragment {
     @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        System.out.println("Fragment is populated (in onCreateView): " +fragmentIsPopulated);
+
         uiHandler = new Handler(Looper.getMainLooper());
         View rootView = inflater.inflate(R.layout.fragment_session, container, false);
         ImageButton returnButton = rootView.findViewById(R.id.return_button);
@@ -94,10 +94,8 @@ public class SessionFragment extends Fragment {
                 updateUI();
             }
         };
-
-        if(!fragmentIsPopulated){
             populateUI();
-        }
+
 
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,7 +206,7 @@ public class SessionFragment extends Fragment {
 
                 sessionContainer.addView(sessionView);
             }
-            System.out.println("Fragment is populated (after update UI: " +fragmentIsPopulated);
+
         }
 
     }

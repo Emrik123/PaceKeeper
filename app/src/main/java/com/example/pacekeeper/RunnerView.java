@@ -3,16 +3,13 @@ package com.example.pacekeeper;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.speech.tts.TextToSpeech;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -35,8 +32,6 @@ import com.google.android.gms.location.LocationServices;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -67,17 +62,17 @@ public class RunnerView extends Fragment {
     private ArrayList<Session> sessionHistory; // For storing session when you stop a current one, also for loading up existing sessions from file.
     private FeedbackHandler feedback;
     private UnitOfVelocity unitOfVelocity;
+    private boolean autosaveSession;
     private int kmDistance;
     private String kmTime;
     private FragmentManager fragmentManager;
     private Handler interfaceUpdateHandler;
     private Runnable uiUpdates;
-
-    TextView desiredSpeedText;
-    ImageView speedCircle;
-    Drawable slowCircle;
-    Drawable fastCircle;
-    Drawable goodSpeedCircle;
+    private TextView desiredSpeedText;
+    private ImageView speedCircle;
+    private Drawable slowCircle;
+    private Drawable fastCircle;
+    private Drawable goodSpeedCircle;
 
     public RunnerView() {
         sessionHistory = new ArrayList<>();
@@ -85,13 +80,14 @@ public class RunnerView extends Fragment {
     }
 
 
-    public static RunnerView newInstance(MainActivity mainActivity, double speed) {
+    public static RunnerView newInstance(MainActivity mainActivity, double speed, boolean autoSaveSession) {
         RunnerView fragment = new RunnerView();
         Bundle args = new Bundle();
         // You can pass arguments if needed
         args.putDouble("speed", speed);
         fragment.setArguments(args);
         fragment.setMainActivity(mainActivity);
+        fragment.setAutosaveSession(autoSaveSession);
         return fragment;
     }
 
@@ -180,11 +176,14 @@ public class RunnerView extends Fragment {
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                displaySessionOverview();
-               // sessionManager.add(currentSession.getSerializableSession());
-               // sessionManager.storeSessionToMemory(mainActivity);
-             // currentSession.killSession();
-               // getParentFragmentManager().popBackStackImmediate();
+                if(autosaveSession){
+                    sessionManager.add(currentSession.getSerializableSession());
+                    sessionManager.storeSessionToMemory(mainActivity);
+                    currentSession.killSession();
+                    getParentFragmentManager().popBackStackImmediate();
+                }else{
+                    displaySessionOverview();
+                }
             }
         });
 
@@ -290,6 +289,9 @@ public class RunnerView extends Fragment {
                 .commit();
     }
 
+    public void setAutosaveSession(boolean autosaveSession){
+        this.autosaveSession = autosaveSession;
+    }
     public Session getCurrentSession(){
         return currentSession;
     }

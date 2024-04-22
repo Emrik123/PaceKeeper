@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private TextView unitTextView;
     private RunnerView runnerView;
-    public static boolean sessionFragmentHasBeenPopulated;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -159,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, sessionFragment);
         transaction.addToBackStack(null);
         transaction.commit();
-        sessionFragmentHasBeenPopulated = true;
     }
 
     private void displaySettingsView(){
@@ -169,16 +167,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayRunnerView(double speed) {
-       // disableAllButtons();
         loadSharedPreferences();
         setFeedbackPreferences();
 
-        runnerView = RunnerView.newInstance(this, speed);
+        runnerView = RunnerView.newInstance(this, speed, autoSaveSession);
 
         Bundle bundle = new Bundle();
         bundle.putDouble("speed", speed);
         getIntent().putExtra("feedbackHandler", feedback);
-        //getIntent().putExtra("speedDisplayMode", speedDisplayMode);
         getIntent().putExtra("unitOfVelocity", unitOfVelocity);
 
 
@@ -214,20 +210,6 @@ public class MainActivity extends AppCompatActivity {
 
     public SessionManager getSessionManager(){
         return sessionManager;
-    }
-
-
-
-    public void disableAllButtons(){
-        previousSessionsButton.setEnabled(false);
-        settingsButton.setEnabled(false);
-        startSessionButton.setEnabled(false);
-    }
-    public void enableAllButtons(){
-        previousSessionsButton.setEnabled(true);
-        settingsButton.setEnabled(true);
-        startSessionButton.setEnabled(true);
-
     }
 
 }

@@ -94,7 +94,7 @@ public class Session {
     }
 
     public StoredSession getSerializableSession(){
-        return new StoredSession(getSessionDate(), getDistance(), getTotalSessionTime(), getTimePerKm());
+        return new StoredSession(getSessionDate(), getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed);
     }
 
     public void updateLocation(Location location, int size) {
@@ -260,18 +260,21 @@ public class Session {
         private static final long serialVersionUID = 0L;
         private LocalDate date;
 
+        private double selectedSpeed;
+
         private ArrayList<String> timePerKm;
 
         private String sessionComment;
 
 
 
-        public StoredSession( LocalDate date, double distance, String time, ArrayList<String> timePerKm){
+        public StoredSession( LocalDate date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed){
             this.totalTime = time;
             this.totalDistance = distance;
             this.date = date;
             this.timePerKm = timePerKm;
             this.sessionID = idCount.incrementAndGet();
+            this.selectedSpeed = selectedSpeed;
         }
 
         public void setSessionComment(String sessionComment){
@@ -296,6 +299,9 @@ public class Session {
 
         public String getSessionComment(){
             return sessionComment;
+        }
+        public String getSelectedSpeed(){
+            return Double.toString(selectedSpeed);
         }
     }
 }
