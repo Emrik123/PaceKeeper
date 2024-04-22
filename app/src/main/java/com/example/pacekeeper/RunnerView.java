@@ -1,9 +1,14 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 
@@ -38,7 +43,7 @@ import java.util.ArrayList;
  * Use the {@link RunnerView#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RunnerView extends Fragment {
+public class RunnerView extends Fragment implements SensorEventListener {
     private MainActivity mainActivity;
     private SessionManager sessionManager;
     private NumberPicker speedInput;
@@ -53,8 +58,11 @@ public class RunnerView extends Fragment {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
     private double speed;
-    private final double UPDATE_INTERVAL_MS = 250;
-    private final long UPDATE_INTERVAL_TIMER_MS = 1000;
+    private final double LOWEST_SPEED_THRESHOLD = 0.5;
+    private final long UPDATE_INTERVAL_MS = 250;
+    private final float X_OFFSET = 0.0455f;
+    private final float Y_OFFSET = 0.2534f;
+    //private final long UPDATE_INTERVAL_TIMER_MS = 1000; Ignore if not used
     private Bundle savedInstance;
     private MediaPlayer tooSlowAlert;
     private MediaPlayer tooFastAlert;
@@ -68,6 +76,12 @@ public class RunnerView extends Fragment {
     private FragmentManager fragmentManager;
     private Handler interfaceUpdateHandler;
     private Runnable uiUpdates;
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private float[] accelerometerValues;
+    private static final float ALPHA = 0.8f;
+    private OrientationHandler orientationHandler;
+
     private TextView desiredSpeedText;
     private ImageView speedCircle;
     private Drawable slowCircle;
@@ -116,6 +130,11 @@ public class RunnerView extends Fragment {
         slowCircle = ContextCompat.getDrawable(requireContext(),R.drawable.circle);
         fastCircle = ContextCompat.getDrawable(requireContext(),R.drawable.redcircle);
         goodSpeedCircle = ContextCompat.getDrawable(requireContext(),R.drawable.greencircle);
+
+        sensorManager = (SensorManager) requireContext().getSystemService(Context.SENSOR_SERVICE);
+        orientationHandler = new OrientationHandler(requireContext(), this);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        sensorManager.registerListener(RunnerView.this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
 
         TextView unitOfVelocityDisplay = rootView.findViewById(R.id.unit_of_velocity);
 
@@ -191,7 +210,7 @@ public class RunnerView extends Fragment {
             @Override
             public void run() {
                 updateUI();
-                interfaceUpdateHandler.postDelayed(this, UPDATE_INTERVAL_TIMER_MS);
+                interfaceUpdateHandler.postDelayed(this, UPDATE_INTERVAL_MS);
             }
         };
 
@@ -201,7 +220,7 @@ public class RunnerView extends Fragment {
                 super.onLocationResult(locationResult);
                 if (!locationResult.getLocations().isEmpty() && currentSession.getRunning()) {
                     currentSession.updateLocation(locationResult.getLocations().get(locationResult.getLocations().size() - 1),
-                            locationResult.getLocations().size());
+                            locationResult.getLocations().size(), getAccelerometerValues());
                     feedback.setRunning(currentSession.getRunning());
                     feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
                     currentSession.updateSessionData();
@@ -235,7 +254,7 @@ public class RunnerView extends Fragment {
     public void updateUI(){
         if(currentSession.getRunning()){
             distanceDisplay.setText(currentSession.getFormattedDistance());
-            if(currentSession.getCurrentSpeed() > 1){
+            if(currentSession.getCurrentSpeed() > LOWEST_SPEED_THRESHOLD){
                 speedDisplay.setText(currentSession.getFormattedSpeed());
             }else{
                 speedDisplay.setText(getResources().getString(R.string.null_speed));
@@ -311,5 +330,32 @@ public class RunnerView extends Fragment {
         transaction.replace(R.id.fragment_container, sessionOverview);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (accelerometerValues == null) {
+            accelerometerValues = event.values.clone();
+        } else {
+            for (int i = 0; i < 3; i++) {
+                accelerometerValues[i] = ALPHA * accelerometerValues[i] + (1 - ALPHA) * event.values[i];
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
+    public void setAccelerometerValues(float[] values){
+        accelerometerValues = values;
+    }
+
+    public float[] getAccelerometerValues(){
+        return accelerometerValues;
+    }
+
+    public SensorManager getSensorManager(){
+        return this.sensorManager;
     }
 }
