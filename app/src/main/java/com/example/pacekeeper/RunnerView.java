@@ -132,7 +132,7 @@ public class RunnerView extends Fragment implements SensorEventListener {
         goodSpeedCircle = ContextCompat.getDrawable(requireContext(),R.drawable.greencircle);
 
         sensorManager = (SensorManager) requireContext().getSystemService(Context.SENSOR_SERVICE);
-        orientationHandler = new OrientationHandler(requireContext(), this);
+        orientationHandler = new OrientationHandler(this);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         sensorManager.registerListener(RunnerView.this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
 

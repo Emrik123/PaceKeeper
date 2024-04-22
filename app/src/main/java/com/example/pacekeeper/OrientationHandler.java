@@ -1,6 +1,5 @@
 package com.example.pacekeeper;
 
-import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,8 +8,6 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
-
-import java.util.Arrays;
 
 public class OrientationHandler implements SensorEventListener {
 
@@ -28,7 +25,7 @@ public class OrientationHandler implements SensorEventListener {
     private RunnerView runnerView;
     private RealMatrix matrix;
 
-    public OrientationHandler(Context context, RunnerView runnerView) {
+    public OrientationHandler(RunnerView runnerView) {
         this.runnerView = runnerView;
         sensorManager = runnerView.getSensorManager();
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
