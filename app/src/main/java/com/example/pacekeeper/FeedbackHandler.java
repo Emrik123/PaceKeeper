@@ -29,22 +29,12 @@ public class FeedbackHandler implements Serializable {
         this.context = context;
         audioPlayer = new AudioPlayer(context);
         vibrator = new Vibrator(context);
-
-        tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    tts.setLanguage(Locale.ROOT);
-                }
-            }
-        });
-
     }
 
     public void giveFeedback() {
-        String correctPrompt = "good pace";
-        String fasterPrompt = "speed up";
-        String slowerPrompt = "slow down";
+        String correctPrompt = "good pace.";
+        String fasterPrompt = "speed up.";
+        String slowerPrompt = "slow down.";
         CharSequence prompt = formattedVelocity();
 
         if (isRunning && currentSpeed > LOWER_LIMIT_MPS) {
@@ -86,7 +76,7 @@ public class FeedbackHandler implements Serializable {
         CharSequence seq = "";
         switch (unitOfVelocity) {
             case KM_PER_HOUR:
-                seq = String.format(Locale.US, "%.1f... ", currentSpeed * 3.6);
+                seq = String.format(Locale.US, "%.1f km/h... ", currentSpeed * 3.6);
                 break;
             case MIN_PER_KM:
                 double minutesPerKm = currentSpeed * 60;
@@ -109,6 +99,15 @@ public class FeedbackHandler implements Serializable {
     }
 
     public void runFeedback(double selectedSpeed) {
+        tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    tts.setLanguage(Locale.US);
+                }
+            }
+        });
+
         setSelectedSpeed(selectedSpeed);
         timer = new Timer();
         timerTask = new Task(this);
@@ -116,6 +115,7 @@ public class FeedbackHandler implements Serializable {
     }
 
     public void stopFeedback() {
+        removeTextToSpeech();
         timerTask.cancel();
         timer.cancel();
         timer.purge();
@@ -124,13 +124,13 @@ public class FeedbackHandler implements Serializable {
     public void setFeedbackFrequency(String keyword) {
         switch (keyword.toLowerCase(Locale.ROOT)) {
             case "medium":
-                setFeedbackDelayMillis(4000);
+                setFeedbackDelayMillis(6000);
                 break;
             case "low":
-                setFeedbackDelayMillis(7000);
+                setFeedbackDelayMillis(10000);
                 break;
             case "high":
-                setFeedbackDelayMillis(1000);
+                setFeedbackDelayMillis(3000);
                 break;
         }
     }

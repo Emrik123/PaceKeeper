@@ -195,6 +195,8 @@ public class RunnerView extends Fragment implements SensorEventListener {
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                feedback.stopFeedback();
+                stopLocationUpdates();
                 if(autosaveSession){
                     sessionManager.add(currentSession.getSerializableSession());
                     sessionManager.storeSessionToMemory(mainActivity);
