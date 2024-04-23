@@ -27,7 +27,7 @@ public class SettingsFragment extends Fragment {
     private RadioButton radioSpeedKmh;
     private RadioButton radioSpeedMinPerKm;
     private String feedbackFrequency;
-    private String speedDisplayMode;
+    private UnitOfVelocity unitOfVelocity;
     private SharedPreferences preferences;
     private ImageButton returnButton;
 
@@ -104,10 +104,10 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == radioSpeedKmh.getId()){
-                    speedDisplayMode = "kmh";
+                    unitOfVelocity = UnitOfVelocity.KM_PER_HOUR;
                 }
                 else {
-                    speedDisplayMode = "minPerKm";
+                    unitOfVelocity = UnitOfVelocity.MIN_PER_KM;
                 }
             }
         });
@@ -134,7 +134,7 @@ public class SettingsFragment extends Fragment {
         preferenceEditor.putBoolean("audioFeedback", audioFeedback);
         preferenceEditor.putBoolean("vibrationFeedback", vibrationFeedback);
         preferenceEditor.putString("feedbackFrequency", feedbackFrequency);
-        preferenceEditor.putString("speedDisplayMode", speedDisplayMode);
+        preferenceEditor.putString("unitOfVelocity", unitOfVelocity.toString());
         preferenceEditor.putBoolean("autoSaveSessions", autoSaveSessions);
         preferenceEditor.apply();
         ((MainActivity) getActivity()).updateSettings();
@@ -145,8 +145,16 @@ public class SettingsFragment extends Fragment {
         vibrationFeedback = preferences.getBoolean("vibrationFeedback", true);
         audioFeedback = preferences.getBoolean("audioFeedback", true);
         feedbackFrequency = preferences.getString("feedbackFrequency", "medium");
-        speedDisplayMode = preferences.getString("speedDisplayMode", "minPerKm");
         autoSaveSessions = preferences.getBoolean("autoSaveSessions", false);
+        String unit = preferences.getString("unitOfVelocity", "min/km");
+        switch (unit.trim()) {
+            case "km/h":
+                unitOfVelocity = UnitOfVelocity.KM_PER_HOUR;
+                break;
+            case "min/km":
+                unitOfVelocity = UnitOfVelocity.MIN_PER_KM;
+                break;
+        }
     }
 
     private void setGraphicElements(){
@@ -170,11 +178,13 @@ public class SettingsFragment extends Fragment {
     }
 
     private void setDisplaySpeedButton(){
-        if(speedDisplayMode.equals("kmh")){
-            radioSpeedKmh.setChecked(true);
-        }
-        else if(speedDisplayMode.equals("minPerKm")){
-            radioSpeedMinPerKm.setChecked(true);
+        switch (unitOfVelocity) {
+            case KM_PER_HOUR:
+                radioSpeedKmh.setChecked(true);
+                break;
+            case MIN_PER_KM:
+                radioSpeedMinPerKm.setChecked(true);
+                break;
         }
     }
 }

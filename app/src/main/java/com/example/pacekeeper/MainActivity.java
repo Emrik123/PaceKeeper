@@ -128,16 +128,16 @@ public class MainActivity extends AppCompatActivity {
         audio = preferences.getBoolean("audioFeedback", true);
         feedbackFrequency = preferences.getString("feedbackFrequency", "medium");
         autoSaveSession = preferences.getBoolean("autoSaveSessions", false);
-
-        String unit = preferences.getString("speedDisplayMode", "minPerKm");
-        switch (unit) {
-            case "kmh":
+        String unit = preferences.getString("unitOfVelocity", "min/km");
+        switch (unit.trim()) {
+            case "km/h":
                 unitOfVelocity = UnitOfVelocity.KM_PER_HOUR;
                 break;
-            case "minPerKm":
+            case "min/km":
                 unitOfVelocity = UnitOfVelocity.MIN_PER_KM;
                 break;
         }
+        System.out.println("Unit set to: " + unitOfVelocity);
     }
 
     public void setFeedbackPreferences() {
