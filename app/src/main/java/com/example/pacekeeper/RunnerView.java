@@ -327,11 +327,9 @@ public class RunnerView extends Fragment implements SensorEventListener {
 
     private void displaySessionOverview() {
         SessionOverview sessionOverview = SessionOverview.newInstance(currentSession, sessionManager);
-        Bundle bundle = new Bundle();
-        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, sessionOverview);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        fragmentManager.beginTransaction().add(R.id.fragment_container, sessionOverview, null)
+                .addToBackStack("runnerView")
+                .commit();
     }
 
     @Override

@@ -76,9 +76,12 @@ public class SessionOverview extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_session_overview, container, false);
 
-        ImageButton endSession = rootView.findViewById(R.id.stopButtonLogo);
+        ImageButton saveSession = rootView.findViewById(R.id.save_session_button);
+        ImageButton resumeSession = rootView.findViewById(R.id.resume_session_button);
+        ImageButton deleteSession = rootView.findViewById(R.id.delete_session_button);
 
-        endSession.setOnClickListener(new View.OnClickListener() {
+
+        saveSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sessionManager.add(currentSession.getSerializableSession());
@@ -89,6 +92,26 @@ public class SessionOverview extends Fragment {
                 getActivity().getSupportFragmentManager().popBackStack(
                     "mainActivity",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+            }
+        });
+
+        resumeSession.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().popBackStack(
+                        "runnerView",
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+        });
+
+        deleteSession.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentSession.killSession();
+                getActivity().getSupportFragmentManager().popBackStack(
+                        "mainActivity",
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
             }
         });
