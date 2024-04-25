@@ -2,7 +2,6 @@ package com.example.pacekeeper;
 
 import android.content.Context;
 import android.os.VibrationEffect;
-import android.os.VibratorManager;
 
 import java.io.Serializable;
 
@@ -17,12 +16,12 @@ public class Vibrator implements Serializable {
     public Vibrator(Context context) {
         vibrator = (android.os.Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
-    // ;)
-    public void vibrateFaster() {
+
+    public void increaseVelocity() {
         vibrator.vibrate(increaseSpeedVibrationPattern);
     }
 
-    public void vibrateSlower() {
+    public void decreaseVelocity() {
         vibrator.vibrate(decreaseSpeedVibrationPattern);
     }
 }

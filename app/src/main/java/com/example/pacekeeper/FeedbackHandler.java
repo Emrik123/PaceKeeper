@@ -59,10 +59,10 @@ public class FeedbackHandler implements Serializable {
             }
             if (vibrationAllowed) {
                 if (movingTooFast()) {
-                    vibrator.vibrateSlower();
+                    vibrator.decreaseVelocity();
                 }
                 if (movingTooSlow()) {
-                    vibrator.vibrateFaster();
+                    vibrator.increaseVelocity();
                 }
             }
         }
