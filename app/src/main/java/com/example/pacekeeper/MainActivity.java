@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private TextView unitTextView;
     private RunnerView runnerView;
-    private Intent serviceIntent;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -60,11 +59,6 @@ public class MainActivity extends AppCompatActivity {
         setFeedbackPreferences();
         setUnit();
         setPickerStyle(unitOfVelocity);
-        serviceIntent = new Intent(this, Session.class) ;
-        if (!foregroundServiceRunning()) {
-            startForegroundService(serviceIntent);
-        }
-
 
         startSessionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,11 +109,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopService(serviceIntent);
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        stopService(serviceIntent);
+//    }
 
     public void updateSettings() {
         loadSharedPreferences();
@@ -174,16 +168,16 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    public boolean foregroundServiceRunning() {
-        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
-            if (ForegroundService.class.getName().equals(service.service.getClassName())) ;
-            System.out.println(true);
-            return true;
-        }
-        System.out.println(false);
-        return false;
-    }
+//    public boolean foregroundServiceRunning() {
+//        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+//        for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+//            if (ForegroundService.class.getName().equals(service.service.getClassName())) ;
+//            System.out.println(true);
+//            return true;
+//        }
+//        System.out.println(false);
+//        return false;
+//    }
 
 
     private void displaySettingsView() {

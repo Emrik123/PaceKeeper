@@ -226,7 +226,6 @@ public class RunnerView extends Fragment implements SensorEventListener {
             }
         };
         start();
-        desiredSpeedText.setText(desiredSpeedText.getText() + currentSession.getFormattedSelectedSpeed());
         unitOfVelocityDisplay.setText(unitOfVelocity.toString());
 
 //        sessionIntent = new Intent(getContext(), Session.class);
@@ -294,9 +293,15 @@ public class RunnerView extends Fragment implements SensorEventListener {
 
     private void start() {
         startLocationUpdates();
-        currentSession = new Session(speed);
+        currentSession = new Session();
+        sessionIntent = new Intent(this.getContext(), Session.class);
+        sessionIntent.putExtra("speed", speed);
+        sessionIntent.putExtra("desiredSpeed", unitOfVelocity);
+        requireContext().startForegroundService(sessionIntent);
+//        feedback.runFeedback(currentSession.getSelectedSpeed());
+        feedback.runFeedback(speed);
         currentSession.setUnitOfVelocity(unitOfVelocity);
-        feedback.runFeedback(currentSession.getSelectedSpeed());
+//        desiredSpeedText.setText(desiredSpeedText.getText() + currentSession.getFormattedSelectedSpeed());
         runUiUpdates();
     }
 
@@ -344,6 +349,12 @@ public class RunnerView extends Fragment implements SensorEventListener {
                 accelerometerValues[i] = ALPHA * accelerometerValues[i] + (1 - ALPHA) * event.values[i];
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mainActivity.stopService(sessionIntent);
     }
 
     @Override

@@ -6,11 +6,18 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.IBinder;
+import android.os.PowerManager;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import com.google.android.gms.location.*;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -35,8 +42,13 @@ public class Session extends Service {
     private int kmDistance = 1000;
     private final Kalman kalmanFilter;
     private long timeDelta;
+    private LocationRequest locationRequest;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationCallback locationCallback;
+    private final long UPDATE_INTERVAL_MS = 250;
 
-    public Session(double selectedSpeed){
+
+    public Session(double selectedSpeed) {
         kalmanFilter = new Kalman();
         this.sessionDate = LocalDate.now();
         this.selectedSpeed = selectedSpeed;
@@ -49,6 +61,7 @@ public class Session extends Service {
     }
 
     public Session() {
+        System.out.println("session no args constructor");
         kalmanFilter = new Kalman();
         this.sessionDate = LocalDate.now();
         this.isRunning = true;
@@ -57,11 +70,17 @@ public class Session extends Service {
         timePerKm = new ArrayList<>();
         stopwatch = new StopWatch();
         stopwatch.start();
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+//        PowerManager.WakeLock wakeLock;
+//        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+//        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "myapp:mywakelocktag");
         System.out.println("on start command");
+        selectedSpeed = intent.getDoubleExtra("speed", 10);
+        System.out.println(selectedSpeed);
         final String CHANNELID = "Foreground Service ID";
         NotificationChannel channel = new NotificationChannel(
                 CHANNELID,
@@ -71,15 +90,38 @@ public class Session extends Service {
 
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
         Notification.Builder notification = new Notification.Builder(getApplicationContext(), CHANNELID)
-                .setContentText("Service is running")
+                .setContentText("Session active")
                 .setContentTitle("Service enabled")
                 .setSmallIcon(R.drawable.pacekeeperlogo)
                 .setOngoing(true);
         startForeground(1, notification.build());
+
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval((long) UPDATE_INTERVAL_MS);
+        locationRequest.setFastestInterval((long) UPDATE_INTERVAL_MS);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NotNull LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                System.out.println("Location updated in session");
+            }
+        };
+        startLocationUpdates();
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public String updateTime(){
+    public void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
+    }
+
+
+    public String updateTime() {
         long currentTimeMillis = stopwatch.getTime();
 
         int hours = (int) (currentTimeMillis / (1000 * 60 * 60)) % 24;
@@ -99,64 +141,64 @@ public class Session extends Service {
         }
     }
 
-    public void addTime(long kmTime){
-        timeExceptCurrentKm+=kmTime;
+    public void addTime(long kmTime) {
+        timeExceptCurrentKm += kmTime;
     }
 
-    public long getTimeExceptCurrentKm(){
+    public long getTimeExceptCurrentKm() {
         return timeExceptCurrentKm;
     }
 
-    public void setSelectedSpeed(double speed){
+    public void setSelectedSpeed(double speed) {
         this.selectedSpeed = speed;
     }
 
-    public void setConversionUnit(double value){
+    public void setConversionUnit(double value) {
         this.conversionUnit = value;
     }
 
-    public void pauseSession(){
+    public void pauseSession() {
         this.isRunning = false;
         stopwatch.suspend();
     }
 
-    public void continueSession(){
+    public void continueSession() {
         isRunning = true;
         currentLocation = null;
         stopwatch.resume();
     }
 
-    public void killSession(){
+    public void killSession() {
         isRunning = false;
 
     }
 
-    public StoredSession getSerializableSession(){
+    public StoredSession getSerializableSession() {
         return new StoredSession(getSessionDate(), getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed);
     }
 
     public void updateLocation(Location location, int size, float[] a) {
-        if(isRunning) {
+        if (isRunning) {
             Location lastLocation = null;
-            if(currentLocation != null) {
+            if (currentLocation != null) {
                 lastLocation = currentLocation;
             }
             this.currentLocation = location;
             route.add(currentLocation);
             double tempTime;
-            if(timeDelta != 0){
+            if (timeDelta != 0) {
                 tempTime = stopwatch.getTime() - timeDelta;
                 tempTime /= size;
-            }else{
+            } else {
                 tempTime = 0;
             }
             this.timeDelta = stopwatch.getTime();
             kalmanFilter.predict(a[0], a[1]);
-            kalmanFilter.update(currentLocation.getSpeed(), tempTime /1000);
+            kalmanFilter.update(currentLocation.getSpeed(), tempTime / 1000);
             double[] result = kalmanFilter.getState();
             this.currentSpeed = Math.abs(result[1]);
 //            System.out.println("Current speed Kalman: " + currentSpeed + " ||  Current speed GPS: " + currentLocation.getSpeed());
-            if(currentSpeed > 0.5 && lastLocation != null){
+            if (currentSpeed > 0.5 && lastLocation != null) {
 //                double distDelta = Math.abs(result[0]) - distance;
                 distance = Math.abs(result[0]);
 //                System.out.println("Current distance Kalman: " + distDelta + " ||  Current distance GPS: " + lastLocation.distanceTo(currentLocation));
@@ -164,15 +206,15 @@ public class Session extends Service {
         }
     }
 
-    public boolean getRunning(){
+    public boolean getRunning() {
         return this.isRunning;
     }
 
-    public Location getCurrentLocation(){
+    public Location getCurrentLocation() {
         return currentLocation;
     }
 
-    public double getSelectedSpeed(){
+    public double getSelectedSpeed() {
         return selectedSpeed;
     }
 
@@ -180,7 +222,7 @@ public class Session extends Service {
         return currentSpeed;
     }
 
-    public String getFormattedSelectedSpeed(){
+    public String getFormattedSelectedSpeed() {
         switch (unitOfVelocity) {
             case KM_PER_HOUR:
                 return selectedSpeed * conversionUnit + unitOfVelocity.toString();
@@ -191,10 +233,10 @@ public class Session extends Service {
     }
 
     @SuppressLint("DefaultLocale")
-    public String getFormattedSpeed(){
+    public String getFormattedSpeed() {
         switch (unitOfVelocity) {
             case KM_PER_HOUR:
-                return String.format("%.2f", currentSpeed * conversionUnit) ;
+                return String.format("%.2f", currentSpeed * conversionUnit);
             case MIN_PER_KM:
                 return android.text.format.DateUtils.formatElapsedTime((long) (1000 / currentSpeed));
         }
@@ -202,69 +244,69 @@ public class Session extends Service {
     }
 
 
-    public double getCurrentSpeedMinPerKm(){
-        return (1000/currentSpeed)/60;
+    public double getCurrentSpeedMinPerKm() {
+        return (1000 / currentSpeed) / 60;
     }
 
-    public double getDistance(){
+    public double getDistance() {
         return distance;
     }
 
     @SuppressLint("DefaultLocale")
-    public String getFormattedDistance(){
-        if(getDistance() > 1000){
-            return String.format("%.2f", distance/1000) + " km";
-        }else{
+    public String getFormattedDistance() {
+        if (getDistance() > 1000) {
+            return String.format("%.2f", distance / 1000) + " km";
+        } else {
             return String.format("%.2f", distance) + " m";
         }
     }
 
-    public LocalDate getSessionDate(){
+    public LocalDate getSessionDate() {
         return sessionDate;
     }
 
-    public String getTotalSessionTime(){
-            long totalTimeMillis = stopwatch.getTime();
-            long hours = totalTimeMillis / (60 * 60 * 1000);
-            long minutes = (totalTimeMillis % (60 * 60 * 1000)) / (60 * 1000);
+    public String getTotalSessionTime() {
+        long totalTimeMillis = stopwatch.getTime();
+        long hours = totalTimeMillis / (60 * 60 * 1000);
+        long minutes = (totalTimeMillis % (60 * 60 * 1000)) / (60 * 1000);
 
-            StringBuilder formattedTime = new StringBuilder();
+        StringBuilder formattedTime = new StringBuilder();
 
-            if (hours > 0) {
-                formattedTime.append(hours).append("h ");
-            }
-            if (minutes > 0 || hours == 0) {
-                formattedTime.append(minutes).append("min");
-            }
+        if (hours > 0) {
+            formattedTime.append(hours).append("h ");
+        }
+        if (minutes > 0 || hours == 0) {
+            formattedTime.append(minutes).append("min");
+        }
 
-            return formattedTime.toString().trim();
+        return formattedTime.toString().trim();
     }
 
-    public double getConversionUnit(){
+    public double getConversionUnit() {
         return conversionUnit;
     }
 
-    public ArrayList<Location> getRoute(){
+    public ArrayList<Location> getRoute() {
         return route;
     }
 
-    public void setUnitOfVelocity(UnitOfVelocity unitOfVelocity){
+    public void setUnitOfVelocity(UnitOfVelocity unitOfVelocity) {
         this.unitOfVelocity = unitOfVelocity;
     }
 
-    public double calculateAverageSpeed(){
+    public double calculateAverageSpeed() {
         double avg = 0;
-        for(Double d : storedSpeedArray){
-            avg+=d;
+        for (Double d : storedSpeedArray) {
+            avg += d;
         }
-        return avg/storedSpeedArray.size();
+        return avg / storedSpeedArray.size();
     }
 
-    public long getTotalTime(){
+    public long getTotalTime() {
         return stopwatch.getTime();
     }
 
-    public void addTimePerKm(long time){
+    public void addTimePerKm(long time) {
         long minutes = (time % (60 * 60 * 1000)) / (60 * 1000);
         long seconds = (time % (60 * 1000)) / 1000; //
 
@@ -281,7 +323,7 @@ public class Session extends Service {
     }
 
 
-    public ArrayList<String> getTimePerKm(){
+    public ArrayList<String> getTimePerKm() {
         return timePerKm;
     }
 
@@ -292,7 +334,7 @@ public class Session extends Service {
     }
 
 
-    public static class StoredSession implements Serializable{
+    public static class StoredSession implements Serializable {
 
         private static final AtomicInteger idCount = new AtomicInteger(0);
         private final double totalDistance;
@@ -308,8 +350,7 @@ public class Session extends Service {
         private String sessionComment;
 
 
-
-        public StoredSession( LocalDate date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed){
+        public StoredSession(LocalDate date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed) {
             this.totalTime = time;
             this.totalDistance = distance;
             this.date = date;
@@ -318,7 +359,7 @@ public class Session extends Service {
             this.selectedSpeed = selectedSpeed;
         }
 
-        public void setSessionComment(String sessionComment){
+        public void setSessionComment(String sessionComment) {
             this.sessionComment = sessionComment;
         }
 
@@ -330,19 +371,22 @@ public class Session extends Service {
             return totalTime;
         }
 
-        public ArrayList<String> getTimePerKm(){
+        public ArrayList<String> getTimePerKm() {
             return timePerKm;
         }
 
-        public LocalDate getDate(){
+        public LocalDate getDate() {
             return date;
         }
 
-        public String getSessionComment(){
+        public String getSessionComment() {
             return sessionComment;
         }
-        public String getSelectedSpeed(){
+
+        public String getSelectedSpeed() {
             return Double.toString(selectedSpeed);
         }
     }
+
+
 }
