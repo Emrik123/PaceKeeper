@@ -237,6 +237,7 @@ public class RunnerView extends Fragment implements SensorEventListener {
     @Override
     public void onResume() {
         super.onResume();
+        runUiUpdates();
 //        mainActivity.updateSettingsRunnersView();
     }
 
