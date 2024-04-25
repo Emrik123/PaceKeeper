@@ -2,6 +2,9 @@ package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.ImageButton;
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private TextView unitTextView;
     private RunnerView runnerView;
+    private Intent serviceIntent;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -56,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
         setFeedbackPreferences();
         setUnit();
         setPickerStyle(unitOfVelocity);
+        serviceIntent = new Intent(this, Session.class) ;
+        if (!foregroundServiceRunning()) {
+            startForegroundService(serviceIntent);
+        }
+
 
         startSessionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,13 +89,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-        previousSessionsButton.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick (View v){
+        previousSessionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 displaySessionsView();
-                }
-            });
+            }
+        });
 
 
     }
@@ -107,14 +115,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void updateSettings(){
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(serviceIntent);
+    }
+
+    public void updateSettings() {
         loadSharedPreferences();
         setUnit();
         setPickerStyle(unitOfVelocity);
     }
 
-    public void updateSettingsRunnersView(){
-        if(runnerView != null){
+    public void updateSettingsRunnersView() {
+        if (runnerView != null) {
             setFeedbackPreferences();
             //runnerView.setSpeedDisplayMode(speedDisplayMode);
             runnerView.setUnitOfVelocity(unitOfVelocity);
@@ -122,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void loadSharedPreferences(){
+    public void loadSharedPreferences() {
         preferences = getSharedPreferences("preferences", MODE_PRIVATE);
         vibration = preferences.getBoolean("vibrationFeedback", true);
         audio = preferences.getBoolean("audioFeedback", true);
@@ -148,11 +162,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("SetTextI18n")
-    public void setUnit(){
+    public void setUnit() {
         unitTextView.setText(unitOfVelocity.toString());
     }
 
-    private void displaySessionsView(){
+    private void displaySessionsView() {
         SessionFragment sessionFragment = SessionFragment.newInstance(sessionManager);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, sessionFragment);
@@ -160,7 +174,19 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    private void displaySettingsView(){
+    public boolean foregroundServiceRunning() {
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+            if (ForegroundService.class.getName().equals(service.service.getClassName())) ;
+            System.out.println(true);
+            return true;
+        }
+        System.out.println(false);
+        return false;
+    }
+
+
+    private void displaySettingsView() {
         fragmentManager.beginTransaction().replace(R.id.fragment_container, SettingsFragment.class, null)
                 .addToBackStack(null)
                 .commit();
@@ -176,7 +202,6 @@ public class MainActivity extends AppCompatActivity {
         bundle.putDouble("speed", speed);
         getIntent().putExtra("feedbackHandler", feedback);
         getIntent().putExtra("unitOfVelocity", unitOfVelocity);
-
 
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -208,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public SessionManager getSessionManager(){
+    public SessionManager getSessionManager() {
         return sessionManager;
     }
 

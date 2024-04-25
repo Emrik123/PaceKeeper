@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
+import android.widget.*;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -23,10 +24,6 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.NumberPicker;
-import android.widget.TextView;
 
 import androidx.fragment.app.FragmentManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -81,6 +78,7 @@ public class RunnerView extends Fragment implements SensorEventListener {
     private float[] accelerometerValues;
     private static final float ALPHA = 0.8f;
     private OrientationHandler orientationHandler;
+    private Intent sessionIntent;
 
     private TextView desiredSpeedText;
     private ImageView speedCircle;
@@ -230,11 +228,16 @@ public class RunnerView extends Fragment implements SensorEventListener {
         start();
         desiredSpeedText.setText(desiredSpeedText.getText() + currentSession.getFormattedSelectedSpeed());
         unitOfVelocityDisplay.setText(unitOfVelocity.toString());
+
+//        sessionIntent = new Intent(getContext(), Session.class);
+//        getContext().startForegroundService(sessionIntent);
+
         return rootView;
     }
     @Override
     public void onResume() {
         super.onResume();
+        runUiUpdates();
 //        mainActivity.updateSettingsRunnersView();
     }
 

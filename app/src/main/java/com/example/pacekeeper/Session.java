@@ -1,7 +1,14 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.Service;
+import android.content.Intent;
 import android.location.Location;
+import android.os.IBinder;
+import androidx.annotation.Nullable;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -11,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Session {
+public class Session extends Service {
     private final ArrayList<Location> route;
     private final ArrayList<Double> storedSpeedArray;
     private final ArrayList<String> timePerKm;
@@ -39,6 +46,37 @@ public class Session {
         timePerKm = new ArrayList<>();
         stopwatch = new StopWatch();
         stopwatch.start();
+    }
+
+    public Session() {
+        kalmanFilter = new Kalman();
+        this.sessionDate = LocalDate.now();
+        this.isRunning = true;
+        route = new ArrayList<>();
+        storedSpeedArray = new ArrayList<>();
+        timePerKm = new ArrayList<>();
+        stopwatch = new StopWatch();
+        stopwatch.start();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        System.out.println("on start command");
+        final String CHANNELID = "Foreground Service ID";
+        NotificationChannel channel = new NotificationChannel(
+                CHANNELID,
+                CHANNELID,
+                NotificationManager.IMPORTANCE_LOW
+        );
+
+        getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        Notification.Builder notification = new Notification.Builder(getApplicationContext(), CHANNELID)
+                .setContentText("Service is running")
+                .setContentTitle("Service enabled")
+                .setSmallIcon(R.drawable.pacekeeperlogo)
+                .setOngoing(true);
+        startForeground(1, notification.build());
+        return super.onStartCommand(intent, flags, startId);
     }
 
     public String updateTime(){
@@ -245,6 +283,12 @@ public class Session {
 
     public ArrayList<String> getTimePerKm(){
         return timePerKm;
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
 
