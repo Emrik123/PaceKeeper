@@ -1,6 +1,8 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -372,4 +374,15 @@ public class RunnerView extends Fragment implements SensorEventListener {
     public SensorManager getSensorManager(){
         return this.sensorManager;
     }
+
+        public boolean foregroundServiceRunning() {
+        ActivityManager activityManager = (ActivityManager) mainActivity.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+            if (Session.class.getName().equals(service.service.getClassName())) ;
+            return true;
+        }
+        System.out.println(false);
+        return false;
+    }
+
 }

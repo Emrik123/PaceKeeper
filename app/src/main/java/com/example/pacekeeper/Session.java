@@ -5,15 +5,19 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.android.gms.location.*;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -46,6 +50,7 @@ public class Session extends Service {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
     private final long UPDATE_INTERVAL_MS = 250;
+    private TestBroadcastReceiver broadcastReceiver;
 
 
     public Session(double selectedSpeed) {
@@ -78,7 +83,12 @@ public class Session extends Service {
 //        PowerManager.WakeLock wakeLock;
 //        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 //        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "myapp:mywakelocktag");
+        broadcastReceiver = new TestBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("locationUpdate");
+        registerReceiver(broadcastReceiver, intentFilter);
         System.out.println("on start command");
+        System.out.println("current session referenced object in onStartCommand" + this.hashCode());
         selectedSpeed = intent.getDoubleExtra("speed", 10);
         System.out.println(selectedSpeed);
         final String CHANNELID = "Foreground Service ID";
@@ -107,6 +117,11 @@ public class Session extends Service {
             public void onLocationResult(@NotNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 System.out.println("Location updated in session");
+                Intent locationIntent = new Intent("locationUpdate");
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("loc", locationResult);
+                locationIntent.putExtras(bundle);
+                sendBroadcast(locationIntent);
             }
         };
         startLocationUpdates();
