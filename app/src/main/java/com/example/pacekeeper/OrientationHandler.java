@@ -4,6 +4,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -18,19 +21,31 @@ public class OrientationHandler implements SensorEventListener {
      * order to better fit the current application.
      */
 
+    private SensorUnitHandler sensorUnitHandler;
     private SensorManager sensorManager;
     private Sensor rotationSensor;
     private float[] rotationMatrix = new float[9];
     private float[] orientationAngles = new float[3];
-    private RunnerView runnerView;
     private RealMatrix matrix;
+    private HandlerThread sensorThread;
+    private Handler sensorHandler;
 
-    public OrientationHandler(RunnerView runnerView) {
-        this.runnerView = runnerView;
-        sensorManager = runnerView.getSensorManager();
-        rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_GAME);
+    public OrientationHandler(SensorManager sensorManager, SensorUnitHandler sensorUnitHandler) {
+        this.sensorUnitHandler = sensorUnitHandler;
+        this.sensorManager = sensorManager;
         matrix = new Array2DRowRealMatrix(3, 3);
+    }
+
+    public void startOrientationSensor() {
+        rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        sensorThread = new HandlerThread("Orientation Sensor");
+        sensorThread.start();
+        sensorHandler = new Handler(sensorThread.getLooper());
+        sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_GAME, sensorHandler);
+    }
+
+    public void stopOrientationSensor() {
+        sensorManager.unregisterListener(this);
     }
 
     @Override
@@ -39,9 +54,9 @@ public class OrientationHandler implements SensorEventListener {
             SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
             SensorManager.getOrientation(rotationMatrix, orientationAngles);
             updateMatrix(rotationMatrix);
-            float[] temp = runnerView.getAccelerometerValues();
+            float[] temp = sensorUnitHandler.getAccelerometer().getAccelerometerValues();
             if(temp != null){
-                transformAcceleration(runnerView.getAccelerometerValues());
+                transformAcceleration(sensorUnitHandler.getAccelerometer().getAccelerometerValues());
             }
         }
     }
@@ -63,8 +78,8 @@ public class OrientationHandler implements SensorEventListener {
                 accelerometerValues[0], accelerometerValues[1], accelerometerValues[2]
         });
         RealVector resultVector = matrix.operate(vector);
-        runnerView.setAccelerometerValues(new float[]{(float) resultVector.getEntry(0), (float) resultVector.getEntry(1),
-                (float) resultVector.getEntry(2)});
+        sensorUnitHandler.getAccelerometer().setAccelerometerValues(new float[]{(float) resultVector.getEntry(0),
+                (float) resultVector.getEntry(1), (float) resultVector.getEntry(2)});
         // transformedAcceleration[0] is east, transformedAcceleration[1] is north, transformedAcceleration[2] is vertical
     }
 
