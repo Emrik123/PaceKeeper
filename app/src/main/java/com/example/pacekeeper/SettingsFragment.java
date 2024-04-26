@@ -3,6 +3,7 @@ package com.example.pacekeeper;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.widget.*;
 import androidx.appcompat.widget.SwitchCompat;
@@ -30,6 +31,12 @@ public class SettingsFragment extends Fragment {
     private UnitOfVelocity unitOfVelocity;
     private SharedPreferences preferences;
     private ImageButton returnButton;
+    private Button soundSampleSpeedUpButton;
+    private Button soundSampleSlowDownButton;
+    private Button vibrationSampleSpeedUpButton;
+    private Button vibrationSampleSlowDownButton;
+    private AudioPlayer audioPlayer;
+    private Vibrator vibrator;
 
 
     public SettingsFragment() {
@@ -60,6 +67,12 @@ public class SettingsFragment extends Fragment {
         radioSpeedMinPerKm = rootView.findViewById(R.id.radio_min_km);
         returnButton = rootView.findViewById(R.id.return_button);
         autoSaveSessionsSwitch = rootView.findViewById(R.id.autosave_switch);
+        soundSampleSpeedUpButton = rootView.findViewById(R.id.btn_speed_up_sound);
+        soundSampleSlowDownButton = rootView.findViewById(R.id.btn_slow_down_sound);
+        vibrationSampleSpeedUpButton = rootView.findViewById(R.id.btn_speed_up_vibration);
+        vibrationSampleSlowDownButton = rootView.findViewById(R.id.btn_slow_down_vibration);
+        audioPlayer = new AudioPlayer(requireContext());
+        vibrator = new Vibrator(requireContext());
 
         loadAndSetCurrentSettings();
         setGraphicElements();
@@ -118,6 +131,11 @@ public class SettingsFragment extends Fragment {
                 getParentFragmentManager().popBackStackImmediate();
             }
         });
+
+        soundSampleSpeedUpButton.setOnClickListener(v -> audioPlayer.increaseSound());
+        soundSampleSlowDownButton.setOnClickListener(v -> audioPlayer.decreaseSound());
+        vibrationSampleSpeedUpButton.setOnClickListener(v -> vibrator.increaseVelocity());
+        vibrationSampleSlowDownButton.setOnClickListener(v -> vibrator.decreaseVelocity());
 
         return rootView;
     }

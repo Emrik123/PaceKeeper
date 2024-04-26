@@ -47,5 +47,7 @@
     <string name="add_session_comment_button">Add session comment</string>
     <string name="edit_comment_text">Add text here.</string>
     <string name="null_speed">- - : - -</string>
+    <string name="sound_samples">Sound Samples</string>
+    <string name="vibration_samples">Vibration Samples</string>
 
 </resources>

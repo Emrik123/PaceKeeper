@@ -144,6 +144,88 @@
                 android:text="@string/frequency_high" />
         </RadioGroup>
 
+        <RelativeLayout android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="horizontal">
+
+
+            <TextView
+                    android:id="@+id/sound_samples"
+                    android:layout_width="wrap_content"
+                    android:text="@string/sound_samples"
+                    android:textSize="18sp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginStart="10dp"
+            />
+            
+            <Button
+                    android:text="Speed Up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_speed_up_sound"
+                    android:layout_below="@id/sound_samples"
+                    android:layout_marginEnd="50dp"
+                    android:layout_marginStart="50dp"
+            >
+
+            </Button>
+
+            <Button
+                    android:text="Slow Down"
+                    android:id="@+id/btn_slow_down_sound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/btn_speed_up_sound"
+                    android:layout_below="@id/sound_samples"
+                    android:layout_marginEnd="50dp"
+                    android:layout_marginStart="30dp">
+
+
+            </Button>
+
+            <TextView
+                    android:id="@+id/vibration_samples"
+                    android:layout_width="wrap_content"
+                    android:text="@string/vibration_samples"
+                    android:textSize="18sp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/btn_slow_down_sound"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginStart="10dp"
+            />
+
+            <Button
+                    android:text="Speed Up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_speed_up_vibration"
+                    android:layout_below="@id/vibration_samples"
+                    android:layout_marginEnd="50dp"
+                    android:layout_marginStart="50dp"
+            >
+
+            </Button>
+
+            <Button
+                    android:text="Slow Down"
+                    android:id="@+id/btn_slow_down_vibration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/btn_speed_up_vibration"
+                    android:layout_below="@id/vibration_samples"
+                    android:layout_marginEnd="50dp"
+                    android:layout_marginStart="30dp">
+
+
+            </Button>
+
+
+        </RelativeLayout>
+
+
+
     </LinearLayout>
 
 </LinearLayout>
