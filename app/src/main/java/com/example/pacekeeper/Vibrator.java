@@ -17,8 +17,7 @@ public class Vibrator implements Serializable {
     private android.os.Vibrator vibrator;
     private VibratorManager vibratorManager;
     private final VibrationEffect increaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{150, 50, 150, 50, 150, 50, 150}, new int[]{255, 0, 255, 0, 255, 0, 255}, -1); //Creates Vibration pattern for being too slow
-    private final VibrationEffect decreaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{150, 500, 150, 500, 150}, new int[]{255, 0, 255, 0, 255},-1); //Creates Vibration pattern for being too fast
-    //private final VibrationEffect decreaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{900}, new int[]{255}, -1); //Creates Vibration pattern for being too fast
+    private final VibrationEffect decreaseSpeedVibrationPattern = VibrationEffect.createWaveform(new long[]{0, 700}, new int[]{0, 255},-1); //Creates Vibration pattern for being too fast
 
     @SuppressLint("NewApi")
     public Vibrator(Context context) {
