@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -127,9 +128,9 @@ public class RunnerView extends Fragment implements SensorEventListener {
 
         speedCircle = rootView.findViewById(R.id.speed_circle);
         desiredSpeedText = rootView.findViewById(R.id.desired_speed_text);
-        slowCircle = ContextCompat.getDrawable(requireContext(),R.drawable.circle);
-        fastCircle = ContextCompat.getDrawable(requireContext(),R.drawable.redcircle);
-        goodSpeedCircle = ContextCompat.getDrawable(requireContext(),R.drawable.greencircle);
+        slowCircle = ContextCompat.getDrawable(requireContext(), R.drawable.circle);
+        fastCircle = ContextCompat.getDrawable(requireContext(), R.drawable.redcircle);
+        goodSpeedCircle = ContextCompat.getDrawable(requireContext(), R.drawable.greencircle);
 
         sensorManager = (SensorManager) requireContext().getSystemService(Context.SENSOR_SERVICE);
         orientationHandler = new OrientationHandler(this);
@@ -197,12 +198,12 @@ public class RunnerView extends Fragment implements SensorEventListener {
             public void onClick(View v) {
                 feedback.stopFeedback();
                 stopLocationUpdates();
-                if(autosaveSession){
+                if (autosaveSession) {
                     sessionManager.add(currentSession.getSerializableSession());
                     sessionManager.storeSessionToMemory(mainActivity);
                     currentSession.killSession();
                     getParentFragmentManager().popBackStackImmediate();
-                }else{
+                } else {
                     displaySessionOverview();
                 }
             }
@@ -233,13 +234,16 @@ public class RunnerView extends Fragment implements SensorEventListener {
         desiredSpeedText.setText(desiredSpeedText.getText() + currentSession.getFormattedSelectedSpeed());
         unitOfVelocityDisplay.setText(unitOfVelocity.toString());
         hideNavigationBar();
+        setBackButtonBehavior();
         return rootView;
     }
+
     @Override
     public void onResume() {
         super.onResume();
         runUiUpdates();
         hideNavigationBar();
+        setBackButtonBehavior();
 //        mainActivity.updateSettingsRunnersView();
     }
 
@@ -255,7 +259,14 @@ public class RunnerView extends Fragment implements SensorEventListener {
         super.onDestroy();
         feedback.removeTextToSpeech();
     }
-
+    private void setBackButtonBehavior() {
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                mainActivity.moveTaskToBack(true);
+            }
+        });
+    }
     private void hideNavigationBar() {
         View decorView = getActivity().getWindow().getDecorView();
         int hideNavigation = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -271,12 +282,12 @@ public class RunnerView extends Fragment implements SensorEventListener {
 
 
     @SuppressLint("SetTextI18n")
-    public void updateUI(){
-        if(currentSession.getRunning()){
+    public void updateUI() {
+        if (currentSession.getRunning()) {
             distanceDisplay.setText(currentSession.getFormattedDistance());
-            if(currentSession.getCurrentSpeed() > LOWEST_SPEED_THRESHOLD){
+            if (currentSession.getCurrentSpeed() > LOWEST_SPEED_THRESHOLD) {
                 speedDisplay.setText(currentSession.getFormattedSpeed());
-            }else{
+            } else {
                 speedDisplay.setText(getResources().getString(R.string.null_speed));
             }
             double velocity = currentSession.getCurrentSpeed();
@@ -322,20 +333,21 @@ public class RunnerView extends Fragment implements SensorEventListener {
     }
 
 
-    private void displaySettingsView(){
+    private void displaySettingsView() {
         fragmentManager.beginTransaction().add(R.id.fragment_container, SettingsFragment.class, null)
                 .addToBackStack(null)
                 .commit();
     }
 
-    public void setAutosaveSession(boolean autosaveSession){
+    public void setAutosaveSession(boolean autosaveSession) {
         this.autosaveSession = autosaveSession;
     }
-    public Session getCurrentSession(){
+
+    public Session getCurrentSession() {
         return currentSession;
     }
 
-    public TextView getSpeedDisplay(){
+    public TextView getSpeedDisplay() {
         return speedDisplay;
     }
 
@@ -365,15 +377,15 @@ public class RunnerView extends Fragment implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    public void setAccelerometerValues(float[] values){
+    public void setAccelerometerValues(float[] values) {
         accelerometerValues = values;
     }
 
-    public float[] getAccelerometerValues(){
+    public float[] getAccelerometerValues() {
         return accelerometerValues;
     }
 
-    public SensorManager getSensorManager(){
+    public SensorManager getSensorManager() {
         return this.sensorManager;
     }
 }
