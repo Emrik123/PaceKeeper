@@ -232,18 +232,21 @@ public class RunnerView extends Fragment implements SensorEventListener {
         start();
         desiredSpeedText.setText(desiredSpeedText.getText() + currentSession.getFormattedSelectedSpeed());
         unitOfVelocityDisplay.setText(unitOfVelocity.toString());
+        hideNavigationBar();
         return rootView;
     }
     @Override
     public void onResume() {
         super.onResume();
         runUiUpdates();
+        hideNavigationBar();
 //        mainActivity.updateSettingsRunnersView();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        displayNavigationBar();
         interfaceUpdateHandler.removeCallbacks(uiUpdates);
     }
 
@@ -252,6 +255,20 @@ public class RunnerView extends Fragment implements SensorEventListener {
         super.onDestroy();
         feedback.removeTextToSpeech();
     }
+
+    private void hideNavigationBar() {
+        View decorView = getActivity().getWindow().getDecorView();
+        int hideNavigation = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        int immersive = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        decorView.setSystemUiVisibility(hideNavigation | immersive);
+    }
+
+    private void displayNavigationBar() {
+        View decorView = getActivity().getWindow().getDecorView();
+        int visible = View.SYSTEM_UI_FLAG_VISIBLE;
+        decorView.setSystemUiVisibility(visible);
+    }
+
 
     @SuppressLint("SetTextI18n")
     public void updateUI(){
