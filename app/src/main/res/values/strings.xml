@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">testApp</string>
+    <string name="app_name">PaceKeeper</string>
     <string name="viewString">Current speed</string>
     <string name="viewString2">km/h</string>
     <string name="reachedSpeed">You\'ve reached the desired speed!</string>
