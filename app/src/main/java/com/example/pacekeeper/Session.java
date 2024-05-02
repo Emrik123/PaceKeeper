@@ -2,13 +2,12 @@ package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
 import android.location.Location;
-import org.apache.commons.lang3.time.DateUtils;
+import com.google.android.gms.location.LocationResult;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Session {
@@ -97,18 +96,17 @@ public class Session {
         return new StoredSession(getSessionDate(), getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed);
     }
 
-    public void updateLocation(Location location, int size, float[] a) {
+    public void updateLocation(LocationResult location, float[] a) {
         if(isRunning) {
             Location lastLocation = null;
             if(currentLocation != null) {
                 lastLocation = currentLocation;
             }
-            this.currentLocation = location;
+            this.currentLocation = location.getLocations().get(location.getLocations().size() - 1);
             route.add(currentLocation);
             double tempTime;
             if(timeDelta != 0){
                 tempTime = stopwatch.getTime() - timeDelta;
-                tempTime /= size;
             }else{
                 tempTime = 0;
             }

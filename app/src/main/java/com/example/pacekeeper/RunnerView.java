@@ -1,25 +1,12 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-
 import android.os.Handler;
 import android.os.Looper;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,14 +14,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -62,7 +44,7 @@ public class RunnerView extends Fragment {
     private Bundle savedInstance;
     private MediaPlayer tooSlowAlert;
     private MediaPlayer tooFastAlert;
-    private Session currentSession;
+    protected static Session currentSession;
     private ArrayList<Session> sessionHistory; // For storing session when you stop a current one, also for loading up existing sessions from file.
     private FeedbackHandler feedback;
     private UnitOfVelocity unitOfVelocity;
@@ -117,7 +99,7 @@ public class RunnerView extends Fragment {
         Intent intent = requireActivity().getIntent();
         interfaceUpdateHandler = new Handler(Looper.getMainLooper());
 
-        sensorUnitHandler = new SensorUnitHandler(this);
+        sensorUnitHandler = new SensorUnitHandler();
 
         speedCircle = rootView.findViewById(R.id.speed_circle);
         desiredSpeedText = rootView.findViewById(R.id.desired_speed_text);
@@ -163,7 +145,6 @@ public class RunnerView extends Fragment {
                 stopButton.setVisibility(View.INVISIBLE);
                 settingsButton.setVisibility(View.INVISIBLE);
                 currentSession.continueSession();
-                sensorUnitHandler.startSensorThreads();
                 feedback.runFeedback(currentSession.getSelectedSpeed());
             }
         });
@@ -195,7 +176,11 @@ public class RunnerView extends Fragment {
             @Override
             public void run() {
                 updateUI();
-                interfaceUpdateHandler.postDelayed(this, sensorUnitHandler.getGPS().getUpdateInterval());
+                if(sensorUnitHandler.getGPS()!= null){
+                    interfaceUpdateHandler.postDelayed(this, sensorUnitHandler.getGPS().getUpdateInterval());
+                }else{
+                    interfaceUpdateHandler.postDelayed(this, 1000);
+                }
             }
         };
 
@@ -252,7 +237,9 @@ public class RunnerView extends Fragment {
 
     private void start() {
         currentSession = new Session(speed);
-        sensorUnitHandler.startSensorThreads();
+        sensorUnitHandler.initBroadcaster(currentSession);
+        Intent intent = new Intent(getContext(), SensorUnitHandler.class);
+        requireContext().startForegroundService(intent);
         feedback.setRunning(currentSession.getRunning());
         feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
         currentSession.setUnitOfVelocity(unitOfVelocity);
