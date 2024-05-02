@@ -55,7 +55,7 @@ public class RunnerView extends Fragment {
     private FragmentManager fragmentManager;
     private Handler interfaceUpdateHandler;
     private Runnable uiUpdates;
-    private SensorUnitHandler sensorUnitHandler;
+//    private SensorUnitHandler sensorUnitHandler;
     private SessionBroadcastReceiver broadcastReceiver;
 
     private TextView desiredSpeedText;
@@ -101,7 +101,7 @@ public class RunnerView extends Fragment {
         Intent intent = requireActivity().getIntent();
         interfaceUpdateHandler = new Handler(Looper.getMainLooper());
 
-        sensorUnitHandler = new SensorUnitHandler();
+//        sensorUnitHandler = new SensorUnitHandler();
 
         speedCircle = rootView.findViewById(R.id.speed_circle);
         desiredSpeedText = rootView.findViewById(R.id.desired_speed_text);
@@ -135,7 +135,7 @@ public class RunnerView extends Fragment {
                 settingsButton.setVisibility(View.VISIBLE);
                 currentSession.pauseSession();
                 feedback.stopFeedback();
-                sensorUnitHandler.stopSensorThreads();
+//                sensorUnitHandler.stopSensorThreads();
             }
         });
 
@@ -162,7 +162,7 @@ public class RunnerView extends Fragment {
             @Override
             public void onClick(View v) {
                 feedback.stopFeedback();
-                sensorUnitHandler.stopSensorThreads();
+//                sensorUnitHandler.stopSensorThreads();
                 if(autosaveSession){
                     sessionManager.add(currentSession.getSerializableSession());
                     sessionManager.storeSessionToMemory(mainActivity);
@@ -178,11 +178,12 @@ public class RunnerView extends Fragment {
             @Override
             public void run() {
                 updateUI();
-                if(sensorUnitHandler.getGPS()!= null){
-                    interfaceUpdateHandler.postDelayed(this, sensorUnitHandler.getGPS().getUpdateInterval());
-                }else{
-                    interfaceUpdateHandler.postDelayed(this, 1000);
-                }
+//                if(sensorUnitHandler.getGPS()!= null){
+//                    interfaceUpdateHandler.postDelayed(this, sensorUnitHandler.getGPS().getUpdateInterval());
+//                }else{
+//                    interfaceUpdateHandler.postDelayed(this, 1000);
+//                }
+                interfaceUpdateHandler.postDelayed(this,250);
             }
         };
 
