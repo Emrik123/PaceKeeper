@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -70,14 +69,6 @@ public class SensorUnitHandler extends Service {
         sendBroadcast(locationIntent);
     }
 
-//    public void initBroadcaster(Session session){
-//        if(sessionBroadcastReceiver == null){
-//            sessionBroadcastReceiver = new SessionBroadcastReceiver(session);
-//        }else{
-//            sessionBroadcastReceiver.setSession(session);
-//        }
-//    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -96,14 +87,6 @@ public class SensorUnitHandler extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground(1, getNotification());
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction("locationUpdate");
-//        if(sessionBroadcastReceiver != null){
-//            registerReceiver(sessionBroadcastReceiver, intentFilter);
-//        }else{
-//            sessionBroadcastReceiver = new SessionBroadcastReceiver(null);
-//            registerReceiver(sessionBroadcastReceiver, intentFilter);
-//        }
         return START_STICKY;
     }
 

@@ -6,7 +6,6 @@ import android.content.IntentFilter;
 import android.location.Location;
 import com.google.android.gms.location.LocationResult;
 import org.apache.commons.lang3.time.StopWatch;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
