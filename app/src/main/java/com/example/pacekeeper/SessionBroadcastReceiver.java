@@ -20,6 +20,7 @@ public class SessionBroadcastReceiver extends BroadcastReceiver {
         LocationResult result = bundle.getParcelable("loc");
         float[] a = bundle.getFloatArray("accel");
         session.updateLocation(result, a);
+        System.out.println("Received message");
 //        if(session == null){
 //            session = RunnerView.currentSession;
 //        }else{

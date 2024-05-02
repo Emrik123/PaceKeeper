@@ -1,10 +1,9 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.IntentFilter;
 import android.location.Location;
-import android.view.View;
 import com.google.android.gms.location.LocationResult;
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -30,18 +29,22 @@ public class Session {
     private int kmDistance = 1000;
     private final Kalman kalmanFilter;
     private long timeDelta;
+    private SessionBroadcastReceiver broadcastReceiver;
+    private Context context;
 
-    public Session(double selectedSpeed){
+    public Session(double selectedSpeed, Context context){
         kalmanFilter = new Kalman();
         this.sessionDate = LocalDate.now();
         this.selectedSpeed = selectedSpeed;
         this.isRunning = true;
         route = new ArrayList<>();
+        this.context = context;
         storedSpeedArray = new ArrayList<>();
         timePerKm = new ArrayList<>();
         stopwatch = new StopWatch();
         stopwatch.start();
-
+        broadcastReceiver = new SessionBroadcastReceiver(this);
+        initializeReceiver();
     }
 
     public String updateTime(){
@@ -53,6 +56,12 @@ public class Session {
 
         @SuppressLint("DefaultLocale") String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         return timeString;
+    }
+
+    public void initializeReceiver(){
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("locationUpdate");
+        context.registerReceiver(broadcastReceiver, intentFilter);
     }
 
     public void updateSessionData() {

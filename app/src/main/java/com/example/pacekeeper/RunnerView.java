@@ -101,7 +101,7 @@ public class RunnerView extends Fragment {
         Intent intent = requireActivity().getIntent();
         interfaceUpdateHandler = new Handler(Looper.getMainLooper());
 
-//        sensorUnitHandler = new SensorUnitHandler();
+        sensorUnitHandler = new SensorUnitHandler();
 
         speedCircle = rootView.findViewById(R.id.speed_circle);
         desiredSpeedText = rootView.findViewById(R.id.desired_speed_text);
@@ -238,12 +238,8 @@ public class RunnerView extends Fragment {
     }
 
     private void start() {
-        currentSession = new Session(speed);
+        currentSession = new Session(speed, getContext());
 //        sensorUnitHandler.initBroadcaster(currentSession);
-        broadcastReceiver = new SessionBroadcastReceiver(currentSession);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("locationUpdate");
-        getActivity().registerReceiver(broadcastReceiver, intentFilter);
         Intent intent = new Intent(getContext(), SensorUnitHandler.class);
         requireContext().startForegroundService(intent);
         feedback.setRunning(currentSession.getRunning());
