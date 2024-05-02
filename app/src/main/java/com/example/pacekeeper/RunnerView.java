@@ -2,6 +2,7 @@ package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -44,7 +45,7 @@ public class RunnerView extends Fragment {
     private Bundle savedInstance;
     private MediaPlayer tooSlowAlert;
     private MediaPlayer tooFastAlert;
-    protected static Session currentSession;
+    private Session currentSession;
     private ArrayList<Session> sessionHistory; // For storing session when you stop a current one, also for loading up existing sessions from file.
     private FeedbackHandler feedback;
     private UnitOfVelocity unitOfVelocity;
@@ -55,6 +56,7 @@ public class RunnerView extends Fragment {
     private Handler interfaceUpdateHandler;
     private Runnable uiUpdates;
     private SensorUnitHandler sensorUnitHandler;
+    private SessionBroadcastReceiver broadcastReceiver;
 
     private TextView desiredSpeedText;
     private ImageView speedCircle;
@@ -238,6 +240,10 @@ public class RunnerView extends Fragment {
     private void start() {
         currentSession = new Session(speed);
 //        sensorUnitHandler.initBroadcaster(currentSession);
+        broadcastReceiver = new SessionBroadcastReceiver(currentSession);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("locationUpdate");
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
         Intent intent = new Intent(getContext(), SensorUnitHandler.class);
         requireContext().startForegroundService(intent);
         feedback.setRunning(currentSession.getRunning());

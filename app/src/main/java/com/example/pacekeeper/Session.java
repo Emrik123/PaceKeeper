@@ -1,7 +1,10 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.location.Location;
+import android.view.View;
 import com.google.android.gms.location.LocationResult;
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -38,6 +41,7 @@ public class Session {
         timePerKm = new ArrayList<>();
         stopwatch = new StopWatch();
         stopwatch.start();
+
     }
 
     public String updateTime(){

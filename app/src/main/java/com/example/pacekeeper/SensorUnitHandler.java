@@ -19,7 +19,6 @@ public class SensorUnitHandler extends Service {
     private GPS gps;
     private OrientationHandler orientationHandler;
     private Context context;
-    private SessionBroadcastReceiver sessionBroadcastReceiver;
 
     public SensorUnitHandler() {
         super();
@@ -97,14 +96,14 @@ public class SensorUnitHandler extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground(1, getNotification());
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("locationUpdate");
-        if(sessionBroadcastReceiver != null){
-            registerReceiver(sessionBroadcastReceiver, intentFilter);
-        }else{
-            sessionBroadcastReceiver = new SessionBroadcastReceiver(null);
-            registerReceiver(sessionBroadcastReceiver, intentFilter);
-        }
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("locationUpdate");
+//        if(sessionBroadcastReceiver != null){
+//            registerReceiver(sessionBroadcastReceiver, intentFilter);
+//        }else{
+//            sessionBroadcastReceiver = new SessionBroadcastReceiver(null);
+//            registerReceiver(sessionBroadcastReceiver, intentFilter);
+//        }
         return START_STICKY;
     }
 

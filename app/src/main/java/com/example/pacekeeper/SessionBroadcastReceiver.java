@@ -19,14 +19,15 @@ public class SessionBroadcastReceiver extends BroadcastReceiver {
         Bundle bundle = intent.getExtras();
         LocationResult result = bundle.getParcelable("loc");
         float[] a = bundle.getFloatArray("accel");
-        if(session == null){
-            session = RunnerView.currentSession;
-        }else{
-            session.updateLocation(result, a);
-        }
-        if(session != null){
-            session.updateLocation(result, a);
-        }
+        session.updateLocation(result, a);
+//        if(session == null){
+//            session = RunnerView.currentSession;
+//        }else{
+//            session.updateLocation(result, a);
+//        }
+//        if(session != null){
+//            session.updateLocation(result, a);
+//        }
     }
 
     public void setSession(Session session){
