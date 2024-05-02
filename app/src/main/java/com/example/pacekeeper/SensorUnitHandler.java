@@ -71,13 +71,13 @@ public class SensorUnitHandler extends Service {
         sendBroadcast(locationIntent);
     }
 
-    public void initBroadcaster(Session session){
-        if(sessionBroadcastReceiver == null){
-            sessionBroadcastReceiver = new SessionBroadcastReceiver(session);
-        }else{
-            sessionBroadcastReceiver.setSession(session);
-        }
-    }
+//    public void initBroadcaster(Session session){
+//        if(sessionBroadcastReceiver == null){
+//            sessionBroadcastReceiver = new SessionBroadcastReceiver(session);
+//        }else{
+//            sessionBroadcastReceiver.setSession(session);
+//        }
+//    }
 
     @Override
     public void onCreate() {
