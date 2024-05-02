@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
         mainActivity = this;
         sessionManager = new SessionManager();
         sessionManager.readFile(this);
-        loadSharedPreferences();
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
         startSessionButton = findViewById(R.id.start_button);
@@ -53,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         feedback = new FeedbackHandler(getApplicationContext());
         previousSessionsButton = findViewById(R.id.previous_sessions_button);
         unitTextView = findViewById(R.id.unitTextView);
+        loadSharedPreferences();
         setFeedbackPreferences();
         setUnit();
         setPickerStyle(unitOfVelocity);
@@ -80,13 +80,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-        previousSessionsButton.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick (View v){
+        previousSessionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 displaySessionsView();
-                }
-            });
+            }
+        });
 
 
     }
@@ -107,14 +106,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void updateSettings(){
+    public void updateSettings() {
         loadSharedPreferences();
         setUnit();
         setPickerStyle(unitOfVelocity);
     }
 
-    public void updateSettingsRunnersView(){
-        if(runnerView != null){
+    public void updateSettingsRunnersView() {
+        if (runnerView != null) {
             setFeedbackPreferences();
             //runnerView.setSpeedDisplayMode(speedDisplayMode);
             runnerView.setUnitOfVelocity(unitOfVelocity);
@@ -122,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void loadSharedPreferences(){
+    public void loadSharedPreferences() {
         preferences = getSharedPreferences("preferences", MODE_PRIVATE);
         vibration = preferences.getBoolean("vibrationFeedback", true);
         audio = preferences.getBoolean("audioFeedback", true);
@@ -140,6 +139,20 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("Unit set to: " + unitOfVelocity);
     }
 
+    private void saveSharedPreferences() {
+        SharedPreferences.Editor preferenceEditor;
+        preferenceEditor = preferences.edit();
+        if (unitOfVelocity == UnitOfVelocity.KM_PER_HOUR) {
+            preferenceEditor.putInt("leftNumberPickerValueKmH", leftNPicker.getValue());
+            preferenceEditor.putInt("rightNumberPickerValueKmH", rightNPicker.getValue());
+        } else {
+            preferenceEditor.putInt("leftNumberPickerValueMinKm", leftNPicker.getValue());
+            preferenceEditor.putInt("rightNumberPickerValueMinKm", rightNPicker.getValue());
+        }
+        preferenceEditor.apply();
+    }
+
+
     public void setFeedbackPreferences() {
         feedback.setVibrationAllowed(vibration);
         feedback.setAudioAllowed(audio);
@@ -148,11 +161,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("SetTextI18n")
-    public void setUnit(){
+    public void setUnit() {
         unitTextView.setText(unitOfVelocity.toString());
     }
 
-    private void displaySessionsView(){
+    private void displaySessionsView() {
         SessionFragment sessionFragment = SessionFragment.newInstance(sessionManager);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, sessionFragment);
@@ -160,7 +173,8 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    private void displaySettingsView(){
+    private void displaySettingsView() {
+        saveSharedPreferences();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, SettingsFragment.class, null)
                 .addToBackStack(null)
                 .commit();
@@ -176,7 +190,6 @@ public class MainActivity extends AppCompatActivity {
         bundle.putDouble("speed", speed);
         getIntent().putExtra("feedbackHandler", feedback);
         getIntent().putExtra("unitOfVelocity", unitOfVelocity);
-
 
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -195,6 +208,8 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.dot).setVisibility(View.INVISIBLE);
                 findViewById(R.id.minutes_tag).setVisibility(View.VISIBLE);
                 findViewById(R.id.seconds_tag).setVisibility(View.VISIBLE);
+                leftNPicker.setValue(preferences.getInt("leftNumberPickerValueMinKm", 1));
+                rightNPicker.setValue(preferences.getInt("rightNumberPickerValueMinKm", 0));
                 break;
             case KM_PER_HOUR:
                 leftNPicker.setMinValue(4);
@@ -204,11 +219,13 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.dot).setVisibility(View.VISIBLE);
                 findViewById(R.id.minutes_tag).setVisibility(View.INVISIBLE);
                 findViewById(R.id.seconds_tag).setVisibility(View.INVISIBLE);
+                leftNPicker.setValue(preferences.getInt("leftNumberPickerValueKmH", 4));
+                rightNPicker.setValue(preferences.getInt("rightNumberPickerValueKmH", 0));
                 break;
         }
     }
 
-    public SessionManager getSessionManager(){
+    public SessionManager getSessionManager() {
         return sessionManager;
     }
 
