@@ -5,10 +5,13 @@
     android:id="@+id/fragment_blank"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1C8399"
+    android:background="@drawable/runnerview"
     android:visibility="visible"
     tools:context=".MainActivity"
-    tools:visibility="visible">
+    tools:visibility="visible"
+    android:clickable="true"
+    >
+
 <!--For some reason all horizontal placement is set using orientation vertical and vice versa for vertical-->
     <!--I don't know why-->
 
@@ -17,14 +20,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
+        app:layout_constraintGuide_percent="0.14" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_horizontal_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.00" />
+        app:layout_constraintGuide_percent="0.05" />
 
     <!--This is only used for the pause button-->
     <androidx.constraintlayout.widget.Guideline
@@ -36,115 +39,224 @@
 
     <ImageView
         android:id="@+id/timeLogo"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_icon"
-
-        android:layout_marginTop="30dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="16dp"
         android:src="@drawable/stopwatch"
-        android:contentDescription="Stopwatch" />
+        app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/settingsButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:backgroundTint="@color/transparent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/settinglogo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/time_text"
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/timeLogo"
-        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
+        android:layout_marginStart="20dp"
         android:fontFamily="monospace"
         android:text="@string/timeS"
         android:textAlignment="textStart"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="48sp"
-        android:textStyle="bold" />
+        android:textColor="#2B2D42"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
+        app:layout_constraintTop_toTopOf="@id/timeLogo" />
 
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/time"
+        android:textColor="#444054"
+        android:textSize="40sp"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
         app:layout_constraintTop_toBottomOf="@+id/time_text"
-        android:text="@string/time"
-        android:textColor="#FFFFFF"
-        android:textSize="60sp"
-        android:visibility="visible"
         tools:visibility="visible" />
 
     <ImageView
         android:id="@+id/distanceLogo"
-        android:layout_width="113dp"
-        android:layout_height="50dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/distancelog"
         app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_icon"
-        app:layout_constraintTop_toBottomOf="@+id/time"
-        android:src="@drawable/distancelog" />
+        app:layout_constraintTop_toBottomOf="@+id/time" />
+
 
     <TextView
         android:id="@+id/distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
-        app:layout_constraintTop_toBottomOf="@+id/distanceLogo"
+        android:layout_marginStart="20dp"
         android:text="@string/distance"
         android:textAlignment="textStart"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="48sp"
-        android:textStyle="bold" />
+        android:textColor="#2B2D42"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
+        app:layout_constraintTop_toTopOf="@+id/distanceLogo" />
 
     <TextView
         android:id="@+id/distanceDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="@string/distanceS"
+        android:textColor="#444054"
+        android:textSize="40sp"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
         app:layout_constraintTop_toBottomOf="@+id/distance"
-        android:text="@string/distanceS"
-        android:textColor="#FFFFFF"
-        android:textSize="60sp"
-        android:visibility="visible"
         tools:visibility="visible" />
 
     <ImageView
         android:id="@+id/speedLogo"
-        android:layout_width="113dp"
+        android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="36dp"
+        android:src="@drawable/pngwing"
         app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_icon"
-        app:layout_constraintTop_toBottomOf="@+id/distanceDisplay"
-        android:src="@drawable/pngwing" />
+        app:layout_constraintTop_toBottomOf="@+id/distanceDisplay" />
 
     <TextView
         android:id="@+id/speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
-        app:layout_constraintTop_toBottomOf="@+id/speedLogo"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="24dp"
         android:text="@string/speed"
         android:textAlignment="textStart"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#2B2D42"
         android:textSize="48sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/relative_layout"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/relative_layout"
+        app:layout_constraintTop_toBottomOf="@+id/distanceDisplay" />
 
-    <TextView
-        android:id="@+id/speedDisplay"
+    <RelativeLayout
+        android:id="@+id/relative_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_text"
-        app:layout_constraintTop_toBottomOf="@+id/speed"
-        android:text="@string/distanceS"
-        android:textColor="#FFFFFF"
-        android:textSize="60sp"
-        android:visibility="visible"
-        tools:visibility="visible" />
+        android:layout_marginBottom="60dp"
+        android:layout_marginTop="60dp"
+
+        app:layout_constraintTop_toBottomOf="@id/speed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/pauseButtonLogo">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:id="@+id/speedDisplay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/distanceS"
+                android:textColor="#444054"
+                android:textSize="40sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/unit_of_velocity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/unit_of_velocity"
+                android:textColor="#444054"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="@id/speedDisplay"
+                app:layout_constraintEnd_toEndOf="@id/speedDisplay"
+                app:layout_constraintTop_toBottomOf="@id/speedDisplay"
+               />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:layout_centerInParent="true"
+            android:id="@+id/speed_circle"
+            android:layout_width="260dp"
+            android:layout_height="260dp"
+            android:background="@drawable/circle" />
+
+
+    </RelativeLayout>
+
 
 
     <ImageButton
         android:id="@+id/pauseButtonLogo"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:background="@drawable/round_button"
+        android:scaleType="centerCrop"
         android:src="@drawable/pauselogo"
+        app:layout_constraintBottom_toBottomOf="@+id/guideline_vertical_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageButton
+        android:id="@+id/playButtonLogo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/round_button"
+        android:scaleType="centerCrop"
+        android:src="@drawable/playlogo"
+        app:layout_constraintBottom_toBottomOf="@+id/guideline_vertical_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageButton
+        android:id="@+id/stopButtonLogo"
+        android:layout_width="57dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="56dp"
+        android:background="@drawable/round_button"
+        android:scaleType="centerCrop"
+        android:src="@drawable/stoplogo"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/pauseButtonLogo"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/desired_speed_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:text="Desired speed:"
+        android:textColor="#191919"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/guideline_vertical_icon"
-        android:scaleType="centerCrop"
-        android:background="@drawable/round_button"
-       />
-
+        app:layout_constraintBottom_toTopOf="@+id/relative_layout"
+        app:layout_constraintTop_toBottomOf="@id/speed"
+ />
 </androidx.constraintlayout.widget.ConstraintLayout>

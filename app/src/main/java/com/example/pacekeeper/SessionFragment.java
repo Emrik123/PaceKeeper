@@ -1,17 +1,24 @@
 package com.example.pacekeeper;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +35,14 @@ public class SessionFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private SessionManager sessionManager;
+    LinearLayout sessionContainer;
+    private Runnable uiPopulation;
+
+
+    View sessionView;
+    Handler uiHandler;
+
 
     public SessionFragment() {
         // Required empty public constructor
@@ -37,19 +52,18 @@ public class SessionFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment SessionFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SessionFragment newInstance(String param1, String param2) {
+    public static SessionFragment newInstance(SessionManager sessionManager) {
         SessionFragment fragment = new SessionFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
+        fragment.setSessionManager(sessionManager);
+
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,44 +77,148 @@ public class SessionFragment extends Fragment {
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        uiHandler = new Handler(Looper.getMainLooper());
         View rootView = inflater.inflate(R.layout.fragment_session, container, false);
-
         ImageButton returnButton = rootView.findViewById(R.id.return_button);
-        ImageButton expandButton =rootView.findViewById(R.id.expand_button);
-        TextView allKmInSession = rootView.findViewById(R.id.detail_text_view_km);
-        TextView routeText = rootView.findViewById(R.id.detail_text_view_route);
-        ImageView routeAsImage = rootView.findViewById(R.id.route_image);
-        TextView sessionCommentTitle = rootView.findViewById(R.id.detail_text_view_session_comment_title);
-        TextView sessionComment = rootView.findViewById(R.id.detail_text_view_session_comment_text);
-        expandButton.setOnClickListener(new View.OnClickListener() {
+        sessionContainer = rootView.findViewById(R.id.session_layout);
+
+
+        uiPopulation = new Runnable() {
             @Override
-            public void onClick(View v) {
-                if (allKmInSession.getVisibility() == View.VISIBLE) {
-                    allKmInSession.setVisibility(View.GONE);
-                    routeText.setVisibility(View.GONE);
-                    routeAsImage.setVisibility(View.GONE);
-                    sessionCommentTitle.setVisibility(View.GONE);
-                    sessionComment.setVisibility(View.GONE);
-                } else {
-                    allKmInSession.setVisibility(View.VISIBLE);
-                    routeText.setVisibility(View.VISIBLE);
-                    routeAsImage.setVisibility(View.VISIBLE);
-                    sessionCommentTitle.setVisibility(View.VISIBLE);
-                    sessionComment.setVisibility(View.VISIBLE);
-                }
+            public void run() {
+                updateUI();
             }
-        });
+        };
+            populateUI();
+
 
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sessionManager.storeSessionToMemory(requireContext());
                 requireActivity().onBackPressed();
             }
         });
 
         return rootView;
     }
+
+    public void populateUI(){
+        uiHandler.post(uiPopulation);
+
+    }
+
+    private void updateUI() {
+        List<Session.StoredSession> sessionsList = sessionManager.getSavedSessions();
+
+        if(sessionsList!=null) {
+            for (Session.StoredSession session : sessionsList) {
+
+                sessionView = LayoutInflater.from(getContext()).inflate(R.layout.session_item, null);
+                ImageButton compressButton = sessionView.findViewById(R.id.compress_button);
+                ImageButton  expandButton = sessionView.findViewById(R.id.expand_button);
+                TextView sessionComment = sessionView.findViewById(R.id.detail_text_view_session_comment_text);
+                TextView sessionCommentTitle = sessionView.findViewById(R.id.detail_text_view_session_comment_title);
+                ImageView routeAsImage = sessionView.findViewById(R.id.route_image);
+
+                Button saveCommentButton = sessionView.findViewById(R.id.save_comment_button);
+                EditText editCommentText = sessionView.findViewById(R.id.edit_comment);
+                ImageButton editCommentIcon = sessionView.findViewById(R.id.edit_comment_icon);
+
+                TextView sessionOverview = sessionView.findViewById(R.id.summary_text_view1);
+                TextView allKmInSession = sessionView.findViewById(R.id.detail_text_view_km);
+                TextView routeText = sessionView.findViewById(R.id.detail_text_view_route);
+
+                String formattedDistance = String.format(Locale.forLanguageTag("Swedish"), "%.1f", session.getTotalDistance() / 1000);
+
+                sessionOverview.setText(session.getDate() + "|" + session.getTotalTime() + "|" + formattedDistance + " km");
+                StringBuilder allKmTime = new StringBuilder();
+                if (session.getTimePerKm() != null) {
+                    for (int i = 0; i < session.getTimePerKm().size(); i++) {
+                        allKmTime.append("km ").append(i + 1).append(" ").append(session.getTimePerKm().get(i)).append("\n ");
+                    }
+                    allKmInSession.setText(allKmTime);
+                }
+                if (session.getSessionComment() != null) {
+                    sessionComment.setText(session.getSessionComment());
+                }
+
+                // routeText.setText(session.getRoute());
+                // routeAsImage.setImageResource(session.getRouteImage());
+
+
+                expandButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (allKmInSession.getVisibility() == View.GONE) {
+                            editCommentIcon.setVisibility(View.VISIBLE);
+                            allKmInSession.setVisibility(View.VISIBLE);
+                            routeText.setVisibility(View.VISIBLE);
+                            routeAsImage.setVisibility(View.VISIBLE);
+                            sessionCommentTitle.setVisibility(View.VISIBLE);
+                            if (session.getSessionComment() != null) {
+                                sessionComment.setVisibility(View.VISIBLE);
+                            }
+                            expandButton.setVisibility(View.GONE);
+                            compressButton.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+
+                compressButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (allKmInSession.getVisibility() == View.VISIBLE) {
+                            allKmInSession.setVisibility(View.GONE);
+                            routeText.setVisibility(View.GONE);
+                            routeAsImage.setVisibility(View.GONE);
+                            sessionCommentTitle.setVisibility(View.GONE);
+                            sessionComment.setVisibility(View.GONE);
+                            expandButton.setVisibility(View.VISIBLE);
+                            compressButton.setVisibility(View.GONE);
+                        }
+                    }
+                });
+
+                editCommentIcon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editCommentText.setVisibility(View.VISIBLE);
+                        saveCommentButton.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                saveCommentButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        session.setSessionComment(String.valueOf(editCommentText.getText()));
+                        editCommentText.setVisibility(View.GONE);
+                        saveCommentButton.setVisibility(View.GONE);
+
+                    }
+                });
+
+
+                sessionContainer.addView(sessionView);
+            }
+
+        }
+
+    }
+
+
+
+
+    public void setSessionManager(SessionManager sessionManager){
+        if(this.sessionManager == null && sessionManager != null){
+            this.sessionManager = sessionManager;
+        }
+    }
+
+
+
 }

@@ -1,44 +1,24 @@
 package com.example.pacekeeper;
 
-import static com.example.pacekeeper.R.*;
-
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Location;
-import android.media.AudioAttributes;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,48 +26,59 @@ import java.util.TimerTask;
  * create an instance of this fragment.
  */
 public class RunnerView extends Fragment {
+    private MainActivity mainActivity;
+    private SessionManager sessionManager;
     private NumberPicker speedInput;
     private TextView speedDisplay;
     private TextView timeDisplay;
     private TextView distanceDisplay;
     private ImageButton pauseButton;
-    private LocationRequest locationRequest;
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private LocationCallback locationCallback;
-    private Kalman kalman;
+    private ImageButton resumeButton;
+    private ImageButton stopButton;
+    private ImageButton settingsButton;
     private double speed;
-    private final double UPDATE_INTERVAL_MS = 500;
-    private final double MEASUREMENT_NOISE_M = 5;
-    private final double ACCEL_NOISE_MS = 0.1;
+    private final double LOWEST_SPEED_THRESHOLD = 0.5;
+    private final float X_OFFSET = 0.0455f;
+    private final float Y_OFFSET = 0.2534f;
+    //private final long UPDATE_INTERVAL_TIMER_MS = 1000; Ignore if not used
     private Bundle savedInstance;
     private MediaPlayer tooSlowAlert;
     private MediaPlayer tooFastAlert;
     private Session currentSession;
     private ArrayList<Session> sessionHistory; // For storing session when you stop a current one, also for loading up existing sessions from file.
     private FeedbackHandler feedback;
+    private UnitOfVelocity unitOfVelocity;
+    private boolean autosaveSession;
+    private int kmDistance;
+    private String kmTime;
+    private FragmentManager fragmentManager;
+    private Handler interfaceUpdateHandler;
+    private Runnable uiUpdates;
+    private TextView desiredSpeedText;
+    private ImageView speedCircle;
+    private Drawable slowCircle;
+    private Drawable fastCircle;
+    private Drawable goodSpeedCircle;
 
     public RunnerView() {
-        // Kommer att fixa ett fungerande filter när jag förstått mig på den här skiten
-        // Ignore for now
-        kalman = new Kalman(UPDATE_INTERVAL_MS, MEASUREMENT_NOISE_M, ACCEL_NOISE_MS);
         sessionHistory = new ArrayList<>();
-
+        kmDistance = 1000;
     }
 
-    public static RunnerView newInstance(int speed) {
+
+    public static RunnerView newInstance(MainActivity mainActivity, double speed, boolean autoSaveSession) {
         RunnerView fragment = new RunnerView();
         Bundle args = new Bundle();
         // You can pass arguments if needed
-        args.putInt("speed", speed);
-
+        args.putDouble("speed", speed);
         fragment.setArguments(args);
+        fragment.setMainActivity(mainActivity);
+        fragment.setAutosaveSession(autoSaveSession);
         return fragment;
     }
 
     @SuppressLint("VisibleForTests")
     @Override
-
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_blank, container, false);
@@ -96,96 +87,187 @@ public class RunnerView extends Fragment {
         speedDisplay = rootView.findViewById(R.id.speedDisplay);
         distanceDisplay = rootView.findViewById(R.id.distanceDisplay);
         pauseButton = rootView.findViewById(R.id.pauseButtonLogo);
-        Intent intent = getActivity().getIntent();
+        resumeButton = rootView.findViewById(R.id.playButtonLogo);
+        stopButton = rootView.findViewById(R.id.stopButtonLogo);
+        settingsButton = rootView.findViewById(R.id.settingsButton);
+        stopButton.setVisibility(View.INVISIBLE);
+        resumeButton.setVisibility(View.INVISIBLE);
+        settingsButton.setVisibility(View.INVISIBLE);
+        fragmentManager = mainActivity.getSupportFragmentManager();
+        Intent intent = requireActivity().getIntent();
+        interfaceUpdateHandler = new Handler(Looper.getMainLooper());
+
+
+        speedCircle = rootView.findViewById(R.id.speed_circle);
+        desiredSpeedText = rootView.findViewById(R.id.desired_speed_text);
+        slowCircle = ContextCompat.getDrawable(requireContext(),R.drawable.circle);
+        fastCircle = ContextCompat.getDrawable(requireContext(),R.drawable.redcircle);
+        goodSpeedCircle = ContextCompat.getDrawable(requireContext(),R.drawable.greencircle);
+
+        TextView unitOfVelocityDisplay = rootView.findViewById(R.id.unit_of_velocity);
+
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
+            //speedDisplayMode = intent.getStringExtra("speedDisplayMode");
+            unitOfVelocity = (UnitOfVelocity) intent.getSerializableExtra("unitOfVelocity");
         }
-
         Bundle args = getArguments();
+
         if (args != null) {
-            speed = args.getInt("speed", 0);
+            speed = args.getDouble("speed", 0);
         }
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval((long) UPDATE_INTERVAL_MS);
-        locationRequest.setFastestInterval((long) UPDATE_INTERVAL_MS);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NotNull LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                if (locationResult.getLastLocation() != null) {
-                    //Location rawLocation = locationResult.getLastLocation(); <- Icke Kalman-filtrerad location med noise
-                    //Location filteredLocation = kalman.predictAndCorrect(rawLocation); <- Kalman filtrerad location utan noise
-                    Location lastLocation = locationResult.getLastLocation();
-                    currentSession.updateLocation(lastLocation);
-                    if (currentSession.getRunning()) {
-                        feedback.giveFeedback(currentSession.getSelectedSpeed(), currentSession.getCurrentSpeed());
-                    }
-                    updateUI();
-                }
-            }
-
-
-        };
+        if (mainActivity != null) {
+            sessionManager = mainActivity.getSessionManager();
+        }
 
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               //TODO få upp pausmenyn.
+                pauseButton.setVisibility(View.INVISIBLE);
+                resumeButton.setVisibility(View.VISIBLE);
+                stopButton.setVisibility(View.VISIBLE);
+                settingsButton.setVisibility(View.VISIBLE);
                 currentSession.pauseSession();
-                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                    return;
-                }
-                currentSession.storeSessionToMemory(requireContext());
+                feedback.stopFeedback();
             }
         });
 
+        resumeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pauseButton.setVisibility(View.VISIBLE);
+                resumeButton.setVisibility(View.INVISIBLE);
+                stopButton.setVisibility(View.INVISIBLE);
+                settingsButton.setVisibility(View.INVISIBLE);
+                currentSession.continueSession();
+                feedback.runFeedback(currentSession.getSelectedSpeed());
+            }
+        });
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displaySettingsView();
+            }
+        });
+
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                feedback.stopFeedback();
+                if(autosaveSession){
+                    sessionManager.add(currentSession.getSerializableSession());
+                    sessionManager.storeSessionToMemory(mainActivity);
+                    currentSession.killSession();
+                    getParentFragmentManager().popBackStackImmediate();
+                }else{
+                    displaySessionOverview();
+                }
+            }
+        });
+
+        uiUpdates = new Runnable() {
+            @Override
+            public void run() {
+                updateUI();
+                interfaceUpdateHandler.postDelayed(this,250);
+            }
+        };
 
         start();
-
+        desiredSpeedText.setText(desiredSpeedText.getText() + currentSession.getFormattedSelectedSpeed());
+        unitOfVelocityDisplay.setText(unitOfVelocity.toString());
         return rootView;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        runUiUpdates();
+//        mainActivity.updateSettingsRunnersView();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        interfaceUpdateHandler.removeCallbacks(uiUpdates);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        feedback.removeTextToSpeech();
     }
 
     @SuppressLint("SetTextI18n")
     public void updateUI(){
         if(currentSession.getRunning()){
-            int roundedDistance = (int) currentSession.getDistance();
-            distanceDisplay.setText(Integer.toString(roundedDistance));
-            int roundedSpeed = (int) currentSession.getCurrentSpeed();
-            String s1 = Double.toString(roundedSpeed);
-            speedDisplay.setText(s1);
-
-
-            /*if(roundedSpeed == currentSession.getSelectedSpeed() ||
-                    (roundedSpeed >= currentSession.getSelectedSpeed() -1
-                            && roundedSpeed <= currentSession.getSelectedSpeed() +1)){
-                speedDisplay.setTextColor(Color.parseColor("green"));
-            }else if(roundedSpeed > currentSession.getSelectedSpeed()+1){
-                speedDisplay.setTextColor(Color.parseColor("red"));
-                tooFastAlert.start();
-            }else if(roundedSpeed < currentSession.getSelectedSpeed()-1){
-                speedDisplay.setTextColor(Color.parseColor("blue"));
-                tooSlowAlert.start();
-            }*/
-
-
+            distanceDisplay.setText(currentSession.getFormattedDistance());
+            if(currentSession.getCurrentSpeed() > LOWEST_SPEED_THRESHOLD){
+                speedDisplay.setText(currentSession.getFormattedSpeed());
+            }else{
+                speedDisplay.setText(getResources().getString(R.string.null_speed));
+            }
+            double velocity = currentSession.getCurrentSpeed();
+            final double delta = feedback.getVelocityDelta();
+            double selectedVelocity = currentSession.getSelectedSpeed();
+            if (velocity < selectedVelocity + delta && velocity > selectedVelocity - delta) {
+                speedCircle.setBackground(goodSpeedCircle);
+            } else if (velocity > selectedVelocity + delta) {
+                speedCircle.setBackground(fastCircle);
+            } else if (velocity < selectedVelocity - delta) {
+                speedCircle.setBackground(slowCircle);
+            }
             timeDisplay.setText(currentSession.updateTime());
         }
     }
 
-
-
-
+    public void runUiUpdates() {
+        interfaceUpdateHandler.post(uiUpdates);
+    }
 
     private void start() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            return;
-        }
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
-        currentSession = new Session(speed);
+        currentSession = new Session(speed, getContext());
+        Intent intent = new Intent(getContext(), SensorUnitHandler.class);
+        requireContext().startForegroundService(intent);
+        feedback.setRunning(currentSession.getRunning());
+        feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
+        currentSession.setUnitOfVelocity(unitOfVelocity);
+        feedback.runFeedback(currentSession.getSelectedSpeed());
+        runUiUpdates();
+
+    }
+
+    public void setUnitOfVelocity(UnitOfVelocity unitOfVelocity) {
+        this.unitOfVelocity = unitOfVelocity;
+    }
+
+
+    private void displaySettingsView(){
+        fragmentManager.beginTransaction().add(R.id.fragment_container, SettingsFragment.class, null)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void setAutosaveSession(boolean autosaveSession){
+        this.autosaveSession = autosaveSession;
+    }
+    public Session getCurrentSession(){
+        return currentSession;
+    }
+
+    public TextView getSpeedDisplay(){
+        return speedDisplay;
+    }
+
+    public void setMainActivity(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
+    }
+
+    private void displaySessionOverview() {
+        SessionOverview sessionOverview = SessionOverview.newInstance(currentSession, sessionManager);
+        fragmentManager.beginTransaction().add(R.id.fragment_container, sessionOverview, null)
+                .addToBackStack("runnerView")
+                .commit();
     }
 }

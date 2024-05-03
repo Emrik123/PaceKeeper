@@ -1,68 +1,74 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Location;
-import android.media.MediaPlayer;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.View;
-import android.widget.*;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.core.app.ActivityCompat;
+
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.gms.location.*;
-
 public class MainActivity extends AppCompatActivity {
-    private int speed;
-    private Button confirm;
-    private NumberPicker numberPicker;
+
+    private Activity mainActivity;
+    private SessionManager sessionManager;
+    private double speed;
+
+    private ImageButton startSessionButton;
+    private NumberPicker leftNPicker;
+    private NumberPicker rightNPicker;
     private ImageButton settingsButton;
     private Boolean vibration;
     private Boolean audio;
+    private Boolean autoSaveSession;
     private String feedbackFrequency;
+    private UnitOfVelocity unitOfVelocity;
     private SharedPreferences preferences;
     private FeedbackHandler feedback;
-    private ImageButton sessions;
-
+    private ImageButton previousSessionsButton;
+    private FragmentManager fragmentManager;
+    private TextView unitTextView;
+    private RunnerView runnerView;
 
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        mainActivity = this;
+        sessionManager = new SessionManager();
+        sessionManager.readFile(this);
         loadSharedPreferences();
         setContentView(R.layout.activity_main);
-        confirm = findViewById(R.id.confirmButton);
-        settingsButton = findViewById(R.id.settingsButton);
-        numberPicker = findViewById(R.id.leftNPicker);
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(40);
+        fragmentManager = getSupportFragmentManager();
+        startSessionButton = findViewById(R.id.start_button);
+        settingsButton = findViewById(R.id.settings_button);
+        leftNPicker = findViewById(R.id.left_n_picker);
+        rightNPicker = findViewById(R.id.right_n_picker);
         feedback = new FeedbackHandler(getApplicationContext());
+        previousSessionsButton = findViewById(R.id.previous_sessions_button);
+        unitTextView = findViewById(R.id.unitTextView);
         setFeedbackPreferences();
-        sessions = findViewById(R.id.historyButton);
+        setUnit();
+        setPickerStyle(unitOfVelocity);
 
-        confirm.setOnClickListener(new View.OnClickListener() {
+        Intent sensorIntent = new Intent(this, SensorUnitHandler.class);
+        sensorIntent.putExtra("runnerView", true);
+        startForegroundService(sensorIntent);
+
+        startSessionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                speed = numberPicker.getValue();
+                setSpeed(unitOfVelocity);
                 if (speed != 0) {
                     Toast.makeText(MainActivity.this, "Speed stored.", Toast.LENGTH_SHORT).show();
                     displayRunnerView(speed);
-
                 } else {
                     Toast.makeText(MainActivity.this, "Please enter a valid speed.", Toast.LENGTH_SHORT).show();
                 }
@@ -74,23 +80,51 @@ public class MainActivity extends AppCompatActivity {
             @Override
 
             public void onClick(View v) {
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, SettingsFragment.class, null)
-                        .setReorderingAllowed(true)
-                        .addToBackStack(null)
-                        .commit();
+                displaySettingsView();
             }
         });
 
 
 
-        sessions.setOnClickListener(new View.OnClickListener(){
+        previousSessionsButton.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick (View v){
-                displaySessionsView("test", "test");
+                displaySessionsView();
                 }
             });
 
 
+    }
+
+    public void setSpeed(UnitOfVelocity unitOfVelocity) {
+        switch (unitOfVelocity) {
+            case KM_PER_HOUR:
+            default:
+                speed = leftNPicker.getValue();
+                speed += (rightNPicker.getValue() / 10.0);
+                speed /= 3.6;
+                break;
+            case MIN_PER_KM:
+                double seconds = (leftNPicker.getValue() * 60);
+                seconds += rightNPicker.getValue();
+                speed = 1000 / seconds;
+                break;
+        }
+    }
+
+    public void updateSettings(){
+        loadSharedPreferences();
+        setUnit();
+        setPickerStyle(unitOfVelocity);
+    }
+
+    public void updateSettingsRunnersView(){
+        if(runnerView != null){
+            setFeedbackPreferences();
+            //runnerView.setSpeedDisplayMode(speedDisplayMode);
+            runnerView.setUnitOfVelocity(unitOfVelocity);
+            runnerView.getCurrentSession().setUnitOfVelocity(unitOfVelocity);
+        }
     }
 
     public void loadSharedPreferences(){
@@ -98,51 +132,90 @@ public class MainActivity extends AppCompatActivity {
         vibration = preferences.getBoolean("vibrationFeedback", true);
         audio = preferences.getBoolean("audioFeedback", true);
         feedbackFrequency = preferences.getString("feedbackFrequency", "medium");
+        autoSaveSession = preferences.getBoolean("autoSaveSessions", false);
+        String unit = preferences.getString("unitOfVelocity", "min/km");
+        switch (unit.trim()) {
+            case "km/h":
+                unitOfVelocity = UnitOfVelocity.KM_PER_HOUR;
+                break;
+            case "min/km":
+                unitOfVelocity = UnitOfVelocity.MIN_PER_KM;
+                break;
+        }
+        System.out.println("Unit set to: " + unitOfVelocity);
     }
 
     public void setFeedbackPreferences() {
         feedback.setVibrationAllowed(vibration);
         feedback.setAudioAllowed(audio);
         feedback.setFeedbackFrequency(feedbackFrequency);
+        feedback.setUnitOfVelocity(unitOfVelocity);
     }
 
+    @SuppressLint("SetTextI18n")
+    public void setUnit(){
+        unitTextView.setText(unitOfVelocity.toString());
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private void displaySessionsView(String arg1, String arg2){
-        SessionFragment sessionFragment = SessionFragment.newInstance(arg1, arg2);
+    private void displaySessionsView(){
+        SessionFragment sessionFragment = SessionFragment.newInstance(sessionManager);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, sessionFragment); // Replace fragment_container with the id of your container layout
-        transaction.addToBackStack(null); // Optional: Add transaction to back stack
+        transaction.replace(R.id.fragment_container, sessionFragment);
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
-    private void displayRunnerView(int speed) {
+    private void displaySettingsView(){
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, SettingsFragment.class, null)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void displayRunnerView(double speed) {
         loadSharedPreferences();
         setFeedbackPreferences();
-        // Create a new instance of RunnerView fragment with the selected speed
-        RunnerView runnerView = RunnerView.newInstance(speed);
+
+        runnerView = RunnerView.newInstance(this, speed, autoSaveSession);
 
         Bundle bundle = new Bundle();
-        bundle.putInt("speed", speed);
+        bundle.putDouble("speed", speed);
         getIntent().putExtra("feedbackHandler", feedback);
+        getIntent().putExtra("unitOfVelocity", unitOfVelocity);
 
-        // Replace the current fragment with the RunnerView fragment
+
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, runnerView); // Replace fragment_container with the id of your container layout
-        transaction.addToBackStack(null); // Optional: Add transaction to back stack
+        transaction.replace(R.id.fragment_container, runnerView);
+        transaction.addToBackStack("mainActivity");
         transaction.commit();
+    }
+
+    public void setPickerStyle(UnitOfVelocity unitOfVelocity) {
+        switch (unitOfVelocity) {
+            case MIN_PER_KM:
+                leftNPicker.setMinValue(1);
+                leftNPicker.setMaxValue(59);
+                rightNPicker.setMaxValue(0);
+                rightNPicker.setMaxValue(59);
+                findViewById(R.id.dot).setVisibility(View.INVISIBLE);
+                findViewById(R.id.minutes_tag).setVisibility(View.VISIBLE);
+                findViewById(R.id.seconds_tag).setVisibility(View.VISIBLE);
+                break;
+            case KM_PER_HOUR:
+                leftNPicker.setMinValue(4);
+                leftNPicker.setMaxValue(40);
+                rightNPicker.setMaxValue(0);
+                rightNPicker.setMaxValue(9);
+                findViewById(R.id.dot).setVisibility(View.VISIBLE);
+                findViewById(R.id.minutes_tag).setVisibility(View.INVISIBLE);
+                findViewById(R.id.seconds_tag).setVisibility(View.INVISIBLE);
+                break;
+        }
+    }
+
+    public SessionManager getSessionManager(){
+        return sessionManager;
     }
 
 }
+
