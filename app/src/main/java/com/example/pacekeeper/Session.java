@@ -147,7 +147,22 @@ public class Session {
     }
 
     public void storeSessionData(){
-        new SessionData(accHistory, timeStampHistory);
+        SessionData d = new SessionData(accHistory, timeStampHistory);
+        writeToFile(d);
+    }
+
+    public void writeToFile(SessionData d){
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
+                "testDataFile_" + d.getDate() + "_#" + d.getId() + ".dat");
+        try{
+            ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file.toPath()));
+            oos.writeObject(d);
+            oos.flush();
+            oos.close();
+            Log.i("File write confirmation", "Successfully wrote file.");
+        }catch (IOException e){
+            Log.e("File write error", "Couldn't write file: " + e.getMessage());
+        }
     }
 
     public boolean getRunning(){
@@ -271,7 +286,7 @@ public class Session {
         return timePerKm;
     }
 
-    private static class SessionData implements Serializable{
+    public static class SessionData implements Serializable{
 
         private ArrayList<float[]> acc;
         private ArrayList<String> timeStamp;
@@ -280,26 +295,24 @@ public class Session {
         private int id;
         private static final AtomicInteger idCount = new AtomicInteger(0);
 
-        SessionData(ArrayList<float[]> acc, ArrayList<String> timeStamps){
+        public SessionData(ArrayList<float[]> acc, ArrayList<String> timeStamps){
             this.acc = acc;
             this.timeStamp = timeStamps;
             date = LocalDate.now();
             id = idCount.incrementAndGet();
-            writeToFile();
         }
 
-        public void writeToFile(){
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-                    "testDataFile_" + date + "_" + id + ".dat");
-            try{
-                ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file.toPath()));
-                oos.writeObject(this);
-                oos.flush();
-                oos.close();
-                Log.i("File write confirmation", "Successfully wrote file.");
-            }catch (IOException e){
-                Log.e("File write error", "Couldn't write file: " + e.getMessage());
-            }
+        public ArrayList<float[]> getAcc(){
+            return acc;
+        }
+        public ArrayList<String> getTimeStamp(){
+            return timeStamp;
+        }
+        public LocalDate getDate(){
+            return date;
+        }
+        public int getId(){
+            return id;
         }
     }
 
