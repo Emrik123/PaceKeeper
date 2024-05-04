@@ -56,10 +56,6 @@ public class MainActivity extends AppCompatActivity {
         setUnit();
         setPickerStyle(unitOfVelocity);
 
-        Intent sensorIntent = new Intent(this, SensorUnitHandler.class);
-        sensorIntent.putExtra("runnerView", true);
-        startForegroundService(sensorIntent);
-
         startSessionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
