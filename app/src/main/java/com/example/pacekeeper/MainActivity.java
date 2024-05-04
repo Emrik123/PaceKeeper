@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
             setFeedbackPreferences();
             runnerView.setUnitOfVelocity(unitOfVelocity);
             runnerView.getCurrentSession().setUnitOfVelocity(unitOfVelocity);
+            runnerView.setUnitOfVelocityDisplay();
         }
     }
 

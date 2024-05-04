@@ -68,6 +68,7 @@ public class RunnerView extends Fragment {
     private Drawable goodSpeedCircle;
     private Intent serviceIntent;
     private Context context;
+    private TextView unitOfVelocityDisplay;
 
     public RunnerView() {
         sessionHistory = new ArrayList<>();
@@ -114,7 +115,7 @@ public class RunnerView extends Fragment {
         fastCircle = ContextCompat.getDrawable(requireContext(), R.drawable.redcircle);
         goodSpeedCircle = ContextCompat.getDrawable(requireContext(), R.drawable.greencircle);
 
-        TextView unitOfVelocityDisplay = rootView.findViewById(R.id.unit_of_velocity);
+        unitOfVelocityDisplay = rootView.findViewById(R.id.unit_of_velocity);
 
         if (intent != null) {
             feedback = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
@@ -283,6 +284,10 @@ public class RunnerView extends Fragment {
         this.unitOfVelocity = unitOfVelocity;
     }
 
+    public void setUnitOfVelocityDisplay(){
+        unitOfVelocityDisplay.setText(unitOfVelocity.toString());
+    }
+
 
     private void displaySettingsView() {
         fragmentManager.beginTransaction().add(R.id.fragment_container, SettingsFragment.class, null)
@@ -301,6 +306,7 @@ public class RunnerView extends Fragment {
     public TextView getSpeedDisplay() {
         return speedDisplay;
     }
+
 
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
