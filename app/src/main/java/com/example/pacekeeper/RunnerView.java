@@ -1,26 +1,18 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-
 import android.os.Handler;
 import android.os.Looper;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,14 +20,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -44,7 +31,7 @@ import java.util.ArrayList;
  * Use the {@link RunnerView#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RunnerView extends Fragment implements SensorEventListener {
+public class RunnerView extends Fragment {
     private MainActivity mainActivity;
     private SessionManager sessionManager;
     private NumberPicker speedInput;
@@ -55,12 +42,8 @@ public class RunnerView extends Fragment implements SensorEventListener {
     private ImageButton resumeButton;
     private ImageButton stopButton;
     private ImageButton settingsButton;
-    private LocationRequest locationRequest;
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private LocationCallback locationCallback;
     private double speed;
     private final double LOWEST_SPEED_THRESHOLD = 0.5;
-    private final long UPDATE_INTERVAL_MS = 250;
     private final float X_OFFSET = 0.0455f;
     private final float Y_OFFSET = 0.2534f;
     //private final long UPDATE_INTERVAL_TIMER_MS = 1000; Ignore if not used
@@ -77,12 +60,6 @@ public class RunnerView extends Fragment implements SensorEventListener {
     private FragmentManager fragmentManager;
     private Handler interfaceUpdateHandler;
     private Runnable uiUpdates;
-    private SensorManager sensorManager;
-    private Sensor accelerometer;
-    private float[] accelerometerValues;
-    private static final float ALPHA = 0.8f;
-    private OrientationHandler orientationHandler;
-
     private TextView desiredSpeedText;
     private ImageView speedCircle;
     private Drawable slowCircle;
@@ -126,16 +103,12 @@ public class RunnerView extends Fragment implements SensorEventListener {
         Intent intent = requireActivity().getIntent();
         interfaceUpdateHandler = new Handler(Looper.getMainLooper());
 
+
         speedCircle = rootView.findViewById(R.id.speed_circle);
         desiredSpeedText = rootView.findViewById(R.id.desired_speed_text);
         slowCircle = ContextCompat.getDrawable(requireContext(), R.drawable.circle);
         fastCircle = ContextCompat.getDrawable(requireContext(), R.drawable.redcircle);
         goodSpeedCircle = ContextCompat.getDrawable(requireContext(), R.drawable.greencircle);
-
-        sensorManager = (SensorManager) requireContext().getSystemService(Context.SENSOR_SERVICE);
-        orientationHandler = new OrientationHandler(this);
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        sensorManager.registerListener(RunnerView.this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
 
         TextView unitOfVelocityDisplay = rootView.findViewById(R.id.unit_of_velocity);
 
@@ -154,12 +127,6 @@ public class RunnerView extends Fragment implements SensorEventListener {
             sessionManager = mainActivity.getSessionManager();
         }
 
-        locationRequest = LocationRequest.create();
-        locationRequest.setInterval((long) UPDATE_INTERVAL_MS);
-        locationRequest.setFastestInterval((long) UPDATE_INTERVAL_MS);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
-
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -169,7 +136,6 @@ public class RunnerView extends Fragment implements SensorEventListener {
                 settingsButton.setVisibility(View.VISIBLE);
                 currentSession.pauseSession();
                 feedback.stopFeedback();
-                stopLocationUpdates();
             }
         });
 
@@ -181,7 +147,6 @@ public class RunnerView extends Fragment implements SensorEventListener {
                 stopButton.setVisibility(View.INVISIBLE);
                 settingsButton.setVisibility(View.INVISIBLE);
                 currentSession.continueSession();
-                startLocationUpdates();
                 feedback.runFeedback(currentSession.getSelectedSpeed());
             }
         });
@@ -197,8 +162,8 @@ public class RunnerView extends Fragment implements SensorEventListener {
             @Override
             public void onClick(View v) {
                 feedback.stopFeedback();
-                stopLocationUpdates();
-                if (autosaveSession) {
+//                stopLocationUpdates();
+                if(autosaveSession){
                     sessionManager.add(currentSession.getSerializableSession());
                     sessionManager.storeSessionToMemory(mainActivity);
                     currentSession.killSession();
@@ -213,23 +178,10 @@ public class RunnerView extends Fragment implements SensorEventListener {
             @Override
             public void run() {
                 updateUI();
-                interfaceUpdateHandler.postDelayed(this, UPDATE_INTERVAL_MS);
+                interfaceUpdateHandler.postDelayed(this,250);
             }
         };
 
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NotNull LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                if (!locationResult.getLocations().isEmpty() && currentSession.getRunning()) {
-                    currentSession.updateLocation(locationResult.getLocations().get(locationResult.getLocations().size() - 1),
-                            locationResult.getLocations().size(), getAccelerometerValues());
-                    feedback.setRunning(currentSession.getRunning());
-                    feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
-                    currentSession.updateSessionData();
-                }
-            }
-        };
         start();
         desiredSpeedText.setText(desiredSpeedText.getText() + currentSession.getFormattedSelectedSpeed());
         unitOfVelocityDisplay.setText(unitOfVelocity.toString());
@@ -308,24 +260,16 @@ public class RunnerView extends Fragment implements SensorEventListener {
         interfaceUpdateHandler.post(uiUpdates);
     }
 
-    public void startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            return;
-        }
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
-    }
-
-    public void stopLocationUpdates() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-    }
-
     private void start() {
-        startLocationUpdates();
-        currentSession = new Session(speed);
+        currentSession = new Session(speed, getContext());
+        Intent intent = new Intent(getContext(), SensorUnitHandler.class);
+        requireContext().startForegroundService(intent);
+        feedback.setRunning(currentSession.getRunning());
+        feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
         currentSession.setUnitOfVelocity(unitOfVelocity);
         feedback.runFeedback(currentSession.getSelectedSpeed());
         runUiUpdates();
+
     }
 
     public void setUnitOfVelocity(UnitOfVelocity unitOfVelocity) {
@@ -362,30 +306,30 @@ public class RunnerView extends Fragment implements SensorEventListener {
                 .commit();
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (accelerometerValues == null) {
-            accelerometerValues = event.values.clone();
-        } else {
-            for (int i = 0; i < 3; i++) {
-                accelerometerValues[i] = ALPHA * accelerometerValues[i] + (1 - ALPHA) * event.values[i];
-            }
-        }
-    }
+//    @Override
+//    public void onSensorChanged(SensorEvent event) {
+//        if (accelerometerValues == null) {
+//            accelerometerValues = event.values.clone();
+//        } else {
+//            for (int i = 0; i < 3; i++) {
+//                accelerometerValues[i] = ALPHA * accelerometerValues[i] + (1 - ALPHA) * event.values[i];
+//            }
+//        }
+//    }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-    }
-
-    public void setAccelerometerValues(float[] values) {
-        accelerometerValues = values;
-    }
-
-    public float[] getAccelerometerValues() {
-        return accelerometerValues;
-    }
-
-    public SensorManager getSensorManager() {
-        return this.sensorManager;
-    }
+//    @Override
+//    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+//    }
+//
+//    public void setAccelerometerValues(float[] values) {
+//        accelerometerValues = values;
+//    }
+//
+//    public float[] getAccelerometerValues() {
+//        return accelerometerValues;
+//    }
+//
+//    public SensorManager getSensorManager() {
+//        return this.sensorManager;
+//    }
 }

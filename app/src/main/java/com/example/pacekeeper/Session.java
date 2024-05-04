@@ -1,14 +1,14 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.IntentFilter;
 import android.location.Location;
-import org.apache.commons.lang3.time.DateUtils;
+import com.google.android.gms.location.LocationResult;
 import org.apache.commons.lang3.time.StopWatch;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Session {
@@ -28,17 +28,22 @@ public class Session {
     private int kmDistance = 1000;
     private final Kalman kalmanFilter;
     private long timeDelta;
+    private SessionBroadcastReceiver broadcastReceiver;
+    private Context context;
 
-    public Session(double selectedSpeed){
+    public Session(double selectedSpeed, Context context){
         kalmanFilter = new Kalman();
         this.sessionDate = LocalDate.now();
         this.selectedSpeed = selectedSpeed;
         this.isRunning = true;
         route = new ArrayList<>();
+        this.context = context;
         storedSpeedArray = new ArrayList<>();
         timePerKm = new ArrayList<>();
         stopwatch = new StopWatch();
         stopwatch.start();
+        broadcastReceiver = new SessionBroadcastReceiver(this);
+        initializeReceiver();
     }
 
     public String updateTime(){
@@ -50,6 +55,12 @@ public class Session {
 
         @SuppressLint("DefaultLocale") String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         return timeString;
+    }
+
+    public void initializeReceiver(){
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("locationUpdate");
+        context.registerReceiver(broadcastReceiver, intentFilter);
     }
 
     public void updateSessionData() {
@@ -97,18 +108,17 @@ public class Session {
         return new StoredSession(getSessionDate(), getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed);
     }
 
-    public void updateLocation(Location location, int size, float[] a) {
+    public void updateLocation(LocationResult location, float[] a) {
         if(isRunning) {
             Location lastLocation = null;
             if(currentLocation != null) {
                 lastLocation = currentLocation;
             }
-            this.currentLocation = location;
+            this.currentLocation = location.getLocations().get(location.getLocations().size() - 1);
             route.add(currentLocation);
             double tempTime;
             if(timeDelta != 0){
                 tempTime = stopwatch.getTime() - timeDelta;
-                tempTime /= size;
             }else{
                 tempTime = 0;
             }

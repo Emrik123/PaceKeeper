@@ -7,7 +7,7 @@ public class Kalman {
      * A Basic Kalman filter implementation used to filter noise from GPS signal when evaluating velocity.
      * The filter follows the extended model for estimating two variables related through a linear state model.
      *  A - State transition matrix describing how the "measured state" changes over time. Acceleration is ignored in the measurement.
-     *      [1 dt  0  0] - Where dt is the time interval of change, averaged to about 0.5.
+     *      [1 dt  0  0] - Where dt is the time interval of change.
      *      [0  1  0  0]
      *      [0  0  1 dt]
      *      [0  0  0  1]

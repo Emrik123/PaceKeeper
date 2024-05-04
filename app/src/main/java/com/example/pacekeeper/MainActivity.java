@@ -2,6 +2,7 @@ package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.ImageButton;
@@ -54,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
         setFeedbackPreferences();
         setUnit();
         setPickerStyle(unitOfVelocity);
+
+        Intent sensorIntent = new Intent(this, SensorUnitHandler.class);
+        sensorIntent.putExtra("runnerView", true);
+        startForegroundService(sensorIntent);
 
         startSessionButton.setOnClickListener(new View.OnClickListener() {
             @Override
