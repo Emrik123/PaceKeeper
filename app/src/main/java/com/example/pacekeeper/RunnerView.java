@@ -1,6 +1,7 @@
 package com.example.pacekeeper;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
@@ -65,6 +66,8 @@ public class RunnerView extends Fragment {
     private Drawable slowCircle;
     private Drawable fastCircle;
     private Drawable goodSpeedCircle;
+    private Intent serviceIntent;
+    private Context context;
 
     public RunnerView() {
         sessionHistory = new ArrayList<>();
@@ -88,6 +91,7 @@ public class RunnerView extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_blank, container, false);
+        context = container.getContext();
         this.savedInstance = savedInstanceState;
         timeDisplay = rootView.findViewById(R.id.time);
         speedDisplay = rootView.findViewById(R.id.speedDisplay);
@@ -163,7 +167,7 @@ public class RunnerView extends Fragment {
             public void onClick(View v) {
                 feedback.stopFeedback();
 //                stopLocationUpdates();
-                if(autosaveSession){
+                if (autosaveSession) {
                     sessionManager.add(currentSession.getSerializableSession());
                     sessionManager.storeSessionToMemory(mainActivity);
                     currentSession.killSession();
@@ -171,6 +175,8 @@ public class RunnerView extends Fragment {
                 } else {
                     displaySessionOverview();
                 }
+                serviceIntent.setAction("STOP");
+                context.startForegroundService(serviceIntent);
             }
         });
 
@@ -178,7 +184,7 @@ public class RunnerView extends Fragment {
             @Override
             public void run() {
                 updateUI();
-                interfaceUpdateHandler.postDelayed(this,250);
+                interfaceUpdateHandler.postDelayed(this, 250);
             }
         };
 
@@ -196,7 +202,6 @@ public class RunnerView extends Fragment {
         runUiUpdates();
         hideNavigationBar();
         setBackButtonBehavior();
-//        mainActivity.updateSettingsRunnersView();
     }
 
     @Override
@@ -211,6 +216,7 @@ public class RunnerView extends Fragment {
         super.onDestroy();
         feedback.removeTextToSpeech();
     }
+
     private void setBackButtonBehavior() {
         requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -219,6 +225,7 @@ public class RunnerView extends Fragment {
             }
         });
     }
+
     private void hideNavigationBar() {
         View decorView = getActivity().getWindow().getDecorView();
         int hideNavigation = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -262,14 +269,14 @@ public class RunnerView extends Fragment {
 
     private void start() {
         currentSession = new Session(speed, getContext(), feedback);
-        Intent intent = new Intent(getContext(), SensorUnitHandler.class);
-        requireContext().startForegroundService(intent);
+        serviceIntent = new Intent(getActivity().getApplicationContext(), SensorUnitHandler.class);
+        serviceIntent.setAction("START");
+        context.startForegroundService(serviceIntent);
         feedback.setRunning(currentSession.getRunning());
         feedback.setCurrentSpeed(currentSession.getCurrentSpeed());
         currentSession.setUnitOfVelocity(unitOfVelocity);
         feedback.runFeedback(currentSession.getSelectedSpeed());
         runUiUpdates();
-
     }
 
     public void setUnitOfVelocity(UnitOfVelocity unitOfVelocity) {
@@ -305,31 +312,4 @@ public class RunnerView extends Fragment {
                 .addToBackStack("runnerView")
                 .commit();
     }
-
-//    @Override
-//    public void onSensorChanged(SensorEvent event) {
-//        if (accelerometerValues == null) {
-//            accelerometerValues = event.values.clone();
-//        } else {
-//            for (int i = 0; i < 3; i++) {
-//                accelerometerValues[i] = ALPHA * accelerometerValues[i] + (1 - ALPHA) * event.values[i];
-//            }
-//        }
-//    }
-
-//    @Override
-//    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-//    }
-//
-//    public void setAccelerometerValues(float[] values) {
-//        accelerometerValues = values;
-//    }
-//
-//    public float[] getAccelerometerValues() {
-//        return accelerometerValues;
-//    }
-//
-//    public SensorManager getSensorManager() {
-//        return this.sensorManager;
-//    }
 }

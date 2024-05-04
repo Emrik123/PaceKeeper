@@ -1,4 +1,5 @@
 package com.example.pacekeeper;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -23,8 +24,8 @@ public class SensorUnitHandler extends Service {
         super();
     }
 
-    public void startSensorThreads(){
-        if(accelerometer == null){
+    public void startSensorThreads() {
+        if (accelerometer == null) {
             sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
             accelerometer = new Accelerometer(sensorManager);
             gps = new GPS(context, this);
@@ -35,31 +36,31 @@ public class SensorUnitHandler extends Service {
         orientationHandler.startOrientationSensor();
     }
 
-    public void stopSensorThreads(){
-        if(accelerometer != null && gps != null && orientationHandler != null){
+    public void stopSensorThreads() {
+        if (accelerometer != null && gps != null && orientationHandler != null) {
             accelerometer.stopAccelerometer();
             gps.stopLocationUpdates();
             orientationHandler.stopOrientationSensor();
         }
     }
 
-    public SensorManager getSensorManager(){
+    public SensorManager getSensorManager() {
         return this.sensorManager;
     }
 
-    public Accelerometer getAccelerometer(){
+    public Accelerometer getAccelerometer() {
         return this.accelerometer;
     }
 
-    public GPS getGPS(){
+    public GPS getGPS() {
         return this.gps;
     }
 
-    public OrientationHandler getOrientationHandler(){
+    public OrientationHandler getOrientationHandler() {
         return this.orientationHandler;
     }
 
-    public void GPSNotification(LocationResult result){
+    public void GPSNotification(LocationResult result) {
         Intent locationIntent = new Intent("locationUpdate");
         Bundle bundle = new Bundle();
         bundle.putParcelable("loc", result);
@@ -72,29 +73,44 @@ public class SensorUnitHandler extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        this.context = getApplicationContext();
-        if(context!= null){
-            startSensorThreads();
-        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopSensorThreads();
+        System.out.println("on destroy called");
+        stopService();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent.getAction().equals("STOP")) {
+            stopService();
+        } else if (intent.getAction().equals("START")) {
+            startService();
+        }
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void startService() {
+        context = getApplicationContext();
+        if (context != null) {
+            startSensorThreads();
+        }
         startForeground(1, getNotification());
-        return START_STICKY;
+    }
+
+    private void stopService() {
+        stopSensorThreads();
+        stopForeground(true);
+        stopSelf();
     }
 
     private Notification getNotification() {
         String channelId = "sensor_service";
-            NotificationChannel channel = new NotificationChannel(channelId, "Sensor Service", NotificationManager.IMPORTANCE_DEFAULT);
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
+        NotificationChannel channel = new NotificationChannel(channelId, "Sensor Service", NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        manager.createNotificationChannel(channel);
 
         return new NotificationCompat.Builder(this, channelId)
                 .setContentTitle("Sensor Service")
@@ -103,7 +119,6 @@ public class SensorUnitHandler extends Service {
                 .setOngoing(true)
                 .build();
     }
-
 
     @Nullable
     @Override

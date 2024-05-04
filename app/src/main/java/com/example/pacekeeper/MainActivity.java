@@ -82,6 +82,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, SensorUnitHandler.class));
+    }
+
     public void setTargetVelocity(UnitOfVelocity unitOfVelocity) {
         switch (unitOfVelocity) {
             case KM_PER_HOUR:
