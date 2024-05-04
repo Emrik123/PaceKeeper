@@ -261,7 +261,7 @@ public class RunnerView extends Fragment {
     }
 
     private void start() {
-        currentSession = new Session(speed, getContext());
+        currentSession = new Session(speed, getContext(), feedback);
         Intent intent = new Intent(getContext(), SensorUnitHandler.class);
         requireContext().startForegroundService(intent);
         feedback.setRunning(currentSession.getRunning());

@@ -30,8 +30,10 @@ public class Session {
     private long timeDelta;
     private SessionBroadcastReceiver broadcastReceiver;
     private Context context;
+    private FeedbackHandler feedbackHandler;
 
-    public Session(double selectedSpeed, Context context){
+    public Session(double selectedSpeed, Context context, FeedbackHandler feedbackHandler){
+        this.feedbackHandler = feedbackHandler;
         kalmanFilter = new Kalman();
         this.sessionDate = LocalDate.now();
         this.selectedSpeed = selectedSpeed;
@@ -133,6 +135,8 @@ public class Session {
                 distance = Math.abs(result[0]);
 //                System.out.println("Current distance Kalman: " + distDelta + " ||  Current distance GPS: " + lastLocation.distanceTo(currentLocation));
             }
+            feedbackHandler.setRunning(isRunning);
+            feedbackHandler.setCurrentSpeed(currentSpeed);
         }
     }
 
