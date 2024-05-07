@@ -15,7 +15,7 @@ public class FeedbackHandler implements Serializable {
     private boolean isRunning = false;
     private double selectedSpeed;
     private double currentSpeed;
-    private long initialDelayMillis = 2000;
+    private final long INITIAL_DELAY_MILLIS = 2000;
     private Timer timer;
     private TimerTask timerTask;
     private Context context;
@@ -110,7 +110,7 @@ public class FeedbackHandler implements Serializable {
         setSelectedSpeed(selectedSpeed);
         timer = new Timer();
         timerTask = new Task(this);
-        timer.schedule(timerTask, initialDelayMillis, feedbackDelayMillis);
+        timer.schedule(timerTask, INITIAL_DELAY_MILLIS, feedbackDelayMillis);
     }
 
     public void stopFeedback() {
