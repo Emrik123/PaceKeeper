@@ -29,7 +29,8 @@ public class GPS implements Runnable {
         locationRequest.setInterval(UPDATE_INTERVAL_MS);
         locationRequest.setFastestInterval(UPDATE_INTERVAL_MS);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        fusedLocationProviderClient =
+                LocationServices.getFusedLocationProviderClient(context);
         thread = new Thread(this);
     }
 
@@ -49,10 +50,6 @@ public class GPS implements Runnable {
     public void stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
         thread.interrupt();
-    }
-
-    public long getUpdateInterval() {
-        return UPDATE_INTERVAL_MS;
     }
 
     @Override

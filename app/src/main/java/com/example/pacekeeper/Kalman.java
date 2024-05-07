@@ -132,7 +132,6 @@ public class Kalman {
     }
 
     public double[] getState() {
-        //System.out.println(Arrays.toString(x.toArray()));
         return x.toArray();
     }
 }

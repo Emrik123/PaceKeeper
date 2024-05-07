@@ -24,9 +24,11 @@ public class Accelerometer implements SensorEventListener {
     }
 
     public void startAccelerometer() {
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        accelerometer = sensorManager
+                .getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         if (accelerometer != null) {
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME, sensorHandler);
+            sensorManager.registerListener(this, accelerometer,
+                    SensorManager.SENSOR_DELAY_GAME, sensorHandler);
         }
     }
 
@@ -53,7 +55,8 @@ public class Accelerometer implements SensorEventListener {
             accelerometerValues = event.values.clone();
         } else {
             for (int i = 0; i < 3; i++) {
-                accelerometerValues[i] = ALPHA * accelerometerValues[i] + (1 - ALPHA) * event.values[i];
+                accelerometerValues[i] = ALPHA * accelerometerValues[i]
+                        + (1 - ALPHA) * event.values[i];
             }
         }
     }
@@ -62,11 +65,11 @@ public class Accelerometer implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    public void setAccelerometerValues(float[] values){
+    public void setAccelerometerValues(float[] values) {
         accelerometerValues = values;
     }
 
-    public float[] getAccelerometerValues(){
+    public float[] getAccelerometerValues() {
         return accelerometerValues;
     }
 }
