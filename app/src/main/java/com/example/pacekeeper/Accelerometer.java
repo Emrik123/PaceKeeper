@@ -13,6 +13,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Accelerometer implements SensorEventListener {
 
@@ -65,9 +66,16 @@ public class Accelerometer implements SensorEventListener {
     public static class Data implements Serializable {
         private ArrayList<float[]> acc;
         private ArrayList<Long> timeStamp;
+        private AtomicInteger idCount = new AtomicInteger(0);
+        private int id;
         public Data(ArrayList<float[]> acc, ArrayList<Long> timeStamp){
+            this.id = idCount.getAndIncrement();
             this.acc = acc;
             this.timeStamp = timeStamp;
+        }
+
+        public int getId(){
+            return id;
         }
 
         public ArrayList<float[]> getAcc() {
@@ -81,7 +89,7 @@ public class Accelerometer implements SensorEventListener {
 
     public void storeValues(Data d){
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-                "testDataFile_" + LocalDate.now() + ".txt");
+                "testDataFile_" + LocalDate.now() + "(" + d.getId() + ").txt");
         try{
             FileOutputStream oos = new FileOutputStream(file);
             ArrayList<float[]> acc = d.getAcc();
