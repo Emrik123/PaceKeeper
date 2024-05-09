@@ -1,9 +1,6 @@
 package com.example.pacekeeper;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.Service;
+import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorManager;
@@ -111,10 +108,12 @@ public class SensorUnitHandler extends Service {
         NotificationChannel channel = new NotificationChannel(channelId, "Sensor Service", NotificationManager.IMPORTANCE_DEFAULT);
         NotificationManager manager = getSystemService(NotificationManager.class);
         manager.createNotificationChannel(channel);
-
+        Intent gotoIntent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, gotoIntent, PendingIntent.FLAG_IMMUTABLE);
         return new NotificationCompat.Builder(this, channelId)
                 .setContentTitle("Sensor Service")
                 .setContentText("Sensor Service active")
+                .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.pacekeeperlogo)
                 .setOngoing(true)
                 .build();
