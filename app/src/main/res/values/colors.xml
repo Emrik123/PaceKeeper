@@ -8,5 +8,6 @@
     <color name="switch_unchecked">#FB0000</color>
     <color name="switch_foreground">#EEF3EE</color>
     <color name="track_color">#AEB5AF</color>
+    <color name="text_color">#302E2E</color>
 
 </resources>

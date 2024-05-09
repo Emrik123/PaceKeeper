@@ -22,7 +22,8 @@ public class MainActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private double targetVelocity;
     private ImageButton startSessionButton;
-    private NumberPicker leftNumberPicker;
+    //private NumberPicker leftNumberPicker;
+    private CustomNumberPicker leftNumberPicker;
     private NumberPicker rightNumberPicker;
     private ImageButton settingsButton;
     private Boolean vibrationEnabled;
