@@ -142,11 +142,11 @@ public class RunnerView extends Fragment {
                     sessionManager.storeSessionToMemory(mainActivity);
                     currentSession.killSession();
                     getParentFragmentManager().popBackStackImmediate();
+                    serviceIntent.setAction("STOP");
+                    context.startForegroundService(serviceIntent);
                 } else {
                     displaySessionOverview();
                 }
-                serviceIntent.setAction("STOP");
-                context.startForegroundService(serviceIntent);
             }
         });
 

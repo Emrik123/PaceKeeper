@@ -1,5 +1,6 @@
 package com.example.pacekeeper;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -92,7 +93,7 @@ public class SessionOverview extends Fragment {
                 getActivity().getSupportFragmentManager().popBackStack(
                     "mainActivity",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
+                stopService();
             }
         });
 
@@ -112,11 +113,21 @@ public class SessionOverview extends Fragment {
                 getActivity().getSupportFragmentManager().popBackStack(
                         "mainActivity",
                         FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
+                stopService();
             }
         });
 
 
         return rootView;
+    }
+
+    /**
+     * Method used for stopping the foregroundService.
+     * @author Johnny
+     */
+    public void stopService() {
+        Intent intent = new Intent(getContext(), SensorUnitHandler.class);
+        intent.setAction("STOP");
+        requireContext().startForegroundService(intent);
     }
 }
