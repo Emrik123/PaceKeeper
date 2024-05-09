@@ -1,5 +1,6 @@
 package com.example.pacekeeper;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -33,6 +34,14 @@ public class AccelerometerFilter {
 
     public void recalculateMatrices() {
         // Recalculate A, B and Q with updated dt
+        A = MatrixUtils.createRealMatrix(new double[][]{
+                {1, dt},
+                {0, 1}
+        });
+
+        // B
+
+        // Q
     }
 
     public void predict() {
@@ -44,7 +53,14 @@ public class AccelerometerFilter {
         this.dt = dt;
         recalculateMatrices();
 
+        // Kalman magic
+        RealVector accVector = new ArrayRealVector(new double[]{acc});
 
+        RealMatrix S = H.multiply(P).multiply(H.transpose()).add(R);
+        K = P.multiply(H.transpose()).multiply(MatrixUtils.inverse(S));
+
+        x = x.add(K.operate(accVector.subtract(H.operate(x))));
+        P = P.subtract(K.multiply(H).multiply(P));
     }
 
     public double[] getState() {
