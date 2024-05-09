@@ -27,6 +27,8 @@ public class Session {
     private long timeExceptCurrentKm;
     private int kmDistance = 1000;
     private final Kalman kalmanFilter;
+    private final AccelerometerFilter eastAxisFilter;
+    private final AccelerometerFilter northAxisFilter;
     private long timeDelta;
     private SessionBroadcastReceiver broadcastReceiver;
     private Context context;
@@ -35,6 +37,8 @@ public class Session {
     public Session(double selectedSpeed, Context context, FeedbackHandler feedbackHandler){
         this.feedbackHandler = feedbackHandler;
         kalmanFilter = new Kalman();
+        eastAxisFilter = new AccelerometerFilter();
+        northAxisFilter = new AccelerometerFilter();
         this.sessionDate = LocalDate.now();
         this.selectedSpeed = selectedSpeed;
         this.isRunning = true;
@@ -125,7 +129,14 @@ public class Session {
                 tempTime = 0;
             }
             this.timeDelta = stopwatch.getTime();
-            kalmanFilter.predict(a[0], a[1]);
+
+            eastAxisFilter.update(a[0], timeDelta);
+            northAxisFilter.update(a[1], timeDelta);
+            double[] eastAxisResult = eastAxisFilter.getState();
+            double[] northAxisResult = northAxisFilter.getState();
+            kalmanFilter.predict(eastAxisResult[1], northAxisResult[1]);
+
+            //kalmanFilter.predict(a[0], a[1]);
             kalmanFilter.update(currentLocation.getSpeed(), tempTime /1000);
             double[] result = kalmanFilter.getState();
             this.currentSpeed = Math.abs(result[1]);
