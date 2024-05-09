@@ -3,15 +3,18 @@ package com.example.pacekeeper;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
 import android.os.Bundle;
-import android.widget.*;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.*;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.fragment.app.Fragment;
 
+/**
+ Class for managing GUI elements in the Settings fragment
+ @author Johnny
+ */
 public class SettingsFragment extends Fragment {
 
     private SwitchCompat vibrationSwitch;
@@ -37,25 +40,62 @@ public class SettingsFragment extends Fragment {
     private Button vibrationSampleSlowDownButton;
     private AudioPlayer audioPlayer;
     private Vibrator vibrator;
+    private ImageButton desiredUnitHelpButton;
+    private ImageButton feedbackFrequencyHelpButton;
+    private TextView desiredUnitHelpTextView;
+    private TextView feedbackFrequencyHelpTextView;
 
-
-    public SettingsFragment() {
-        // Required empty public constructor
-    }
-
+    /**
+     * Create method, called when the fragment is created and loads settings
+     * saved in shared preferences
+     * @param savedInstanceState
+     * @author Johnny
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = this.getActivity().getSharedPreferences("preferences", Context.MODE_PRIVATE);
-
+        preferences = getActivity()
+                .getSharedPreferences("preferences", Context.MODE_PRIVATE);
     }
 
+    /**
+     * Method called when creating the fragment, the necessary initialization is done here
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     * @author Johnny
+     */
     @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView =  inflater.inflate(R.layout.fragment_settings, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
+        audioPlayer = new AudioPlayer(requireContext());
+        vibrator = new Vibrator(requireContext());
+        initGraphicElements(rootView);
+        initListeners();
+        loadAndSetCurrentSettings();
+        setGraphicElements();
+        return rootView;
+    }
+
+    /**
+     * onPause method, called when the fragment is put out of focus
+     * @author Johnny
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        saveSettings();
+    }
+
+    /**
+     * Method for initializing graphical elements
+     * @param rootView
+     * @author Johnny
+     */
+    public void initGraphicElements(View rootView) {
         vibrationSwitch = rootView.findViewById(R.id.vibration_switch);
         audioSwitch = rootView.findViewById(R.id.audio_switch);
         feedbackFrequencyRadioGroup = rootView.findViewById(R.id.feedback_frequency_radiogroup);
@@ -71,82 +111,85 @@ public class SettingsFragment extends Fragment {
         soundSampleSlowDownButton = rootView.findViewById(R.id.btn_slow_down_sound);
         vibrationSampleSpeedUpButton = rootView.findViewById(R.id.btn_speed_up_vibration);
         vibrationSampleSlowDownButton = rootView.findViewById(R.id.btn_slow_down_vibration);
-        audioPlayer = new AudioPlayer(requireContext());
-        vibrator = new Vibrator(requireContext());
-
-        loadAndSetCurrentSettings();
-        setGraphicElements();
-
-        vibrationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                vibrationFeedback = isChecked;
-            }
-        });
-
-        audioSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                audioFeedback = isChecked;
-            }
-        });
-
-        autoSaveSessionsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                autoSaveSessions = isChecked;
-            }
-        });
-
-        feedbackFrequencyRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == radioFrequencyLow.getId()){
-                    feedbackFrequency = "low";
-                }
-                else if(checkedId == radioFrequencyMedium.getId()){
-                    feedbackFrequency = "medium";
-                }
-                else {
-                    feedbackFrequency = "high";
-                }
-            }
-        });
-
-        displaySpeedRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == radioSpeedKmh.getId()){
-                    unitOfVelocity = UnitOfVelocity.KM_PER_HOUR;
-                }
-                else {
-                    unitOfVelocity = UnitOfVelocity.MIN_PER_KM;
-                }
-            }
-        });
-
-        returnButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getParentFragmentManager().popBackStackImmediate();
-            }
-        });
-
-        soundSampleSpeedUpButton.setOnClickListener(v -> audioPlayer.increaseSound());
-        soundSampleSlowDownButton.setOnClickListener(v -> audioPlayer.decreaseSound());
-        vibrationSampleSpeedUpButton.setOnClickListener(v -> vibrator.increaseVelocity());
-        vibrationSampleSlowDownButton.setOnClickListener(v -> vibrator.decreaseVelocity());
-
-        return rootView;
+        feedbackFrequencyHelpButton = rootView.findViewById(R.id.feedback_frequency_help);
+        feedbackFrequencyHelpTextView = rootView.findViewById(R.id.feedback_frequency_textview);
+        desiredUnitHelpButton = rootView.findViewById(R.id.desired_pace_unit_help);
+        desiredUnitHelpTextView = rootView.findViewById(R.id.desired_pace_unit_textview);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        saveSettings();
+    /**
+     * Method for setting the behaviour of the buttons
+     * @author Johnny
+     */
+    public void initListeners() {
+        feedbackFrequencyRadioGroup.setOnCheckedChangeListener
+                ((group, checkedId) -> {
+                    if (checkedId == radioFrequencyLow.getId()) {
+                        feedbackFrequency = "low";
+                    } else if (checkedId == radioFrequencyMedium.getId()) {
+                        feedbackFrequency = "medium";
+                    } else {
+                        feedbackFrequency = "high";
+                    }
+                });
+
+        displaySpeedRadioGroup.setOnCheckedChangeListener
+                ((group, checkedId) -> {
+                    if (checkedId == radioSpeedKmh.getId()) {
+                        unitOfVelocity = UnitOfVelocity.KM_PER_HOUR;
+                    } else {
+                        unitOfVelocity = UnitOfVelocity.MIN_PER_KM;
+                    }
+                });
+
+        desiredUnitHelpButton.setOnClickListener(v -> {
+            if (desiredUnitHelpTextView.getVisibility() == View.GONE) {
+                desiredUnitHelpTextView.setVisibility(View.VISIBLE);
+            } else {
+                desiredUnitHelpTextView.setVisibility(View.GONE);
+            }
+        });
+
+        feedbackFrequencyHelpButton.setOnClickListener(v -> {
+            if (feedbackFrequencyHelpTextView.getVisibility() == View.GONE) {
+                feedbackFrequencyHelpTextView.setVisibility(View.VISIBLE);
+            } else {
+                feedbackFrequencyHelpTextView.setVisibility(View.GONE);
+            }
+        });
+
+        vibrationSwitch.setOnCheckedChangeListener
+                ((view, isChecked) -> vibrationFeedback = isChecked);
+
+        audioSwitch.setOnCheckedChangeListener(
+                (view, isChecked) -> audioFeedback = isChecked);
+
+        autoSaveSessionsSwitch.setOnCheckedChangeListener
+                ((view, isChecked) -> autoSaveSessions = isChecked);
+
+        returnButton.setOnClickListener
+                (v -> getParentFragmentManager().popBackStackImmediate());
+
+        soundSampleSpeedUpButton.setOnClickListener
+                (v -> audioPlayer.increaseSound());
+
+        soundSampleSlowDownButton.setOnClickListener
+                (v -> audioPlayer.decreaseSound());
+
+        vibrationSampleSpeedUpButton.setOnClickListener
+                (v -> vibrator.increaseVelocity());
+
+        vibrationSampleSlowDownButton.setOnClickListener
+                (v -> vibrator.decreaseVelocity());
+
     }
 
-    private void saveSettings(){
+    /**
+     * Method for saving the settings to a shared preference, when the data has been saved
+     * the main activity is called to update its Gui.
+     * @author Johnny
+     */
+    private void saveSettings() {
         SharedPreferences.Editor preferenceEditor;
         preferenceEditor = preferences.edit();
         preferenceEditor.putBoolean("audioFeedback", audioFeedback);
@@ -159,7 +202,11 @@ public class SettingsFragment extends Fragment {
         ((MainActivity) getActivity()).updateSettingsRunnersView();
     }
 
-    private void loadAndSetCurrentSettings(){
+    /**
+     * Method for loading settings currently set in the shared preference
+     * @author Johnny
+     */
+    private void loadAndSetCurrentSettings() {
         vibrationFeedback = preferences.getBoolean("vibrationFeedback", true);
         audioFeedback = preferences.getBoolean("audioFeedback", true);
         feedbackFrequency = preferences.getString("feedbackFrequency", "medium");
@@ -175,7 +222,10 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    private void setGraphicElements(){
+    /**
+     * Method for setting the GUI to match current settings in the shared preferences.
+     */
+    private void setGraphicElements() {
         audioSwitch.setChecked(audioFeedback);
         vibrationSwitch.setChecked(vibrationFeedback);
         autoSaveSessionsSwitch.setChecked(autoSaveSessions);
@@ -183,19 +233,27 @@ public class SettingsFragment extends Fragment {
         setDisplaySpeedButton();
     }
 
-    private void setFeedBackFrequencyButton(){
-        if(feedbackFrequency.equals("low")){
+    /**
+     * Method for checking the radiobutton corresponding to the
+     * current feedback frequency setting
+     * @author Johnny
+     */
+    private void setFeedBackFrequencyButton() {
+        if (feedbackFrequency.equals("low")) {
             radioFrequencyLow.setChecked(true);
-        }
-        else if(feedbackFrequency.equals("medium")){
+        } else if (feedbackFrequency.equals("medium")) {
             radioFrequencyMedium.setChecked(true);
-        }
-        else{
+        } else {
             radioFrequencyHigh.setChecked(true);
         }
     }
 
-    private void setDisplaySpeedButton(){
+    /**
+     * Method for checking the radiobutton corresponding to the
+     * current pace unit
+     * @author Samuel
+     */
+    private void setDisplaySpeedButton() {
         switch (unitOfVelocity) {
             case KM_PER_HOUR:
                 radioSpeedKmh.setChecked(true);

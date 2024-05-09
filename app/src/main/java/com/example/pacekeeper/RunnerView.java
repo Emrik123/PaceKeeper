@@ -35,6 +35,7 @@ public class RunnerView extends Fragment {
     private ImageButton settingsButton;
     private double selectedPace;
     private final double LOWEST_SPEED_THRESHOLD = 0.5;
+    private final String START_SESSION ="START";
     private Session currentSession;
     private FeedbackHandler feedbackHandler;
     private UnitOfVelocity unitOfVelocity;
@@ -237,8 +238,8 @@ public class RunnerView extends Fragment {
 
     private void start() {
         currentSession = new Session(selectedPace, context, feedbackHandler);
-        serviceIntent = new Intent(requireActivity().getApplicationContext(), SensorUnitHandler.class);
-        serviceIntent.setAction("START");
+        serviceIntent = new Intent(context, SensorUnitHandler.class);
+        serviceIntent.setAction(START_SESSION);
         context.startForegroundService(serviceIntent);
         feedbackHandler.setRunning(currentSession.getRunning());
         feedbackHandler.setCurrentSpeed(currentSession.getCurrentSpeed());
