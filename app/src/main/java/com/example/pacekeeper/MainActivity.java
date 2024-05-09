@@ -14,6 +14,8 @@ import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
 
     private Activity mainActivity;
@@ -157,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     public void setUnit() {
-        unitTextView.setText(unitOfVelocity.toString());
+        unitTextView.setText(unitOfVelocity.toString().toUpperCase(Locale.US));
     }
 
     private void displaySessionsView() {

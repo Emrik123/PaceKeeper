@@ -43,8 +43,8 @@
     <string name="speed_km_h">km/h</string>
     <string name="autosave_session">Auto-save finished sessions</string>
     <string name="sessions_textView">Session</string>
-    <string name="minutes_tag">Minutes</string>
-    <string name="seconds_tag">Seconds</string>
+    <string name="minutes_tag">MINUTES</string>
+    <string name="seconds_tag">SECONDS</string>
     <string name="add_session_comment_button">Add session comment</string>
     <string name="edit_comment_text">Add text here.</string>
     <string name="null_speed">- - : - -</string>
