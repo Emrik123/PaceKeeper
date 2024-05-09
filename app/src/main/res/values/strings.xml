@@ -27,6 +27,7 @@
     <string name="frequency_high">high</string>
     <string name="save_settings_button">Save settings</string>
     <string name="sessionOverview">30/3 | 18 min | 5.2 km</string>
+    <string name="desired_pace_text">Desired pace:&#160;</string>
     <string name="each_km_in_session"><![CDATA[
     km1 | 5:35 \n
     km2 | 6:40 \n

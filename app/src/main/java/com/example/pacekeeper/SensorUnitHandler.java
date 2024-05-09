@@ -10,6 +10,12 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import com.google.android.gms.location.LocationResult;
 
+/**
+ * This class is used to hold all the sensors which the application uses.
+ * It inherits from the Android Service class, and is run as a ForegroundService.
+ * Each time the GPS values are changed, a notification is received and broadcast to any listening receivers.
+ * @author Emrik, Johnny
+ */
 public class SensorUnitHandler extends Service {
     private SensorManager sensorManager;
     private Accelerometer accelerometer;
@@ -17,10 +23,18 @@ public class SensorUnitHandler extends Service {
     private OrientationHandler orientationHandler;
     private Context context;
 
+    /**
+     * Required empty constructor.
+     * @author Emrik
+     */
     public SensorUnitHandler() {
         super();
     }
 
+    /**
+     * Used to start the sensor threads.
+     * @author Emrik
+     */
     public void startSensorThreads() {
         if (accelerometer == null) {
             sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
@@ -33,6 +47,10 @@ public class SensorUnitHandler extends Service {
         orientationHandler.startOrientationSensor();
     }
 
+    /**
+     * Used to stop the sensors threads.
+     * @author Emrik
+     */
     public void stopSensorThreads() {
         if (accelerometer != null && gps != null && orientationHandler != null) {
             accelerometer.stopAccelerometer();
@@ -57,6 +75,12 @@ public class SensorUnitHandler extends Service {
         return this.orientationHandler;
     }
 
+    /**
+     * Each time the GPS is updated with new locational data, this method is called.
+     * The new values are then broadcast to any listening receivers.
+     * @param result the updated locational data.
+     * @author Emrik
+     */
     public void GPSNotification(LocationResult result) {
         Intent locationIntent = new Intent("locationUpdate");
         Bundle bundle = new Bundle();
@@ -67,18 +91,41 @@ public class SensorUnitHandler extends Service {
         sendBroadcast(locationIntent);
     }
 
+    /**
+     * Default onCreate
+     * @see android.app.Service
+     * @author Emrik
+     */
     @Override
     public void onCreate() {
         super.onCreate();
     }
 
+    /**
+     * Stops the service when stopped and not restarted.
+     * @see android.app.Service
+     * @author Emrik, Johnny
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
-        System.out.println("on destroy called");
         stopService();
     }
 
+    /**
+     * Called when the service is started.
+     * @param intent The Intent supplied to {@link android.content.Context#startService},
+     * as given.  This may be null if the service is being restarted after
+     * its process has gone away, and it had previously returned anything
+     * except {@link #START_STICKY_COMPATIBILITY}.
+     * @see android.app.Service
+     * @param flags Additional data about this start request.
+     * @param startId A unique integer representing this specific request to
+     * start.  Use with {@link #stopSelfResult(int)}.
+     *
+     * @return result of start command
+     * @author Emrik, Johnny
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals("STOP")) {
@@ -89,6 +136,10 @@ public class SensorUnitHandler extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    /**
+     * Used to run the instance as a ForegroundService and start all sensor threads.
+     * @author Emrik, Johnny
+     */
     private void startService() {
         context = getApplicationContext();
         if (context != null) {
@@ -97,12 +148,22 @@ public class SensorUnitHandler extends Service {
         startForeground(1, getNotification());
     }
 
+    /**
+     * Used to stop the instance and kill all sensor threads.
+     * @author Emrik, Johnny
+     */
     private void stopService() {
         stopSensorThreads();
         stopForeground(true);
         stopSelf();
     }
 
+    /**
+     * Used to create a notification for the Service
+     * @see android.app.Service
+     * @return notification for the Service.
+     * @author Emrik
+     */
     private Notification getNotification() {
         String channelId = "sensor_service";
         NotificationChannel channel = new NotificationChannel(channelId, "Sensor Service", NotificationManager.IMPORTANCE_DEFAULT);
@@ -119,6 +180,17 @@ public class SensorUnitHandler extends Service {
                 .build();
     }
 
+    /**
+     * Default onBind
+     * @see android.app.Service;
+     * @param intent The Intent that was used to bind to this service,
+     * as given to {@link android.content.Context#bindService
+     * Context.bindService}.  Note that any extras that were included with
+     * the Intent at that point will <em>not</em> be seen here.
+     *
+     * @return null
+     * @author Emrik
+     */
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

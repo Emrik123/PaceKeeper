@@ -2,10 +2,12 @@ package com.example.pacekeeper;
 
 import org.apache.commons.math3.linear.*;
 
+/**
+ * Extended Kalman filter for estimating position and velocity.
+ * @author Emrik
+ */
 public class Kalman {
     /**
-     * A Basic Kalman filter implementation used to filter noise from GPS signal when evaluating velocity.
-     * The filter follows the extended model for estimating two variables related through a linear state model.
      *  A - State transition matrix describing how the "measured state" changes over time. Acceleration is ignored in the measurement.
      *      [1 dt  0  0] - Where dt is the time interval of change.
      *      [0  1  0  0]
@@ -38,17 +40,28 @@ public class Kalman {
      *      [0  0  0  1]
      * <p>
      *     Note that matrices A, B and Q are recalculated each cycle with a dynamically changing dt.
+     *
      */
 
     private RealMatrix A, B, Q, R, P, K, H;
     private RealVector x, u;
     private double dt;  // Time step
 
+
+    /**
+     * Class constructor.
+     * Initializes the matrices and sets an arbitrary initial estimate of dt.
+     * @author Emrik
+     */
     public Kalman() {
         dt = 0.5;
         initializeMatrices();
     }
 
+    /**
+     * Used to initialize the matrices of the model.
+     * @author Emrik
+     */
     private void initializeMatrices() {
         A = MatrixUtils.createRealMatrix(new double[][]{
                 {1, dt, 0, 0},
@@ -79,6 +92,10 @@ public class Kalman {
         H = MatrixUtils.createRowRealMatrix(new double[]{0, 1, 0, 0});
     }
 
+    /**
+     * Used to recalculate the matrices affected by the difference in each time step.
+     * @author Emrik
+     */
     public void recalculateMatrices(){
         A = MatrixUtils.createRealMatrix(new double[][]{
                 {1, dt, 0, 0},
@@ -103,6 +120,12 @@ public class Kalman {
         }).scalarMultiply(std);
     }
 
+    /**
+     * Used to predict the next measurement.
+     * @param ax acceleration in x-axis.
+     * @param ay acceleration in y-axis.
+     * @author Emrik
+     */
     public void predict(double ax, double ay) {
         u = new ArrayRealVector(new double[]{ax, ay});
 
@@ -110,6 +133,14 @@ public class Kalman {
         P = A.multiply(P).multiply(A.transpose()).add(Q);
     }
 
+    /**
+     * Used to update the current model to match against the most recent predicted state.
+     * The velocity collected from the GPS is used to correct any major deviance in the estimate.
+     * dt represents the time step from the last update.
+     * @param z velocity harvested from the GPS.
+     * @param dt time step from the last update.
+     * @author Emrik
+     */
     public void update(double z, double dt) {
         this.dt = dt;
         recalculateMatrices();
@@ -131,6 +162,11 @@ public class Kalman {
         P = P.subtract(K.multiply(H).multiply(P));
     }
 
+    /**
+     * Getter.
+     * @return the current values in the measurement matrix x.
+     * @author Emrik
+     */
     public double[] getState() {
         return x.toArray();
     }

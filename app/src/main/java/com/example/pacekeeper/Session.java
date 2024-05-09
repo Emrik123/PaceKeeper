@@ -129,12 +129,9 @@ public class Session {
             kalmanFilter.update(currentLocation.getSpeed(), tempTime /1000);
             double[] result = kalmanFilter.getState();
             this.currentSpeed = Math.abs(result[1]);
-//            System.out.println("Current speed Kalman: " + currentSpeed + " ||  Current speed GPS: " + currentLocation.getSpeed());
             if(currentSpeed > 0.5 && lastLocation != null) {
-//                double distDelta = Math.abs(result[0]) - distance;
                 distance = Math.abs(result[0]);
                 updateSessionData();
-//                System.out.println("Current distance Kalman: " + distDelta + " ||  Current distance GPS: " + lastLocation.distanceTo(currentLocation));
             }
             feedbackHandler.setRunning(isRunning);
             feedbackHandler.setCurrentSpeed(currentSpeed);

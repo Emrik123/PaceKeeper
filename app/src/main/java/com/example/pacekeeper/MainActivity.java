@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 setTargetVelocity(unitOfVelocity);
                 if (targetVelocity != 0) {
-                    Toast.makeText(MainActivity.this, "Speed stored.", Toast.LENGTH_SHORT).show();
                     displayRunnerView(targetVelocity);
                 }
             }
@@ -115,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
             runnerView.setUnitOfVelocity(unitOfVelocity);
             runnerView.getCurrentSession().setUnitOfVelocity(unitOfVelocity);
             runnerView.setUnitOfVelocityDisplay();
+            runnerView.updateSelectedPaceUnit();
         }
     }
 

@@ -62,7 +62,7 @@ public class RunnerView extends Fragment {
         return fragment;
     }
 
-    @SuppressLint("VisibleForTests")
+    @SuppressLint({"VisibleForTests", "SetTextI18n"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -159,7 +159,8 @@ public class RunnerView extends Fragment {
         };
 
         start();
-        selectedPaceDisplay.setText(selectedPaceDisplay.getText() + currentSession.getFormattedSelectedSpeed());
+        selectedPaceDisplay.setText(getString(R.string.desired_pace_text)
+                + currentSession.getFormattedSelectedSpeed());
         unitOfVelocityDisplay.setText(unitOfVelocity.toString());
         hideNavigationBar();
         setBackButtonBehavior();
@@ -260,6 +261,12 @@ public class RunnerView extends Fragment {
         fragmentManager.beginTransaction().add(R.id.fragment_container, SettingsFragment.class, null)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void updateSelectedPaceUnit(){
+        selectedPaceDisplay.setText(getString(R.string.desired_pace_text)
+                + currentSession.getFormattedSelectedSpeed());
     }
 
     public void setAutosaveSession(boolean autosaveSession) {
