@@ -34,10 +34,10 @@ public class SettingsFragment extends Fragment {
     private UnitOfVelocity unitOfVelocity;
     private SharedPreferences preferences;
     private ImageButton returnButton;
-    private Button soundSampleSpeedUpButton;
-    private Button soundSampleSlowDownButton;
-    private Button vibrationSampleSpeedUpButton;
-    private Button vibrationSampleSlowDownButton;
+    private ImageButton soundSampleSpeedUpButton;
+    private ImageButton soundSampleSlowDownButton;
+    private ImageButton vibrationSampleSpeedUpButton;
+    private ImageButton vibrationSampleSlowDownButton;
     private AudioPlayer audioPlayer;
     private Vibrator vibrator;
     private ImageButton desiredUnitHelpButton;
