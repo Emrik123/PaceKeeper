@@ -23,6 +23,7 @@
                 android:backgroundTint="@color/transparent"
                 android:scaleType="centerCrop"
                 android:src="@drawable/backarrow"
+                android:layout_marginTop="12dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
@@ -33,8 +34,9 @@
                 android:gravity="center"
                 android:padding="12dp"
                 android:text="@string/settings_header"
+                android:fontFamily="@font/fugaz_one"
                 android:textAlignment="center"
-                android:textColor="@color/settings_text_color"
+                android:textColor="#302E2E"
                 android:textSize="34sp"/>
 
 
@@ -50,7 +52,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/feedback_method"
-                android:textColor="@color/settings_text_color"
+                android:textColor="#302E2E"
+                android:fontFamily="@font/fugaz_one"
                 android:paddingLeft="10dp"
                 android:textSize="22dp"/>
 
@@ -65,7 +68,8 @@
                     android:layout_height="match_parent"
                     android:minHeight="48dp"
                     android:textSize="18dp"
-                    android:textColor="@color/settings_text_color"
+                    android:textColor="#302E2E"
+                    android:fontFamily="@font/fugaz_one"
                     android:text="@string/vibration_settings"
                     android:theme="@style/switch_background"
                     android:paddingLeft="10dp"
@@ -81,7 +85,8 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="@string/audio_settings"
-                android:textColor="@color/settings_text_color"
+                android:textColor="#302E2E"
+                android:fontFamily="@font/fugaz_one"
                 android:textSize="18dp"
                 android:theme="@style/switch_background"/>
 
@@ -91,7 +96,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/sessions_textView"
                 android:paddingLeft="10dp"
-                android:textColor="@color/settings_text_color"
+                android:textColor="#302E2E"
+                android:fontFamily="@font/fugaz_one"
                 android:textSize="22dp"/>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -102,7 +108,8 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:textSize="17dp"
-                android:textColor="@color/settings_text_color"
+                android:textColor="#302E2E"
+                android:fontFamily="@font/fugaz_one"
                 android:text="@string/autosave_session"
                 app:theme="@style/switch_background"/>
         <LinearLayout
@@ -118,7 +125,8 @@
                     android:gravity="center"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:textColor="@color/settings_text_color"
+                    android:textColor="#302E2E"
+                    android:fontFamily="@font/fugaz_one"
                     android:textSize="18dp"/>
 
             <ImageButton
@@ -144,7 +152,8 @@
                     android:visibility="gone"
                     android:paddingLeft="10dp"
                     android:textSize="14dp"
-                    android:textColor="@color/settings_text_color"
+                    android:textColor="#302E2E"
+                    android:fontFamily="@font/fugaz_one"
                     android:id="@+id/desired_pace_unit_textview"/>
         </LinearLayout>
 
@@ -161,20 +170,22 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingLeft="10dp"
-                    android:textColor="@color/settings_text_color"
+                    android:textColor="#302E2E"
                     android:textSize="17dp"
                     android:theme="@style/radio_background"
-                    android:text="@string/speed_min_km"/>
+                    android:text="@string/speed_min_km"
+                    android:fontFamily="@font/fugaz_one"/>
 
             <RadioButton
                     android:id="@+id/radio_km_h"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="@color/settings_text_color"
+                    android:textColor="#302E2E"
                     android:textSize="17dp"
                     android:theme="@style/radio_background"
-                    android:text="@string/speed_km_h"/>
+                    android:text="@string/speed_km_h"
+                    android:fontFamily="@font/fugaz_one"/>
 
         </RadioGroup>
 
@@ -190,8 +201,9 @@
                     android:text="@string/feedback_frequency"
                     android:paddingLeft="10dp"
                     android:gravity="center_vertical"
-                    android:textColor="@color/settings_text_color"
-                    android:textSize="18dp"/>
+                    android:textColor="#302E2E"
+                    android:textSize="18dp"
+                    android:fontFamily="@font/fugaz_one"/>
 
             <ImageButton
                     android:src="@android:drawable/ic_menu_help"
@@ -217,7 +229,8 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     android:textSize="14dp"
-                    android:textColor="@color/settings_text_color"
+                    android:textColor="#302E2E"
+                    android:fontFamily="@font/fugaz_one"
                     android:id="@+id/feedback_frequency_textview"/>
 
         </LinearLayout>
@@ -233,7 +246,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="@color/settings_text_color"
+                    android:textColor="#302E2E"
+                    android:fontFamily="@font/fugaz_one"
                     android:theme="@style/radio_background"
                     android:textSize="17dp"
                     android:text="@string/frequency_low"/>
@@ -243,8 +257,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="@color/settings_text_color"
+                    android:textColor="#302E2E"
                     android:theme="@style/radio_background"
+                    android:fontFamily="@font/fugaz_one"
                     android:textSize="17dp"
                     android:text="@string/frequency_medium"/>
 
@@ -253,8 +268,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="@color/settings_text_color"
+                    android:textColor="#302E2E"
                     android:theme="@style/radio_background"
+                    android:fontFamily="@font/fugaz_one"
                     android:textSize="17dp"
                     android:text="@string/frequency_high"/>
         </RadioGroup>
@@ -268,7 +284,8 @@
                     android:layout_width="wrap_content"
                     android:text="@string/sound_samples"
                     android:textSize="18sp"
-                    android:textColor="@color/settings_text_color"
+                    android:textColor="#302E2E"
+                    android:fontFamily="@font/fugaz_one"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_marginStart="10dp"/>
@@ -299,7 +316,8 @@
                     android:layout_width="wrap_content"
                     android:text="@string/vibration_samples"
                     android:textSize="18sp"
-                    android:textColor="@color/settings_text_color"
+                    android:textColor="#302E2E"
+                    android:fontFamily="@font/fugaz_one"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/btn_slow_down_sound"
                     android:layout_marginTop="10dp"
