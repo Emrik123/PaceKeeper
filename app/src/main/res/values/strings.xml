@@ -9,14 +9,14 @@
     <string name="pacekeeper">PaceKeeper</string>
     <string name="status">Status:</string>
     <string name="n_a">N/A</string>
-    <string name="distance">Distance</string>
+    <string name="distance">DISTANCE</string>
     <string name="confirm">Start</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="timeS">Time</string>
+    <string name="timeS">TIME</string>
     <string name="distanceS">0.00</string>
-    <string name="unit_of_velocity">km/h</string>
-    <string name="speed">Speed</string>
+    <string name="unit_of_velocity">KM/H</string>
+    <string name="speed">SPEED</string>
     <string name="settings_header">Settings</string>
     <string name="feedback_method">Feedback method</string>
     <string name="vibration_settings">Vibration</string>
@@ -27,7 +27,7 @@
     <string name="frequency_high">high</string>
     <string name="save_settings_button">Save settings</string>
     <string name="sessionOverview">30/3 | 18 min | 5.2 km</string>
-    <string name="desired_pace_text">Desired pace:&#160;</string>
+    <string name="desired_pace_text">DESIRED PACE:&#160;</string>
     <string name="each_km_in_session"><![CDATA[
     km1 | 5:35 \n
     km2 | 6:40 \n
