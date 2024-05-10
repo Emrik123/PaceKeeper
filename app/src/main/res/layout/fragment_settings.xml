@@ -130,7 +130,7 @@
                     android:textSize="18dp"/>
 
             <ImageButton
-                    android:src="@android:drawable/ic_menu_help"
+                    android:src="@drawable/help_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="top"
@@ -206,9 +206,10 @@
                     android:fontFamily="@font/fugaz_one"/>
 
             <ImageButton
-                    android:src="@android:drawable/ic_menu_help"
+                    android:src="@drawable/help_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
                     android:id="@+id/feedback_frequency_help"
                     android:background="@color/transparent"
                     android:layout_weight="0"/>
@@ -290,18 +291,20 @@
                     android:layout_marginBottom="10dp"
                     android:layout_marginStart="10dp"/>
 
-            <Button
-                    android:text="Speed Up"
+            <ImageButton
+                    android:src="@drawable/speed_up_btn"
+                    android:background="@drawable/speed_up_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/btn_speed_up_sound"
                     android:layout_below="@id/sound_samples"
                     android:layout_marginEnd="50dp"
                     android:layout_marginStart="50dp">
-            </Button>
+            </ImageButton>
 
-            <Button
-                    android:text="Slow Down"
+            <ImageButton
+                    android:src="@drawable/slow_down_btn"
+                    android:background="@drawable/slow_down_btn"
                     android:id="@+id/btn_slow_down_sound"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -309,7 +312,7 @@
                     android:layout_below="@id/sound_samples"
                     android:layout_marginEnd="50dp"
                     android:layout_marginStart="30dp">
-            </Button>
+            </ImageButton>
 
             <TextView
                     android:id="@+id/vibration_samples"
@@ -325,26 +328,28 @@
                     android:layout_marginStart="10dp"
             />
 
-            <Button
-                    android:text="Speed Up"
+            <ImageButton
+                    android:src="@drawable/speed_up_btn"
+                    android:background="@drawable/speed_up_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/btn_speed_up_vibration"
                     android:layout_below="@id/vibration_samples"
                     android:layout_marginEnd="50dp"
                     android:layout_marginStart="50dp">
-            </Button>
+            </ImageButton>
 
-            <Button
-                    android:text="Slow Down"
+            <ImageButton
+                    android:src="@drawable/slow_down_btn"
                     android:id="@+id/btn_slow_down_vibration"
+                    android:background="@drawable/slow_down_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/btn_speed_up_vibration"
                     android:layout_below="@id/vibration_samples"
                     android:layout_marginEnd="50dp"
                     android:layout_marginStart="30dp">
-            </Button>
+            </ImageButton>
 
         </RelativeLayout>
         <ImageButton
