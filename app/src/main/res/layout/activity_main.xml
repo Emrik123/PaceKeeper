@@ -101,7 +101,7 @@
             android:textColor="#302E2E"
             android:visibility="visible"
             tools:visibility="visible" tools:layout_editor_absoluteY="201dp" tools:layout_editor_absoluteX="228dp"/>
-    <!--<NumberPicker
+    <NumberPicker
             android:id="@+id/right_n_picker"
             android:layout_width="102dp"
             android:layout_height="211dp"
@@ -110,36 +110,8 @@
             android:theme="@style/numberpicker_style"
             app:layout_constraintStart_toEndOf="@+id/dot" android:layout_marginEnd="99dp"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginBottom="28dp"
-            app:layout_constraintBottom_toTopOf="@+id/unitTextView"/>-->
-    <com.example.pacekeeper.CustomNumberPicker
-            android:id="@+id/right_number_picker"
-            android:layout_width="102dp"
-            android:layout_height="211dp"
-            android:visibility="visible"
-            tools:visibility="visible"
-            android:theme="@style/numberpicker_style"
-            app:layout_constraintStart_toEndOf="@+id/dot"
-            android:layout_marginEnd="99dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="28dp"
-            app:layout_constraintBottom_toTopOf="@+id/unitTextView">
-    </com.example.pacekeeper.CustomNumberPicker>
-
-    <com.example.pacekeeper.CustomNumberPicker
-            android:id="@+id/left_number_picker"
-            android:layout_width="107dp"
-            android:layout_height="211dp"
-            android:visibility="visible"
-            tools:visibility="visible"
-            android:theme="@style/numberpicker_style"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="94dp"
-            android:layout_marginBottom="28dp"
-            android:layout_marginEnd="-30dp"
-            app:layout_constraintBottom_toTopOf="@+id/unitTextView"
-            app:layout_constraintEnd_toStartOf="@+id/dot">
-    </com.example.pacekeeper.CustomNumberPicker>
-    <!--<NumberPicker
+            app:layout_constraintBottom_toTopOf="@+id/unitTextView"/>
+    <NumberPicker
             android:id="@+id/left_n_picker"
             android:layout_width="107dp"
             android:layout_height="211dp"
@@ -149,15 +121,15 @@
             android:layout_marginStart="94dp" android:layout_marginBottom="28dp"
             android:layout_marginEnd="-30dp"
             app:layout_constraintBottom_toTopOf="@+id/unitTextView"
-            app:layout_constraintEnd_toStartOf="@+id/dot"/>-->
+            app:layout_constraintEnd_toStartOf="@+id/dot"/>
     <TextView
             android:text="."
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/dot" android:layout_weight="1"
             android:textSize="34sp"
             android:layout_gravity="center"
-            app:layout_constraintStart_toEndOf="@+id/left_number_picker"
-            app:layout_constraintEnd_toStartOf="@+id/right_number_picker" android:layout_marginBottom="112dp"
+            app:layout_constraintStart_toEndOf="@+id/left_n_picker"
+            app:layout_constraintEnd_toStartOf="@+id/right_n_picker" android:layout_marginBottom="112dp"
             app:layout_constraintBottom_toTopOf="@+id/unitTextView"/>
     <TextView
             android:text="ENTER"

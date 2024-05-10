@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -22,8 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private double targetVelocity;
     private ImageButton startSessionButton;
-    //private NumberPicker leftNumberPicker;
-    private CustomNumberPicker leftNumberPicker;
+    private NumberPicker leftNumberPicker;
     private NumberPicker rightNumberPicker;
     private ImageButton settingsButton;
     private Boolean vibrationEnabled;
