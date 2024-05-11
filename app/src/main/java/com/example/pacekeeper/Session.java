@@ -31,13 +31,15 @@ public class Session {
     private SessionBroadcastReceiver broadcastReceiver;
     private Context context;
     private FeedbackHandler feedbackHandler;
+    private boolean isPaused;
 
     public Session(double selectedSpeed, Context context, FeedbackHandler feedbackHandler){
         this.feedbackHandler = feedbackHandler;
         kalmanFilter = new Kalman();
         this.sessionDate = LocalDate.now();
         this.selectedSpeed = selectedSpeed;
-        this.isRunning = true;
+        isRunning = true;
+        isPaused = false;
         route = new ArrayList<>();
         this.context = context;
         storedSpeedArray = new ArrayList<>();
@@ -91,19 +93,26 @@ public class Session {
     }
 
     public void pauseSession(){
-        this.isRunning = false;
+        isPaused = true;
         stopwatch.suspend();
     }
 
+    public boolean isPaused(){
+        return isPaused;
+    }
+
     public void continueSession(){
-        isRunning = true;
+        isPaused = false;
         currentLocation = null;
         stopwatch.resume();
     }
 
+    public void setPaused(){
+        isPaused = true;
+    }
+
     public void killSession(){
         isRunning = false;
-
     }
 
     public StoredSession getSerializableSession(){
@@ -111,7 +120,7 @@ public class Session {
     }
 
     public void updateLocation(LocationResult location, float[] a) {
-        if(isRunning) {
+        if(isRunning && !isPaused) {
             Location lastLocation = null;
             if(currentLocation != null) {
                 lastLocation = currentLocation;

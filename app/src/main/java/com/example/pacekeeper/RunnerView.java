@@ -265,8 +265,10 @@ public class RunnerView extends Fragment {
 
     @SuppressLint("SetTextI18n")
     public void updateSelectedPaceUnit(){
-        selectedPaceDisplay.setText(getString(R.string.desired_pace_text)
-                + currentSession.getFormattedSelectedSpeed());
+        if(currentSession != null && currentSession.getRunning()){
+            selectedPaceDisplay.setText(getString(R.string.desired_pace_text)
+                    + currentSession.getFormattedSelectedSpeed());
+        }
     }
 
     public void setAutosaveSession(boolean autosaveSession) {
