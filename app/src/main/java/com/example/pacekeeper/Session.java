@@ -8,6 +8,7 @@ import com.google.android.gms.location.LocationResult;
 import org.apache.commons.lang3.time.StopWatch;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -305,8 +306,10 @@ public class Session {
             return timePerKm;
         }
 
-        public LocalDate getDate(){
-            return date;
+        public String getDate(){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd");
+            return date.format(formatter);
+
         }
 
         public String getSessionComment(){

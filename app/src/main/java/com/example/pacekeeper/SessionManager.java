@@ -42,7 +42,6 @@ public class SessionManager {
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(sessions);
             oos.close();
-            Toast.makeText(context, "File stored", Toast.LENGTH_SHORT).show();
             Log.i("Store session", "File successfully created and stored");
         } catch (IOException e) {
             Log.e("Store session", "Error storing file: " + e.getMessage());

@@ -12,7 +12,7 @@
     tools:visibility="visible">
 
 
-    <ScrollView
+  <!-->  <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,9 +20,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.101">
 
+       <-->
+
 
         <LinearLayout
             android:id="@+id/session_layout"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -30,16 +33,27 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/summary_text_view1"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:text="@string/sessionOverview"
-                    android:textSize="30sp" />
+                    android:text="30/3 | 18 min"
+                    android:textSize="50sp"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    />
+                <TextView
+                    android:id="@+id/session_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="20.3 km"
+                    android:textSize="60sp"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    />
 
 
             </LinearLayout>
@@ -50,9 +64,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="1dp"
                 android:layout_marginRight="1dp"
+                android:textColor="@color/black"
                 android:text="@string/each_km_in_session"
-                android:textSize="20sp" />
-
+                android:textSize="40sp" />
+<!-->
             <TextView
                 android:id="@+id/detail_text_view_route"
                 android:layout_width="match_parent"
@@ -71,6 +86,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/linearLayout"
                 app:layout_constraintStart_toStartOf="@+id/linearLayout"
                 app:layout_constraintTop_toBottomOf="@+id/detail_text_view_route" />
+    <-->
 
 
             <TextView
@@ -80,14 +96,9 @@
                 android:layout_marginLeft="1dp"
                 android:layout_marginRight="1dp"
                 android:text="@string/session_comment_title"
-                android:textSize="24sp" />
+                android:textSize="34sp" />
 
 
-            <ImageButton
-                android:id="@+id/edit_comment_icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/baseline_edit_note_24" />
 
             <EditText
                 android:id="@+id/edit_comment"
@@ -110,49 +121,51 @@
 
                 />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/delete_session_button"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/round_button"
-                    android:scaleType="centerCrop"
-                    android:layout_gravity="bottom"
-                    android:src="@drawable/deletesessionwhitetext"
-                    />
-                <ImageButton
-                    android:id="@+id/save_session_button"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:background="@drawable/round_button"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/savesessionbutton"
-                    />
-                <ImageButton
-                    android:id="@+id/resume_session_button"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/round_button"
-                    android:scaleType="centerCrop"
-                    android:layout_gravity="bottom"
-
-                    android:src="@drawable/resumesessionwhitetext"
-                    />
-
-            </LinearLayout>
-
-
-
         </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/session_layout"
+        app:layout_constraintVertical_bias="0.946">
 
-    </ScrollView>
+        <ImageButton
+            android:id="@+id/delete_session_button"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/round_button"
+            android:scaleType="centerCrop"
+            android:src="@drawable/deletebuttontransparent"
+            android:layout_marginEnd="30dp"/>
+
+        <ImageButton
+            android:id="@+id/save_session_button"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@drawable/round_button"
+            android:scaleType="centerCrop"
+            android:src="@drawable/savesessionbutton" />
+
+        <ImageButton
+            android:id="@+id/resume_session_button"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/round_button"
+            android:scaleType="centerCrop"
+            android:layout_marginStart="30dp"
+            android:layout_marginBottom="10dp"
+
+            android:src="@drawable/playlogo" />
+
+    </LinearLayout>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 

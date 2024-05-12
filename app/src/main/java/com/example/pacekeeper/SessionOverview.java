@@ -20,18 +20,6 @@ import android.widget.ImageButton;
  */
 public class SessionOverview extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE = 1;
-    private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 2;
-
-
     private SessionManager sessionManager;
     private Session currentSession;
 
@@ -48,7 +36,6 @@ public class SessionOverview extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static SessionOverview newInstance(Session currentSession, SessionManager sessionManager) {
         SessionOverview fragment = new SessionOverview();
-        Bundle args = new Bundle();
         fragment.setCurrentSession(currentSession);
         fragment.setSessionManager(sessionManager);
         return fragment;
@@ -64,10 +51,6 @@ public class SessionOverview extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -87,7 +70,6 @@ public class SessionOverview extends Fragment {
                 sessionManager.add(currentSession.getSerializableSession());
                 sessionManager.storeSessionToMemory(getContext());
                 currentSession.killSession();
-               // getParentFragmentManager().popBackStackImmediate();
 
                 getActivity().getSupportFragmentManager().popBackStack(
                     "mainActivity",
