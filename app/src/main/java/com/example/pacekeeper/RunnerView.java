@@ -180,7 +180,6 @@ public class RunnerView extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        displayNavigationBar();
         interfaceUpdateHandler.removeCallbacks(uiUpdates);
     }
 
@@ -197,9 +196,6 @@ public class RunnerView extends Fragment {
                 mainActivity.moveTaskToBack(true);
             }
         });
-        if (getCurrentSession().isPaused()) {
-            displayNavigationBar();
-        }
     }
 
     private void hideNavigationBar() {

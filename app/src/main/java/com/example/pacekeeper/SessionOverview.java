@@ -44,6 +44,12 @@ public class SessionOverview extends Fragment {
         return fragment;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        displayNavigationBar();
+    }
+
     public void setSessionManager(SessionManager sessionManager){
         this.sessionManager = sessionManager;
     }
@@ -148,5 +154,10 @@ public class SessionOverview extends Fragment {
         int hideNavigation = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         int immersive = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(hideNavigation | immersive);
+    }
+    private void displayNavigationBar() {
+        View decorView = requireActivity().getWindow().getDecorView();
+        int visible = View.SYSTEM_UI_FLAG_VISIBLE;
+        decorView.setSystemUiVisibility(visible);
     }
 }
