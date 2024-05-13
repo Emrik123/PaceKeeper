@@ -32,28 +32,36 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/summary_text_view1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="30/3 | 18 min"
-                    android:textSize="50sp"
-                    android:textColor="@color/black"
                     android:layout_gravity="center"
-                    />
+                    android:fontFamily="@font/fugaz_one"
+                    android:text="30/3 | 18 min"
+                    android:textColor="#302E2E"
+                    android:textSize="40sp" />
+
                 <TextView
                     android:id="@+id/session_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="20.3 km"
-                    android:textSize="60sp"
-                    android:textColor="@color/black"
                     android:layout_gravity="center"
                     android:layout_marginBottom="20dp"
-                    />
+                    android:fontFamily="@font/fugaz_one"
+                    android:text="20.3 km"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:textColor="#302E2E"
+                    android:textSize="48sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="@android:color/black"
+                    android:layout_marginBottom="5dp"/>
 
 
             </LinearLayout>
@@ -64,7 +72,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="1dp"
                 android:layout_marginRight="1dp"
-                android:textColor="@color/black"
+                android:fontFamily="monospace"
+                android:textColor="#302E2E"
                 android:text="@string/each_km_in_session"
                 android:textSize="40sp" />
 <!-->
@@ -88,14 +97,22 @@
                 app:layout_constraintTop_toBottomOf="@+id/detail_text_view_route" />
     <-->
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:background="@android:color/black"
+                android:layout_marginBottom="5dp"/>
 
             <TextView
                 android:id="@+id/detail_text_view_session_comment_title"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginLeft="1dp"
                 android:layout_marginRight="1dp"
+                android:fontFamily="monospace"
                 android:text="@string/session_comment_title"
+                android:textColor="#302E2E"
                 android:textSize="34sp" />
 
 
@@ -150,7 +167,8 @@
             android:layout_height="150dp"
             android:background="@drawable/round_button"
             android:scaleType="centerCrop"
-            android:src="@drawable/savesessionbutton" />
+            android:src="@drawable/new_stop_button"
+            />
 
         <ImageButton
             android:id="@+id/resume_session_button"
@@ -161,8 +179,8 @@
             android:scaleType="centerCrop"
             android:layout_marginStart="30dp"
             android:layout_marginBottom="10dp"
-
-            android:src="@drawable/playlogo" />
+            android:src="@drawable/new_resume_button"
+            />
 
     </LinearLayout>
 
