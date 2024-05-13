@@ -110,7 +110,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="1dp"
                 android:layout_marginRight="1dp"
-                android:fontFamily="monospace"
+                android:fontFamily="@font/fugaz_one"
                 android:text="@string/session_comment_title"
                 android:textColor="#302E2E"
                 android:textSize="34sp" />
