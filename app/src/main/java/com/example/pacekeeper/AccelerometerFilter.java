@@ -21,27 +21,31 @@ public class AccelerometerFilter {
                 {0, 1}
         });
 
-        //B = MatrixUtils.createRealMatrix(new double[][]{})
+        // Höftskott deluxe
+        double std = 0.1; //standard covariance
+        Q = MatrixUtils.createRealMatrix(new double[][]{
+                {1, dt},
+                {0, 1}}).scalarMultiply(std);
 
-        //double std; //standard covariance
-        //Q = MatrixUtils.createRealMatrix(new double[][]{}).scalarMultiply(std);
-
-        //double noiseVariance;
-        //R = MatrixUtils.createRealMatrix(new double[][]{noiseVariance});
+        // Höftskott deluxe
+        double noiseVariance = 0.05;
+        R = MatrixUtils.createRealMatrix(new double[][]{{noiseVariance}});
+        x = new ArrayRealVector(new double[]{0, 0});
         H = MatrixUtils.createRowRealMatrix(new double[]{1, 0});
         P = MatrixUtils.createRealIdentityMatrix(2);
     }
 
     private void recalculateMatrices() {
-        // Recalculate A, B and Q with updated dt
+        // Recalculate A and Q with updated dt
         A = MatrixUtils.createRealMatrix(new double[][]{
                 {1, dt},
                 {0, 1}
         });
 
-        // B
-
-        // Q
+        double std = 0.1; //standard covariance
+        Q = MatrixUtils.createRealMatrix(new double[][]{
+                {1, dt},
+                {0, 1}}).scalarMultiply(std);
     }
 
     private void predict() {
