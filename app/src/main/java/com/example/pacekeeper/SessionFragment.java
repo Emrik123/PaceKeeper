@@ -18,6 +18,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -113,18 +117,24 @@ public class SessionFragment extends Fragment {
 
     }
 
+
+
+
     private void updateUI() {
         List<Session.StoredSession> sessionsList = sessionManager.getSavedSessions();
 
         if(sessionsList!=null) {
+            Collections.reverse(sessionsList);
             for (Session.StoredSession session : sessionsList) {
 
                 sessionView = LayoutInflater.from(getContext()).inflate(R.layout.session_item, null);
+                LinearLayout sessionItem = sessionView.findViewById(R.id.session_layout);
                 ImageButton compressButton = sessionView.findViewById(R.id.compress_button);
                 ImageButton  expandButton = sessionView.findViewById(R.id.expand_button);
+                ImageButton deleteSessionButton = sessionView.findViewById(R.id.delete_session);
                 TextView sessionComment = sessionView.findViewById(R.id.detail_text_view_session_comment_text);
                 TextView sessionCommentTitle = sessionView.findViewById(R.id.detail_text_view_session_comment_title);
-                ImageView routeAsImage = sessionView.findViewById(R.id.route_image);
+                TextView sessionDistance = sessionView.findViewById(R.id.session_distance);
 
                 Button saveCommentButton = sessionView.findViewById(R.id.save_comment_button);
                 EditText editCommentText = sessionView.findViewById(R.id.edit_comment);
@@ -132,15 +142,15 @@ public class SessionFragment extends Fragment {
 
                 TextView sessionOverview = sessionView.findViewById(R.id.summary_text_view1);
                 TextView allKmInSession = sessionView.findViewById(R.id.detail_text_view_km);
-                TextView routeText = sessionView.findViewById(R.id.detail_text_view_route);
 
                 String formattedDistance = String.format(Locale.forLanguageTag("Swedish"), "%.1f", session.getTotalDistance() / 1000);
 
-                sessionOverview.setText(session.getDate() + "|" + session.getTotalTime() + "|" + formattedDistance + " km");
+                sessionOverview.setText(session.getDate() + " | " + session.getTotalTime());
+                sessionDistance.setText(formattedDistance + " km");
                 StringBuilder allKmTime = new StringBuilder();
                 if (session.getTimePerKm() != null) {
                     for (int i = 0; i < session.getTimePerKm().size(); i++) {
-                        allKmTime.append("km ").append(i + 1).append(" ").append(session.getTimePerKm().get(i)).append("\n ");
+                        allKmTime.append(" km ").append(i + 1).append(" ┃ ").append(session.getTimePerKm().get(i)).append("\n");
                     }
                     allKmInSession.setText(allKmTime);
                 }
@@ -148,8 +158,7 @@ public class SessionFragment extends Fragment {
                     sessionComment.setText(session.getSessionComment());
                 }
 
-                // routeText.setText(session.getRoute());
-                // routeAsImage.setImageResource(session.getRouteImage());
+
 
 
                 expandButton.setOnClickListener(new View.OnClickListener() {
@@ -158,8 +167,6 @@ public class SessionFragment extends Fragment {
                         if (allKmInSession.getVisibility() == View.GONE) {
                             editCommentIcon.setVisibility(View.VISIBLE);
                             allKmInSession.setVisibility(View.VISIBLE);
-                            routeText.setVisibility(View.VISIBLE);
-                            routeAsImage.setVisibility(View.VISIBLE);
                             sessionCommentTitle.setVisibility(View.VISIBLE);
                             if (session.getSessionComment() != null) {
                                 sessionComment.setVisibility(View.VISIBLE);
@@ -175,12 +182,13 @@ public class SessionFragment extends Fragment {
                     public void onClick(View v) {
                         if (allKmInSession.getVisibility() == View.VISIBLE) {
                             allKmInSession.setVisibility(View.GONE);
-                            routeText.setVisibility(View.GONE);
-                            routeAsImage.setVisibility(View.GONE);
                             sessionCommentTitle.setVisibility(View.GONE);
                             sessionComment.setVisibility(View.GONE);
                             expandButton.setVisibility(View.VISIBLE);
                             compressButton.setVisibility(View.GONE);
+                            editCommentText.setVisibility(View.GONE);
+                            saveCommentButton.setVisibility(View.GONE);
+                            editCommentIcon.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -189,7 +197,12 @@ public class SessionFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         editCommentText.setVisibility(View.VISIBLE);
+                        if(session.getSessionComment()!=null){
+                            editCommentText.setText(session.getSessionComment());
+                            sessionComment.setVisibility(View.GONE);
+                        }
                         saveCommentButton.setVisibility(View.VISIBLE);
+                        editCommentIcon.setVisibility(View.GONE);
                     }
                 });
 
@@ -197,14 +210,31 @@ public class SessionFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         session.setSessionComment(String.valueOf(editCommentText.getText()));
+                        sessionComment.setText(editCommentText.getText());
+                        sessionComment.setVisibility(View.VISIBLE);
                         editCommentText.setVisibility(View.GONE);
                         saveCommentButton.setVisibility(View.GONE);
 
                     }
                 });
+                View spacerView = new View(getContext());
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 20);
+                spacerView.setLayoutParams(params);
+
+                deleteSessionButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sessionManager.remove(session);
+                        sessionItem.setVisibility(View.GONE);
+                        sessionContainer.removeView(spacerView);
+                    }
+                });
 
 
                 sessionContainer.addView(sessionView);
+                sessionContainer.addView(spacerView);
+
+
             }
 
         }

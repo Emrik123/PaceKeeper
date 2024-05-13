@@ -30,12 +30,12 @@
         <TextView
             android:id="@+id/titleSession"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:fontFamily="sans-serif-black"
             android:text="Sessions"
             android:textAlignment="center"
             android:textColor="#4F6D7A"
-            android:textSize="34sp"
+            android:textSize="44sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -45,7 +45,7 @@
             android:id="@+id/session_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/border"
+            android:background="@color/transparent"
             android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@+id/titleSession">
 

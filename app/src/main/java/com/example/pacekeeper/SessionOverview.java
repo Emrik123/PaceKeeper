@@ -12,7 +12,9 @@ import androidx.fragment.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,18 +22,6 @@ import android.widget.ImageButton;
  * create an instance of this fragment.
  */
 public class SessionOverview extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE = 1;
-    private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 2;
-
 
     private SessionManager sessionManager;
     private Session currentSession;
@@ -49,7 +39,6 @@ public class SessionOverview extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static SessionOverview newInstance(Session currentSession, SessionManager sessionManager) {
         SessionOverview fragment = new SessionOverview();
-        Bundle args = new Bundle();
         fragment.setCurrentSession(currentSession);
         fragment.setSessionManager(sessionManager);
         return fragment;
@@ -65,10 +54,6 @@ public class SessionOverview extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -80,15 +65,31 @@ public class SessionOverview extends Fragment {
         ImageButton saveSession = rootView.findViewById(R.id.save_session_button);
         ImageButton resumeSession = rootView.findViewById(R.id.resume_session_button);
         ImageButton deleteSession = rootView.findViewById(R.id.delete_session_button);
+        TextView sessionSummary = rootView.findViewById(R.id.summary_text_view1);
+        TextView sessionDistance = rootView.findViewById(R.id.session_distance);
+        TextView timePerKm = rootView.findViewById(R.id.detail_text_view_km);
+        EditText editComment = rootView.findViewById(R.id.edit_comment);
+
+        sessionSummary.setText(currentSession.getSessionDate() + " | " + currentSession.getTotalSessionTime());
+        sessionDistance.setText(currentSession.getFormattedDistance());
+        StringBuilder allKmTime = new StringBuilder();
+        if (currentSession.getTimePerKm() != null) {
+            for (int i = 0; i < currentSession.getTimePerKm().size(); i++) {
+                allKmTime.append(" km ").append(i + 1).append(" ┃ ").append(currentSession.getTimePerKm().get(i)).append("\n");
+            }
+            timePerKm.setText(allKmTime);
+        }
 
 
         saveSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!String.valueOf(editComment.getText()).equals("Add text here.")){
+                    currentSession.setSessionComment(String.valueOf(editComment.getText()));
+                }
                 sessionManager.add(currentSession.getSerializableSession());
                 sessionManager.storeSessionToMemory(getContext());
                 currentSession.killSession();
-               // getParentFragmentManager().popBackStackImmediate();
 
                 getActivity().getSupportFragmentManager().popBackStack(
                     "mainActivity",

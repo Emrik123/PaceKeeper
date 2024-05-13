@@ -8,6 +8,7 @@ import com.google.android.gms.location.LocationResult;
 import org.apache.commons.lang3.time.StopWatch;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -32,6 +33,8 @@ public class Session {
     private Context context;
     private FeedbackHandler feedbackHandler;
     private boolean isPaused;
+    private String sessionComment;
+
 
     public Session(double selectedSpeed, Context context, FeedbackHandler feedbackHandler){
         this.feedbackHandler = feedbackHandler;
@@ -116,7 +119,7 @@ public class Session {
     }
 
     public StoredSession getSerializableSession(){
-        return new StoredSession(getSessionDate(), getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed);
+        return new StoredSession(getSessionDate(), getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed, sessionComment);
     }
 
     public void updateLocation(LocationResult location, float[] a) {
@@ -202,8 +205,14 @@ public class Session {
         }
     }
 
-    public LocalDate getSessionDate(){
-        return sessionDate;
+    public void setSessionComment(String sessionComment){
+        this.sessionComment=sessionComment;
+    }
+
+    public String getSessionDate(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd");
+        return sessionDate.format(formatter);
+
     }
 
     public String getTotalSessionTime(){
@@ -276,7 +285,7 @@ public class Session {
         private final String totalTime;
         private int sessionID;
         private static final long serialVersionUID = 0L;
-        private LocalDate date;
+        private String date;
 
         private double selectedSpeed;
 
@@ -286,13 +295,14 @@ public class Session {
 
 
 
-        public StoredSession( LocalDate date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed){
+        public StoredSession( String date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed, String sessionComment){
             this.totalTime = time;
             this.totalDistance = distance;
             this.date = date;
             this.timePerKm = timePerKm;
             this.sessionID = idCount.incrementAndGet();
             this.selectedSpeed = selectedSpeed;
+            this.sessionComment = sessionComment;
         }
 
         public void setSessionComment(String sessionComment){
@@ -311,7 +321,7 @@ public class Session {
             return timePerKm;
         }
 
-        public LocalDate getDate(){
+        public String getDate(){
             return date;
         }
 

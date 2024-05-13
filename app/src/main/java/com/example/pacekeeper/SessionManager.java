@@ -32,6 +32,10 @@ public class SessionManager {
         sessions.add(session);
     }
 
+    public void remove(Session.StoredSession session){
+        sessions.remove(session);
+    }
+
     public ArrayList<Session.StoredSession> getSavedSessions(){
         return sessions;
     }
