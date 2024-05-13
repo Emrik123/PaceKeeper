@@ -111,6 +111,7 @@ public class RunnerView extends Fragment {
                 settingsButton.setVisibility(View.VISIBLE);
                 currentSession.pauseSession();
                 feedbackHandler.stopFeedback();
+                displayNavigationBar();
             }
         });
 
@@ -123,6 +124,7 @@ public class RunnerView extends Fragment {
                 settingsButton.setVisibility(View.INVISIBLE);
                 currentSession.continueSession();
                 feedbackHandler.runFeedback(currentSession.getSelectedSpeed());
+                hideNavigationBar();
             }
         });
 
@@ -195,6 +197,9 @@ public class RunnerView extends Fragment {
                 mainActivity.moveTaskToBack(true);
             }
         });
+        if (getCurrentSession().isPaused()) {
+            displayNavigationBar();
+        }
     }
 
     private void hideNavigationBar() {
