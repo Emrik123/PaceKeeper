@@ -119,7 +119,7 @@ public class Session {
     }
 
     public StoredSession getSerializableSession(){
-        return new StoredSession(getSessionDate(), getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed, sessionComment);
+        return new StoredSession(sessionDate, getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed, sessionComment);
     }
 
     public void updateLocation(LocationResult location, float[] a) {
@@ -285,7 +285,7 @@ public class Session {
         private final String totalTime;
         private int sessionID;
         private static final long serialVersionUID = 0L;
-        private String date;
+        private LocalDate date;
 
         private double selectedSpeed;
 
@@ -295,7 +295,7 @@ public class Session {
 
 
 
-        public StoredSession( String date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed, String sessionComment){
+        public StoredSession( LocalDate date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed, String sessionComment){
             this.totalTime = time;
             this.totalDistance = distance;
             this.date = date;
@@ -322,7 +322,12 @@ public class Session {
         }
 
         public String getDate(){
-            return date;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
+            if(date!=null){
+                return date.format(formatter);
+            }else{
+                return "no date found";
+            }
         }
 
         public String getSessionComment(){

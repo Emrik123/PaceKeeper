@@ -264,13 +264,8 @@ public class SessionFragment extends Fragment {
                     }
                 });
 
-
-
-
                 sessionContainer.addView(sessionView);
                 sessionContainer.addView(spacerView);
-
-
             }
 
         }
