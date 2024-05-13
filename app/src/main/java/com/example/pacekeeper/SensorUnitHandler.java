@@ -166,14 +166,14 @@ public class SensorUnitHandler extends Service {
      */
     private Notification getNotification() {
         String channelId = "sensor_service";
-        NotificationChannel channel = new NotificationChannel(channelId, "Sensor Service", NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel channel = new NotificationChannel(channelId, "Sensor Service", NotificationManager.IMPORTANCE_LOW);
         NotificationManager manager = getSystemService(NotificationManager.class);
         manager.createNotificationChannel(channel);
         Intent gotoIntent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, gotoIntent, PendingIntent.FLAG_IMMUTABLE);
         return new NotificationCompat.Builder(this, channelId)
-                .setContentTitle("Sensor Service")
-                .setContentText("Sensor Service active")
+                .setContentTitle("PaceKeeper")
+                .setContentText("Session active")
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.pacekeeperlogo)
                 .setOngoing(true)
