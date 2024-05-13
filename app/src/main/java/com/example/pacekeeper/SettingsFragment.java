@@ -145,6 +145,7 @@ public class SettingsFragment extends Fragment {
         desiredUnitHelpButton.setOnClickListener(v -> {
             if (desiredUnitHelpTextView.getVisibility() == View.GONE) {
                 desiredUnitHelpTextView.setVisibility(View.VISIBLE);
+                feedbackFrequencyHelpTextView.setVisibility(View.GONE);
             } else {
                 desiredUnitHelpTextView.setVisibility(View.GONE);
             }
@@ -153,6 +154,7 @@ public class SettingsFragment extends Fragment {
         feedbackFrequencyHelpButton.setOnClickListener(v -> {
             if (feedbackFrequencyHelpTextView.getVisibility() == View.GONE) {
                 feedbackFrequencyHelpTextView.setVisibility(View.VISIBLE);
+                desiredUnitHelpTextView.setVisibility(View.GONE);
             } else {
                 feedbackFrequencyHelpTextView.setVisibility(View.GONE);
             }
