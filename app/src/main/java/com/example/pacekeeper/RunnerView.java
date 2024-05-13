@@ -111,7 +111,6 @@ public class RunnerView extends Fragment {
                 settingsButton.setVisibility(View.VISIBLE);
                 currentSession.pauseSession();
                 feedbackHandler.stopFeedback();
-                displayNavigationBar();
             }
         });
 
@@ -148,6 +147,7 @@ public class RunnerView extends Fragment {
                     context.startForegroundService(serviceIntent);
                 } else {
                     displaySessionOverview();
+                    displayNavigationBar();
                 }
             }
         });

@@ -114,6 +114,7 @@ public class SessionOverview extends Fragment {
                 getActivity().getSupportFragmentManager().popBackStack(
                         "runnerView",
                         FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                hideNavigationBar();
             }
         });
 
@@ -140,5 +141,12 @@ public class SessionOverview extends Fragment {
         Intent intent = new Intent(getContext(), SensorUnitHandler.class);
         intent.setAction("STOP");
         requireContext().startForegroundService(intent);
+    }
+
+    private void hideNavigationBar() {
+        View decorView = requireActivity().getWindow().getDecorView();
+        int hideNavigation = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        int immersive = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        decorView.setSystemUiVisibility(hideNavigation | immersive);
     }
 }
