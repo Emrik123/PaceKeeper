@@ -11,7 +11,9 @@ import androidx.fragment.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,11 +64,28 @@ public class SessionOverview extends Fragment {
         ImageButton saveSession = rootView.findViewById(R.id.save_session_button);
         ImageButton resumeSession = rootView.findViewById(R.id.resume_session_button);
         ImageButton deleteSession = rootView.findViewById(R.id.delete_session_button);
+        TextView sessionSummary = rootView.findViewById(R.id.summary_text_view1);
+        TextView sessionDistance = rootView.findViewById(R.id.session_distance);
+        TextView timePerKm = rootView.findViewById(R.id.detail_text_view_km);
+        EditText editComment = rootView.findViewById(R.id.edit_comment);
+
+        sessionSummary.setText(currentSession.getSessionDate() + " | " + currentSession.getTotalSessionTime());
+        sessionDistance.setText(currentSession.getFormattedDistance());
+        StringBuilder allKmTime = new StringBuilder();
+        if (currentSession.getTimePerKm() != null) {
+            for (int i = 0; i < currentSession.getTimePerKm().size(); i++) {
+                allKmTime.append(" km ").append(i + 1).append(" ┃ ").append(currentSession.getTimePerKm().get(i)).append("\n");
+            }
+            timePerKm.setText(allKmTime);
+        }
 
 
         saveSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!String.valueOf(editComment.getText()).equals("Add text here.")){
+                    currentSession.setSessionComment(String.valueOf(editComment.getText()));
+                }
                 sessionManager.add(currentSession.getSerializableSession());
                 sessionManager.storeSessionToMemory(getContext());
                 currentSession.killSession();

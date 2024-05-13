@@ -18,6 +18,22 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+
+                <ImageButton
+                    android:id="@+id/delete_session"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_gravity="end"
+                    android:backgroundTint="@color/transparent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/deleteicon"
+                    />
             <TextView
                 android:id="@+id/summary_text_view1"
                 android:layout_width="wrap_content"
@@ -27,6 +43,11 @@
                 android:textColor="@color/black"
                 android:layout_gravity="center"
                 />
+
+
+
+
+            </LinearLayout>
             <TextView
                 android:id="@+id/session_distance"
                 android:layout_width="wrap_content"

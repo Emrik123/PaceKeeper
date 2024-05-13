@@ -128,8 +128,10 @@ public class SessionFragment extends Fragment {
             for (Session.StoredSession session : sessionsList) {
 
                 sessionView = LayoutInflater.from(getContext()).inflate(R.layout.session_item, null);
+                LinearLayout sessionItem = sessionView.findViewById(R.id.session_layout);
                 ImageButton compressButton = sessionView.findViewById(R.id.compress_button);
                 ImageButton  expandButton = sessionView.findViewById(R.id.expand_button);
+                ImageButton deleteSessionButton = sessionView.findViewById(R.id.delete_session);
                 TextView sessionComment = sessionView.findViewById(R.id.detail_text_view_session_comment_text);
                 TextView sessionCommentTitle = sessionView.findViewById(R.id.detail_text_view_session_comment_title);
                 TextView sessionDistance = sessionView.findViewById(R.id.session_distance);
@@ -215,14 +217,24 @@ public class SessionFragment extends Fragment {
 
                     }
                 });
-
-
-                sessionContainer.addView(sessionView);
-
                 View spacerView = new View(getContext());
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 20);
                 spacerView.setLayoutParams(params);
+
+                deleteSessionButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sessionManager.remove(session);
+                        sessionItem.setVisibility(View.GONE);
+                        sessionContainer.removeView(spacerView);
+                    }
+                });
+
+
+                sessionContainer.addView(sessionView);
                 sessionContainer.addView(spacerView);
+
+
             }
 
         }
