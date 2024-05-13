@@ -99,10 +99,12 @@ public class SessionOverview extends Fragment {
             }
         });
 
-        editComment.setOnClickListener(new View.OnClickListener() {
+        editComment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View v) {
-                editComment.setText("");
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus && editComment.getText().toString().equals("Add text here.")){
+                    editComment.setText("");
+                }
             }
         });
 

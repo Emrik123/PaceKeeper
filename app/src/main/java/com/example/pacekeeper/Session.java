@@ -210,7 +210,7 @@ public class Session {
     }
 
     public String getSessionDate(){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd");
         return sessionDate.format(formatter);
 
     }
