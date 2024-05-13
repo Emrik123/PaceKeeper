@@ -94,7 +94,15 @@ public class SessionOverview extends Fragment {
                 getActivity().getSupportFragmentManager().popBackStack(
                     "mainActivity",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
                 stopService();
+            }
+        });
+
+        editComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editComment.setText("");
             }
         });
 

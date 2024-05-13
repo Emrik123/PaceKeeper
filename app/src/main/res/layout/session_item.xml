@@ -11,6 +11,7 @@
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/titleSession"
         android:background="@drawable/border"
+    android:clickable="true"
         >
 
         <LinearLayout
@@ -131,8 +132,8 @@
             android:ems="10"
             android:inputType="text"
             android:text="@string/edit_comment_text"
-            android:autofillHints=""
             android:visibility="gone"
+            android:clickable="true"
             />
 
         <TextView

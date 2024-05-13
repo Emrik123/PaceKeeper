@@ -230,6 +230,41 @@ public class SessionFragment extends Fragment {
                     }
                 });
 
+                sessionItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (allKmInSession.getVisibility() == View.GONE) {
+                            editCommentIcon.setVisibility(View.VISIBLE);
+                            allKmInSession.setVisibility(View.VISIBLE);
+                            sessionCommentTitle.setVisibility(View.VISIBLE);
+                            if (session.getSessionComment() != null) {
+                                sessionComment.setVisibility(View.VISIBLE);
+                            }
+                            expandButton.setVisibility(View.GONE);
+                            compressButton.setVisibility(View.VISIBLE);
+                        } else{
+                            allKmInSession.setVisibility(View.GONE);
+                            sessionCommentTitle.setVisibility(View.GONE);
+                            sessionComment.setVisibility(View.GONE);
+                            expandButton.setVisibility(View.VISIBLE);
+                            compressButton.setVisibility(View.GONE);
+                            editCommentText.setVisibility(View.GONE);
+                            saveCommentButton.setVisibility(View.GONE);
+                            editCommentIcon.setVisibility(View.GONE);
+                        }
+                    }
+                });
+
+                editCommentText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(String.valueOf(editCommentText.getText()).equals("Add text here.")){
+                            editCommentText.setText("");
+                        }
+                    }
+                });
+
+
 
                 sessionContainer.addView(sessionView);
                 sessionContainer.addView(spacerView);

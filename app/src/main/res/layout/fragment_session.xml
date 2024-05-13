@@ -33,7 +33,7 @@
             android:layout_height="60dp"
             android:fontFamily="@font/fugaz_one"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:text="Sessions"
+            android:text="SESSIONS"
             android:textAlignment="center"
             android:textColor="#4F6D7A"
             android:textSize="44sp"
