@@ -6,8 +6,7 @@ import android.content.Context;
 import android.speech.tts.TextToSpeech;
 
 public class FeedbackHandler implements Serializable {
-    private Vibrator vibrator;
-    private AudioPlayer audioPlayer;
+    private final Vibrator vibrator;
     private boolean audioAllowed = true;
     private boolean vibrationAllowed = true;
     private long feedbackDelayMillis;
@@ -26,7 +25,6 @@ public class FeedbackHandler implements Serializable {
 
     public FeedbackHandler(Context context) {
         this.context = context;
-        audioPlayer = new AudioPlayer(context);
         vibrator = new Vibrator(context);
     }
 
@@ -42,16 +40,12 @@ public class FeedbackHandler implements Serializable {
                     prompt += correctPrompt;
                     deviated = false;
                     speak(prompt);
-                }
-                if (movingTooFast()) {
-                    //audioPlayer.decreaseSound();
+                } else if (movingTooFast()) {
                     prompt += slowerPrompt;
                     deviated = true;
                     speak(prompt);
-                }
-                if (movingTooSlow()) {
+                } else if (movingTooSlow()) {
                     prompt += fasterPrompt;
-                    //audioPlayer.increaseSound();
                     deviated = true;
                     speak(prompt);
                 }
@@ -59,8 +53,7 @@ public class FeedbackHandler implements Serializable {
             if (vibrationAllowed) {
                 if (movingTooFast()) {
                     vibrator.decreaseVelocity();
-                }
-                if (movingTooSlow()) {
+                } else if (movingTooSlow()) {
                     vibrator.increaseVelocity();
                 }
             }

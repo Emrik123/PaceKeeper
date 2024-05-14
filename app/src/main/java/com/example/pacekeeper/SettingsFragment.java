@@ -4,12 +4,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
+
+import java.util.Locale;
 
 /**
  Class for managing GUI elements in the Settings fragment
@@ -38,12 +41,12 @@ public class SettingsFragment extends Fragment {
     private ImageButton soundSampleSlowDownButton;
     private ImageButton vibrationSampleSpeedUpButton;
     private ImageButton vibrationSampleSlowDownButton;
-    private AudioPlayer audioPlayer;
     private Vibrator vibrator;
     private ImageButton desiredUnitHelpButton;
     private ImageButton feedbackFrequencyHelpButton;
     private TextView desiredUnitHelpTextView;
     private TextView feedbackFrequencyHelpTextView;
+    private TextToSpeech tts;
 
     /**
      * Create method, called when the fragment is created and loads settings
@@ -71,12 +74,12 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
-        audioPlayer = new AudioPlayer(requireContext());
         vibrator = new Vibrator(requireContext());
         initGraphicElements(rootView);
         initListeners();
         loadAndSetCurrentSettings();
         setGraphicElements();
+        initTextToSpeech();
         return rootView;
     }
 
@@ -88,6 +91,7 @@ public class SettingsFragment extends Fragment {
     public void onPause() {
         super.onPause();
         saveSettings();
+        removeTextToSpeech();
     }
 
     /**
@@ -173,10 +177,10 @@ public class SettingsFragment extends Fragment {
                 (v -> getParentFragmentManager().popBackStackImmediate());
 
         soundSampleSpeedUpButton.setOnClickListener
-                (v -> audioPlayer.increaseSound());
+                (v -> speechSampleFaster());
 
         soundSampleSlowDownButton.setOnClickListener
-                (v -> audioPlayer.decreaseSound());
+                (v -> speechSampleSlower());
 
         vibrationSampleSpeedUpButton.setOnClickListener
                 (v -> vibrator.increaseVelocity());
@@ -264,5 +268,62 @@ public class SettingsFragment extends Fragment {
                 radioSpeedMinPerKm.setChecked(true);
                 break;
         }
+    }
+
+    /**
+     * Initializes a speech synthesizer with a set language.
+     * @author Samuel
+     */
+    public void initTextToSpeech() {
+        tts = new TextToSpeech(requireContext(), status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                tts.setLanguage(Locale.US);
+            }
+        });
+    }
+
+    /**
+     * Interrupts and removes the text to speech.
+     * @author Samuel
+     */
+    public void removeTextToSpeech() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+    }
+
+    /**
+     * Tells the text to speech to speak a sample text of what a user might hear
+     * if they're moving too slow.
+     * @author Samuel
+     */
+    public void speechSampleFaster() {
+        CharSequence prompt = "";
+        switch (unitOfVelocity) {
+            case MIN_PER_KM:
+                prompt = "Four minutes, 26 seconds, speed up";
+                break;
+            case KM_PER_HOUR:
+                prompt = "13 km/h, speed up";
+        }
+        tts.speak(prompt, TextToSpeech.QUEUE_FLUSH, null, null);
+    }
+
+    /**
+     * Tells the text to speech to speak a sample text of what a user might hear
+     * if they're moving too fast.
+     * @author Samuel
+     */
+    public void speechSampleSlower() {
+        CharSequence prompt = "";
+        switch (unitOfVelocity) {
+            case MIN_PER_KM:
+                prompt = "Three minutes, 15 seconds, slow down";
+                break;
+            case KM_PER_HOUR:
+                prompt = "19 km/h, slow down";
+        }
+        tts.speak(prompt, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 }
