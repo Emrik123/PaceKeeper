@@ -86,6 +86,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pace_text"
             app:layout_constraintEnd_toStartOf="@+id/seconds_tag"
+            app:layout_constraintBottom_toTopOf="@+id/left_n_picker"
             android:layout_marginStart="75dp"
             android:visibility="visible"
             tools:visibility="visible"/>
@@ -98,6 +99,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pace_text"
             app:layout_constraintStart_toEndOf="@+id/minutes_tag"
+            app:layout_constraintBottom_toTopOf="@+id/right_n_picker"
             android:layout_marginEnd="75dp"
             android:textColor="#302E2E"
             android:visibility="visible"
