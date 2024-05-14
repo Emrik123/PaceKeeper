@@ -40,10 +40,8 @@ public class AccelerometerFilter {
                 {0, 1}
         });
 
-        double std = 0.1; //standard covariance
-        Q = MatrixUtils.createRealMatrix(new double[][]{
-                {1, dt},
-                {0, 1}}).scalarMultiply(std);
+        double std = 0.1;
+        Q = MatrixUtils.createRealMatrix(new double[][]{{std}});
     }
 
     private void predict() {
