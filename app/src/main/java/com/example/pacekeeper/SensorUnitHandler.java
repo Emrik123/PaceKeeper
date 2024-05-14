@@ -13,12 +13,15 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import com.google.android.gms.location.LocationResult;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class SensorUnitHandler extends Service {
     private SensorManager sensorManager;
     private Accelerometer accelerometer;
     private GPS gps;
     private OrientationHandler orientationHandler;
     private Context context;
+    private AtomicInteger id = new AtomicInteger(0);
 
     public SensorUnitHandler() {
         super();
@@ -38,7 +41,7 @@ public class SensorUnitHandler extends Service {
 
     public void stopSensorThreads() {
         if (accelerometer != null && gps != null && orientationHandler != null) {
-            accelerometer.stopAccelerometer();
+            accelerometer.stopAccelerometer(id.getAndIncrement());
             gps.stopLocationUpdates();
             orientationHandler.stopOrientationSensor();
         }

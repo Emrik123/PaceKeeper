@@ -28,6 +28,8 @@ public class OrientationHandler implements SensorEventListener {
     private RealMatrix matrix;
     private HandlerThread sensorThread;
     private Handler sensorHandler;
+    private final AccelerometerFilter eastAxisFilter = new AccelerometerFilter();
+    private final AccelerometerFilter northAxisFilter = new AccelerometerFilter();
 
     public OrientationHandler(SensorManager sensorManager, SensorUnitHandler sensorUnitHandler) {
         this.sensorUnitHandler = sensorUnitHandler;
@@ -80,6 +82,12 @@ public class OrientationHandler implements SensorEventListener {
         sensorUnitHandler.getAccelerometer().setAccelerometerValues(new float[]{(float) resultVector.getEntry(0),
                 (float) resultVector.getEntry(1), (float) resultVector.getEntry(2)});
         // transformedAcceleration[0] is east, transformedAcceleration[1] is north, transformedAcceleration[2] is vertical
+
+        double timeStep = sensorUnitHandler.getAccelerometer().getTimeStep();
+        eastAxisFilter.update(resultVector.getEntry(0), timeStep);
+        northAxisFilter.update(resultVector.getEntry(1), timeStep);
+        float[] filteredValues = {(float) eastAxisFilter.getState()[0], (float) northAxisFilter.getState()[0]};
+        sensorUnitHandler.getAccelerometer().setFilteredAccelerometerValues(filteredValues);
     }
 
     @Override

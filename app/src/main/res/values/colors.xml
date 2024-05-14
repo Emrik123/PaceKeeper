@@ -3,4 +3,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="settings_text_color">#FF000000</color>
+    <color name="switch_checked">#07F825</color>
+    <color name="switch_unchecked">#FB0000</color>
+    <color name="switch_foreground">#EEF3EE</color>
+    <color name="track_color">#AEB5AF</color>
+
 </resources>

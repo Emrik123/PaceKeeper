@@ -37,10 +37,10 @@
     <string name="session_comment_title">Session Comment</string>
     <string name="session_comment"></string>
     <string name="display_settings">Display speed in</string>
-    <string name="display_speed_preference">Display speed preference</string>
+    <string name="display_speed_preference">Desired pace unit</string>
     <string name="speed_min_km">min/km</string>
     <string name="speed_km_h">km/h</string>
-    <string name="autosave_session">Automatically save finished sessions</string>
+    <string name="autosave_session">Auto-save finished sessions</string>
     <string name="sessions_textView">Session</string>
     <string name="minutes_tag">Minutes</string>
     <string name="seconds_tag">Seconds</string>
@@ -49,5 +49,7 @@
     <string name="null_speed">- - : - -</string>
     <string name="sound_samples">Sound Samples</string>
     <string name="vibration_samples">Vibration Samples</string>
+    <string name="desired_pace_unit_help">The choice made here changes the pace unit shown throughout the application</string>
+    <string name="feedback_frequency_help">The feedback frequency setting alters how often you will receive feedback from the application </string>
 
 </resources>
