@@ -21,15 +21,12 @@ public class AccelerometerFilter {
                 {0, 1}
         });
 
-        // Höftskott deluxe
         double std = 0.15; //standard covariance
-        Q = MatrixUtils.createRealMatrix(new double[][]{
-                {1, dt},
-                {0, 1}}).scalarMultiply(std);
+        Q = MatrixUtils.createRealMatrix(new double[][]{{std}});
 
-        // Höftskott deluxe
         double noiseVariance = 0.9;
         R = MatrixUtils.createRealMatrix(new double[][]{{noiseVariance}});
+
         x = new ArrayRealVector(new double[]{0, 0});
         H = MatrixUtils.createRowRealMatrix(new double[]{1, 0});
         P = MatrixUtils.createRealIdentityMatrix(2);
