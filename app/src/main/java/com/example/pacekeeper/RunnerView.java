@@ -68,26 +68,11 @@ public class RunnerView extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_blank, container, false);
         context = container.getContext();
-        timeDisplay = rootView.findViewById(R.id.time);
-        speedDisplay = rootView.findViewById(R.id.speedDisplay);
-        distanceDisplay = rootView.findViewById(R.id.distanceDisplay);
-        pauseButton = rootView.findViewById(R.id.pauseButtonLogo);
-        resumeButton = rootView.findViewById(R.id.playButtonLogo);
-        stopButton = rootView.findViewById(R.id.stopButtonLogo);
-        settingsButton = rootView.findViewById(R.id.settingsButton);
-        stopButton.setVisibility(View.INVISIBLE);
-        resumeButton.setVisibility(View.INVISIBLE);
-        settingsButton.setVisibility(View.INVISIBLE);
+        initializeGraphicalResources(rootView);
         fragmentManager = mainActivity.getSupportFragmentManager();
-        Intent intent = requireActivity().getIntent();
         interfaceUpdateHandler = new Handler(Looper.getMainLooper());
-        speedCircle = rootView.findViewById(R.id.speed_circle);
-        selectedPaceDisplay = rootView.findViewById(R.id.desired_speed_text);
-        slowCircle = ContextCompat.getDrawable(requireContext(), R.drawable.circle);
-        fastCircle = ContextCompat.getDrawable(requireContext(), R.drawable.redcircle);
-        goodSpeedCircle = ContextCompat.getDrawable(requireContext(), R.drawable.greencircle);
-        unitOfVelocityDisplay = rootView.findViewById(R.id.unit_of_velocity);
 
+        Intent intent = requireActivity().getIntent();
         if (intent != null) {
             feedbackHandler = (FeedbackHandler) intent.getSerializableExtra("feedbackHandler");
             unitOfVelocity = (UnitOfVelocity) intent.getSerializableExtra("unitOfVelocity");
@@ -102,56 +87,80 @@ public class RunnerView extends Fragment {
             sessionManager = mainActivity.getSessionManager();
         }
 
-        pauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pauseButton.setVisibility(View.INVISIBLE);
-                resumeButton.setVisibility(View.VISIBLE);
-                stopButton.setVisibility(View.VISIBLE);
-                settingsButton.setVisibility(View.VISIBLE);
-                currentSession.pauseSession();
-                feedbackHandler.stopFeedback();
-            }
+        initializeEventListeners();
+        initializeUiUpdates();
+        start();
+        initializeGraphicalComponents();
+        return rootView;
+    }
+
+    public void initializeGraphicalResources(View rootView) {
+        timeDisplay = rootView.findViewById(R.id.time);
+        speedDisplay = rootView.findViewById(R.id.speedDisplay);
+        distanceDisplay = rootView.findViewById(R.id.distanceDisplay);
+        pauseButton = rootView.findViewById(R.id.pauseButtonLogo);
+        resumeButton = rootView.findViewById(R.id.playButtonLogo);
+        stopButton = rootView.findViewById(R.id.stopButtonLogo);
+        settingsButton = rootView.findViewById(R.id.settingsButton);
+        speedCircle = rootView.findViewById(R.id.speed_circle);
+        selectedPaceDisplay = rootView.findViewById(R.id.desired_speed_text);
+        slowCircle = ContextCompat.getDrawable(requireContext(), R.drawable.circle);
+        fastCircle = ContextCompat.getDrawable(requireContext(), R.drawable.redcircle);
+        goodSpeedCircle = ContextCompat.getDrawable(requireContext(), R.drawable.greencircle);
+        unitOfVelocityDisplay = rootView.findViewById(R.id.unit_of_velocity);
+    }
+
+    public void initializeEventListeners() {
+        pauseButton.setOnClickListener(v -> {
+            pauseButton.setVisibility(View.INVISIBLE);
+            resumeButton.setVisibility(View.VISIBLE);
+            stopButton.setVisibility(View.VISIBLE);
+            settingsButton.setVisibility(View.VISIBLE);
+            currentSession.pauseSession();
+            feedbackHandler.stopFeedback();
         });
 
-        resumeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pauseButton.setVisibility(View.VISIBLE);
-                resumeButton.setVisibility(View.INVISIBLE);
-                stopButton.setVisibility(View.INVISIBLE);
-                settingsButton.setVisibility(View.INVISIBLE);
-                currentSession.continueSession();
-                feedbackHandler.runFeedback(currentSession.getSelectedSpeed());
-                hideNavigationBar();
-            }
+        resumeButton.setOnClickListener(v -> {
+            pauseButton.setVisibility(View.VISIBLE);
+            resumeButton.setVisibility(View.INVISIBLE);
+            stopButton.setVisibility(View.INVISIBLE);
+            settingsButton.setVisibility(View.INVISIBLE);
+            currentSession.continueSession();
+            feedbackHandler.runFeedback(currentSession.getSelectedSpeed());
+            hideNavigationBar();
         });
 
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displaySettingsView();
+        settingsButton.setOnClickListener(v -> displaySettingsView());
+
+        stopButton.setOnClickListener(v -> {
+            feedbackHandler.stopFeedback();
+            if (autosaveSession) {
+                sessionManager.add(currentSession.getSerializableSession());
+                sessionManager.storeSessionToMemory(mainActivity);
+                currentSession.killSession();
+                getParentFragmentManager().popBackStackImmediate();
+                serviceIntent.setAction("STOP");
+                context.startForegroundService(serviceIntent);
+            } else {
+                displaySessionOverview();
+                displayNavigationBar();
             }
         });
+    }
 
-        stopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                feedbackHandler.stopFeedback();
-                if (autosaveSession) {
-                    sessionManager.add(currentSession.getSerializableSession());
-                    sessionManager.storeSessionToMemory(mainActivity);
-                    currentSession.killSession();
-                    getParentFragmentManager().popBackStackImmediate();
-                    serviceIntent.setAction("STOP");
-                    context.startForegroundService(serviceIntent);
-                } else {
-                    displaySessionOverview();
-                    displayNavigationBar();
-                }
-            }
-        });
+    @SuppressLint("SetTextI18n")
+    public void initializeGraphicalComponents() {
+        stopButton.setVisibility(View.INVISIBLE);
+        resumeButton.setVisibility(View.INVISIBLE);
+        settingsButton.setVisibility(View.INVISIBLE);
+        selectedPaceDisplay.setText(getString(R.string.desired_pace_text)
+                + currentSession.getFormattedSelectedSpeed());
+        unitOfVelocityDisplay.setText(unitOfVelocity.toString());
+        hideNavigationBar();
+        setBackButtonBehavior();
+    }
 
+    public void initializeUiUpdates() {
         uiUpdates = new Runnable() {
             @Override
             public void run() {
@@ -159,14 +168,6 @@ public class RunnerView extends Fragment {
                 interfaceUpdateHandler.postDelayed(this, 250);
             }
         };
-
-        start();
-        selectedPaceDisplay.setText(getString(R.string.desired_pace_text)
-                + currentSession.getFormattedSelectedSpeed());
-        unitOfVelocityDisplay.setText(unitOfVelocity.toString());
-        hideNavigationBar();
-        setBackButtonBehavior();
-        return rootView;
     }
 
     @Override

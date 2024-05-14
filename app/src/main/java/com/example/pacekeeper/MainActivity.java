@@ -4,16 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -48,7 +44,16 @@ public class MainActivity extends AppCompatActivity {
         sessionManager = new SessionManager();
         sessionManager.readFile(this);
         setContentView(R.layout.activity_main);
+        initializeGraphicalResources();
         fragmentManager = getSupportFragmentManager();
+        loadSharedPreferences();
+        setFeedbackPreferences();
+        setUnit();
+        setPickerStyle(unitOfVelocity);
+        initializeEventListeners();
+    }
+
+    public void initializeGraphicalResources() {
         startSessionButton = findViewById(R.id.start_button);
         settingsButton = findViewById(R.id.settings_button);
         leftNumberPicker = findViewById(R.id.left_n_picker);
@@ -56,34 +61,17 @@ public class MainActivity extends AppCompatActivity {
         feedbackHandler = new FeedbackHandler(getApplicationContext());
         previousSessionsButton = findViewById(R.id.previous_sessions_button);
         unitTextView = findViewById(R.id.unitTextView);
-        loadSharedPreferences();
-        setFeedbackPreferences();
-        setUnit();
-        setPickerStyle(unitOfVelocity);
+    }
 
-        startSessionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setTargetVelocity(unitOfVelocity);
-                if (targetVelocity != 0) {
-                    displayRunnerView(targetVelocity);
-                }
+    public void initializeEventListeners() {
+        startSessionButton.setOnClickListener(v -> {
+            setTargetVelocity(unitOfVelocity);
+            if (targetVelocity != 0) {
+                displayRunnerView(targetVelocity);
             }
         });
-
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displaySettingsView();
-            }
-        });
-
-        previousSessionsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displaySessionsView();
-            }
-        });
+        settingsButton.setOnClickListener(v -> displaySettingsView());
+        previousSessionsButton.setOnClickListener(v -> displaySessionsView());
     }
 
     @Override

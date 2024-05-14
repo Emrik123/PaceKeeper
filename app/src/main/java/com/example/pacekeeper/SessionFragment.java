@@ -43,6 +43,7 @@ public class SessionFragment extends Fragment {
     private SessionManager sessionManager;
     LinearLayout sessionContainer;
     private Runnable uiPopulation;
+    private ImageButton returnButton;
 
 
     View sessionView;
@@ -88,9 +89,7 @@ public class SessionFragment extends Fragment {
 
         uiHandler = new Handler(Looper.getMainLooper());
         View rootView = inflater.inflate(R.layout.fragment_session, container, false);
-        ImageButton returnButton = rootView.findViewById(R.id.return_button);
-        sessionContainer = rootView.findViewById(R.id.session_layout);
-
+        initializeGraphicalResources(rootView);
 
         uiPopulation = new Runnable() {
             @Override
@@ -98,9 +97,22 @@ public class SessionFragment extends Fragment {
                 updateUI();
             }
         };
-            populateUI();
+        populateUI();
 
+        initializeEventListeners();
+        return rootView;
+    }
 
+    public void populateUI(){
+        uiHandler.post(uiPopulation);
+    }
+
+    public void initializeGraphicalResources(View rootView) {
+        returnButton = rootView.findViewById(R.id.return_button);
+        sessionContainer = rootView.findViewById(R.id.session_layout);
+    }
+
+    public void initializeEventListeners() {
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,16 +120,7 @@ public class SessionFragment extends Fragment {
                 requireActivity().onBackPressed();
             }
         });
-
-        return rootView;
     }
-
-    public void populateUI(){
-        uiHandler.post(uiPopulation);
-
-    }
-
-
 
 
     private void updateUI() {

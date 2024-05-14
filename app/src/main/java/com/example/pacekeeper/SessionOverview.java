@@ -25,6 +25,14 @@ public class SessionOverview extends Fragment {
 
     private SessionManager sessionManager;
     private Session currentSession;
+    private ImageButton saveSession;
+    private ImageButton resumeSession;
+    private ImageButton deleteSession;
+    private TextView sessionSummary;
+    private TextView sessionDistance;
+    private TextView timePerKm;
+    private EditText editComment;
+
 
     public SessionOverview() {
         // Required empty public constructor
@@ -68,13 +76,7 @@ public class SessionOverview extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_session_overview, container, false);
 
-        ImageButton saveSession = rootView.findViewById(R.id.save_session_button);
-        ImageButton resumeSession = rootView.findViewById(R.id.resume_session_button);
-        ImageButton deleteSession = rootView.findViewById(R.id.delete_session_button);
-        TextView sessionSummary = rootView.findViewById(R.id.summary_text_view1);
-        TextView sessionDistance = rootView.findViewById(R.id.session_distance);
-        TextView timePerKm = rootView.findViewById(R.id.detail_text_view_km);
-        EditText editComment = rootView.findViewById(R.id.edit_comment);
+        initializeGraphicalResources(rootView);
 
         sessionSummary.setText(currentSession.getSessionDate() + " | " + currentSession.getTotalSessionTime());
         sessionDistance.setText(currentSession.getFormattedDistance());
@@ -86,57 +88,57 @@ public class SessionOverview extends Fragment {
             timePerKm.setText(allKmTime);
         }
 
+        initializeEventListeners();
 
-        saveSession.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!String.valueOf(editComment.getText()).equals("Add text here.")){
-                    currentSession.setSessionComment(String.valueOf(editComment.getText()));
-                }
-                sessionManager.add(currentSession.getSerializableSession());
-                sessionManager.storeSessionToMemory(getContext());
-                currentSession.killSession();
+        return rootView;
+    }
 
-                getActivity().getSupportFragmentManager().popBackStack(
+    public void initializeGraphicalResources(View rootView) {
+        saveSession = rootView.findViewById(R.id.save_session_button);
+        resumeSession = rootView.findViewById(R.id.resume_session_button);
+        deleteSession = rootView.findViewById(R.id.delete_session_button);
+        sessionSummary = rootView.findViewById(R.id.summary_text_view1);
+        sessionDistance = rootView.findViewById(R.id.session_distance);
+        timePerKm = rootView.findViewById(R.id.detail_text_view_km);
+        editComment = rootView.findViewById(R.id.edit_comment);
+    }
+
+    public void initializeEventListeners() {
+        saveSession.setOnClickListener(v -> {
+            if(!String.valueOf(editComment.getText()).equals("Add text here.")){
+                currentSession.setSessionComment(String.valueOf(editComment.getText()));
+            }
+            sessionManager.add(currentSession.getSerializableSession());
+            sessionManager.storeSessionToMemory(getContext());
+            currentSession.killSession();
+
+            getActivity().getSupportFragmentManager().popBackStack(
                     "mainActivity",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-                stopService();
+            stopService();
+        });
+
+        editComment.setOnFocusChangeListener((v, hasFocus) -> {
+            if(hasFocus && editComment.getText().toString().equals("Add text here.")){
+                editComment.setText("");
             }
         });
 
-        editComment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus && editComment.getText().toString().equals("Add text here.")){
-                    editComment.setText("");
-                }
-            }
+        resumeSession.setOnClickListener(v -> {
+            getActivity().getSupportFragmentManager().popBackStack(
+                    "runnerView",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            hideNavigationBar();
         });
 
-        resumeSession.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack(
-                        "runnerView",
-                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                hideNavigationBar();
-            }
+        deleteSession.setOnClickListener(v -> {
+            currentSession.killSession();
+            getActivity().getSupportFragmentManager().popBackStack(
+                    "mainActivity",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            stopService();
         });
-
-        deleteSession.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentSession.killSession();
-                getActivity().getSupportFragmentManager().popBackStack(
-                        "mainActivity",
-                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                stopService();
-            }
-        });
-
-
-        return rootView;
     }
 
     /**
