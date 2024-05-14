@@ -25,13 +25,16 @@ public class Accelerometer implements SensorEventListener {
     private HandlerThread sensorThread;
     private Handler sensorHandler;
     private ArrayList<float[]> accHistory;
+    private ArrayList<float[]> accHistoryFiltered;
     private ArrayList<Long> timeStamp;
     private StopWatch stopWatch;
+    private double previousTimeStep = 0;
 
     public Accelerometer(SensorManager sensorManager) {
         timeStamp = new ArrayList<>();
         stopWatch = new StopWatch();
         accHistory = new ArrayList<>();
+        accHistoryFiltered = new ArrayList<>();
         this.sensorManager = sensorManager;
         sensorThread = new HandlerThread("Accelerometer");
         sensorThread.start();
@@ -46,9 +49,10 @@ public class Accelerometer implements SensorEventListener {
         }
     }
 
-    public void stopAccelerometer() {
+    public void stopAccelerometer(int dataId) {
         if (accelerometer != null) {
-            storeValues(new Data(accHistory, timeStamp));
+            storeValues(new Data(accHistory, timeStamp), "raw", dataId);
+            storeValues(new Data(accHistoryFiltered, timeStamp), "filtered", dataId);
             sensorManager.unregisterListener(this, accelerometer);
             accelerometer = null;
         }
@@ -88,9 +92,9 @@ public class Accelerometer implements SensorEventListener {
         }
     }
 
-    public void storeValues(Data d){
+    public void storeValues(Data d, String type, int id){
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-                "testDataFile_" + LocalDate.now() + "_#" + LocalTime.now() + ".txt");
+                type + "_testDataFile_" + LocalDate.now() + "_#" + id + ".txt");
         try{
             FileOutputStream oos = new FileOutputStream(file);
             ArrayList<float[]> acc = d.getAcc();
@@ -129,7 +133,22 @@ public class Accelerometer implements SensorEventListener {
         timeStamp.add(stopWatch.getTime());
     }
 
+    public void setFilteredAccelerometerValues(float[] values){
+        accHistoryFiltered.add(values);
+    }
+
     public float[] getAccelerometerValues(){
         return accelerometerValues;
+    }
+
+    public double getTimeStep() {
+        double timeStep = 0;
+        if (previousTimeStep == 0) {
+            return timeStep;
+        } else {
+            timeStep = stopWatch.getTime() - previousTimeStep;
+        }
+        previousTimeStep = stopWatch.getTime();
+        return timeStep / 1000;
     }
 }

@@ -130,13 +130,13 @@ public class Session {
             }
             this.timeDelta = stopwatch.getTime();
 
-            eastAxisFilter.update(a[0], timeDelta);
-            northAxisFilter.update(a[1], timeDelta);
+            /*eastAxisFilter.update(a[0], tempTime / 1000);
+            northAxisFilter.update(a[1], tempTime / 1000);
             double[] eastAxisResult = eastAxisFilter.getState();
             double[] northAxisResult = northAxisFilter.getState();
-            kalmanFilter.predict(eastAxisResult[1], northAxisResult[1]);
+            kalmanFilter.predict(eastAxisResult[1], northAxisResult[1]);*/
 
-            //kalmanFilter.predict(a[0], a[1]);
+            kalmanFilter.predict(a[0], a[1]);
             kalmanFilter.update(currentLocation.getSpeed(), tempTime /1000);
             double[] result = kalmanFilter.getState();
             this.currentSpeed = Math.abs(result[1]);
