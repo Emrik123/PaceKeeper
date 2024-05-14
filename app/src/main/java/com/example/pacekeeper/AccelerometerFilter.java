@@ -21,7 +21,7 @@ public class AccelerometerFilter {
                 {0, 1}
         });
 
-        // Q is replaced with a scalar, std, essentially assuming a constant process noise variance.
+        // Q is replaced with a scalar, std, essentially assuming a constant process noise variance across all state variables.
         double std = 0.15;
         Q = MatrixUtils.createRealMatrix(new double[][]{{std}});
 
