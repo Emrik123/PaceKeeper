@@ -3,6 +3,7 @@ package com.example.pacekeeper;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -79,8 +80,13 @@ public class SessionFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
-
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                getParentFragmentManager().popBackStackImmediate();
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @SuppressLint("SetTextI18n")
@@ -117,7 +123,7 @@ public class SessionFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 sessionManager.storeSessionToMemory(requireContext());
-                requireActivity().onBackPressed();
+                getParentFragmentManager().popBackStackImmediate();
             }
         });
     }

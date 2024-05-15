@@ -111,7 +111,6 @@ public class SessionOverview extends Fragment {
             sessionManager.add(currentSession.getSerializableSession());
             sessionManager.storeSessionToMemory(getContext());
             currentSession.killSession();
-
             getActivity().getSupportFragmentManager().popBackStack(
                     "mainActivity",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
