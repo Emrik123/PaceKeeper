@@ -57,20 +57,20 @@ public class Kalman {
                 {0, 0, 0, 1}
         });
 
-        B = MatrixUtils.createRealMatrix(new double[][]{
-                {0.5 * Math.pow(dt, 2), 0},
-                {dt, 0},
-                {0, 0.5 * Math.pow(dt, 2)},
-                {0, dt}
+        B = new Array2DRowRealMatrix(new double[][]{
+                {0.5 * dt * dt},
+                {dt},
+                {0.5 * dt * dt},
+                {dt}
         });
 
-        double std = 0.125;
+        double scalar = 0.125;
         Q = MatrixUtils.createRealMatrix(new double[][]{
                 {0.25 * Math.pow(dt, 4), 0.5 * Math.pow(dt, 3), 0, 0},
                 {0.5 * Math.pow(dt, 3), Math.pow(dt, 2), 0, 0},
                 {0, 0, 0.25 * Math.pow(dt, 4), 0.5 * Math.pow(dt, 3)},
                 {0, 0, 0.5 * Math.pow(dt, 3), Math.pow(dt, 2)}
-        }).scalarMultiply(std);
+        }).scalarMultiply(scalar);
 
         double gpsNoiseVariance = 0.06;
         R = MatrixUtils.createRealMatrix(new double[][]{{gpsNoiseVariance}});
@@ -87,25 +87,24 @@ public class Kalman {
                 {0, 0, 0, 1}
         });
 
-        B = MatrixUtils.createRealMatrix(new double[][]{
-                {0.5 * Math.pow(dt, 2), 0},
-                {dt, 0},
-                {0, 0.5 * Math.pow(dt, 2)},
-                {0, dt}
+        B = new Array2DRowRealMatrix(new double[][]{
+                {0.5 * dt * dt},
+                {dt},
+                {0.5 * dt * dt},
+                {dt}
         });
 
-        double std = 0.125;
+        double scalar = 0.125;
         Q = MatrixUtils.createRealMatrix(new double[][]{
                 {0.25 * Math.pow(dt, 4), 0.5 * Math.pow(dt, 3), 0, 0},
                 {0.5 * Math.pow(dt, 3), Math.pow(dt, 2), 0, 0},
                 {0, 0, 0.25 * Math.pow(dt, 4), 0.5 * Math.pow(dt, 3)},
                 {0, 0, 0.5 * Math.pow(dt, 3), Math.pow(dt, 2)}
-        }).scalarMultiply(std);
+        }).scalarMultiply(scalar);
     }
 
-    public void predict(double ax, double ay) {
-        u = new ArrayRealVector(new double[]{ax, ay});
-
+    public void predict(double a) {
+        u = new ArrayRealVector(new double[]{a});
         x = A.operate(x).add(B.operate(u));
         P = A.multiply(P).multiply(A.transpose()).add(Q);
     }
@@ -113,20 +112,10 @@ public class Kalman {
     public void update(double z, double dt) {
         this.dt = dt;
         recalculateMatrices();
-        // Below lines are for measuring weightings for v0 and v1 in a given state (0 current, 1 previous)
-        // Not working as intended for now, not sure if necessary but may look into more in the future.
-//        double speedMagnitude = Math.sqrt(Math.pow(x.getEntry(1), 2) + Math.pow(x.getEntry(3), 2));
-//        if (speedMagnitude == 0) {
-//            speedMagnitude = 1;
-//        }
-//        double vxWeight = x.getEntry(1) / speedMagnitude;
-//        double vyWeight = x.getEntry(3) / speedMagnitude;
 
         RealVector zVector = new ArrayRealVector(new double[]{z});
-
         RealMatrix S = H.multiply(P).multiply(H.transpose()).add(R);
         K = P.multiply(H.transpose()).multiply(MatrixUtils.inverse(S));
-
         x = x.add(K.operate(zVector.subtract(H.operate(x))));
         P = P.subtract(K.multiply(H).multiply(P));
     }

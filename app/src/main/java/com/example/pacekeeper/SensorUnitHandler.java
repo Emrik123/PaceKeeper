@@ -84,10 +84,12 @@ public class SensorUnitHandler extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getAction().equals("STOP")) {
-            stopService();
-        } else if (intent.getAction().equals("START")) {
-            startService();
+        if(intent!=null){
+            if (intent.getAction().equals("STOP")) {
+                stopService();
+            } else if (intent.getAction().equals("START")) {
+                startService();
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }

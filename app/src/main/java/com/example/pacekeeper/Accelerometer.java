@@ -11,6 +11,7 @@ import android.util.Log;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,6 +27,7 @@ public class Accelerometer implements SensorEventListener {
     private ArrayList<float[]> accHistory;
     private ArrayList<Long> timeStamp;
     private StopWatch stopWatch;
+    private AtomicInteger id = new AtomicInteger(0);
 
     public Accelerometer(SensorManager sensorManager) {
         timeStamp = new ArrayList<>();
@@ -66,16 +68,9 @@ public class Accelerometer implements SensorEventListener {
     public static class Data implements Serializable {
         private ArrayList<float[]> acc;
         private ArrayList<Long> timeStamp;
-        private AtomicInteger idCount = new AtomicInteger(0);
-        private int id;
         public Data(ArrayList<float[]> acc, ArrayList<Long> timeStamp){
-            this.id = idCount.getAndIncrement();
             this.acc = acc;
             this.timeStamp = timeStamp;
-        }
-
-        public int getId(){
-            return id;
         }
 
         public ArrayList<float[]> getAcc() {
@@ -89,13 +84,15 @@ public class Accelerometer implements SensorEventListener {
 
     public void storeValues(Data d){
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-                "testDataFile_" + LocalDate.now() + "(" + d.getId() + ").txt");
+                "testDataFile_" + LocalDate.now() + "_#" + d.getTimeStamp().get(d.getTimeStamp().size()-1)+ ".txt");
+                Log.i("Test data index", String.valueOf(id));
         try{
             FileOutputStream oos = new FileOutputStream(file);
             ArrayList<float[]> acc = d.getAcc();
             ArrayList<Long> timeStamp = d.getTimeStamp();
             for(int i = 0; i < acc.size(); i++){
-                String s = timeStamp.get(i) + " " + acc.get(i)[0] + " " + acc.get(i)[1] + " \n";
+                double a = Math.sqrt(Math.pow(acc.get(i)[0], 2) + Math.pow(acc.get(i)[1], 2) + Math.pow(acc.get(i)[2], 2));
+                String s = timeStamp.get(i) + " " + a + "\n";
                 oos.write(s.getBytes());
             }
             oos.flush();
@@ -105,7 +102,6 @@ public class Accelerometer implements SensorEventListener {
             Log.e("File write error", "Couldn't write file: " + e.getMessage());
         }
     }
-
 
     @Override
     public void onSensorChanged(SensorEvent event) {
