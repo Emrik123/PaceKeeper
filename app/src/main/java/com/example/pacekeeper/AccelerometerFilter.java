@@ -23,7 +23,9 @@ public class AccelerometerFilter {
 
         // Q is replaced with a scalar, std, essentially assuming a constant process noise variance across all state variables.
         double std = 0.15;
-        Q = MatrixUtils.createRealMatrix(new double[][]{{std}});
+        Q = MatrixUtils.createRealMatrix(new double[][]{
+                {1, dt},
+                {0, 1}}).scalarMultiply(std);
 
         double noiseVariance = 0.9;
         R = MatrixUtils.createRealMatrix(new double[][]{{noiseVariance}});
@@ -40,8 +42,10 @@ public class AccelerometerFilter {
                 {0, 1}
         });
 
-        double std = 0.1;
-        Q = MatrixUtils.createRealMatrix(new double[][]{{std}});
+        double std = 0.15;
+        Q = MatrixUtils.createRealMatrix(new double[][]{
+                {1, dt},
+                {0, 1}}).scalarMultiply(std);
     }
 
     private void predict() {
