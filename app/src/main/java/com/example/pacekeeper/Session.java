@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Session {
@@ -34,9 +36,11 @@ public class Session {
     private FeedbackHandler feedbackHandler;
     private boolean isPaused;
     private String sessionComment;
+    private ArrayList<String> routeCordinates;
 
 
     public Session(double selectedSpeed, Context context, FeedbackHandler feedbackHandler){
+        routeCordinates = new ArrayList<>();
         this.feedbackHandler = feedbackHandler;
         kalmanFilter = new Kalman();
         this.sessionDate = LocalDate.now();
@@ -51,6 +55,26 @@ public class Session {
         stopwatch.start();
         broadcastReceiver = new SessionBroadcastReceiver(this);
         initializeReceiver();
+       // addRouteCordinates();
+    }
+
+    public void addRouteCordinates(){
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+               routeCordinates.add(currentLocation.getLongitude() + "," + currentLocation.getLatitude());
+                System.out.println("Coordinate added.");
+
+                if(!isRunning){
+                    timer.cancel();
+                    for(String s : routeCordinates){
+                        System.out.println(s);
+                    }
+                }
+            }
+        }, 1000);
+
     }
 
     public String updateTime(){
@@ -116,6 +140,9 @@ public class Session {
 
     public void killSession(){
         isRunning = false;
+        for(String s : routeCordinates){
+            System.out.println(s);
+        }
     }
 
     public StoredSession getSerializableSession(){
@@ -148,6 +175,8 @@ public class Session {
             feedbackHandler.setRunning(isRunning);
             feedbackHandler.setCurrentSpeed(currentSpeed);
         }
+        System.out.println("Current location: " + currentLocation.getLongitude());
+        routeCordinates.add(currentLocation.getLongitude() + "," + currentLocation.getLatitude());
     }
 
     public boolean getRunning(){
