@@ -217,7 +217,7 @@ public class RunnerView extends Fragment {
         if (currentSession.getRunning()) {
             distanceDisplay.setText(currentSession.getFormattedDistance());
             if (currentSession.getCurrentSpeed() > LOWEST_SPEED_THRESHOLD) {
-                speedDisplay.setText(currentSession.getFormattedSpeed());
+                speedDisplay.setText(currentSession.getFormattedCurrentSpeed());
             } else {
                 speedDisplay.setText(getResources().getString(R.string.null_speed));
             }

@@ -14,7 +14,6 @@ public class CustomNumberPicker extends android.widget.NumberPicker {
     public CustomNumberPicker(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-
     }
 
     @Override

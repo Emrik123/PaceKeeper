@@ -25,7 +25,7 @@ public class OrientationHandler implements SensorEventListener {
     private Sensor rotationSensor;
     private float[] rotationMatrix = new float[9];
     private float[] orientationAngles = new float[3];
-    private RealMatrix matrix;
+    private RealMatrix inverseRotationMatrix;
     private HandlerThread sensorThread;
     private Handler sensorHandler;
 
@@ -39,7 +39,7 @@ public class OrientationHandler implements SensorEventListener {
     public OrientationHandler(SensorManager sensorManager, SensorUnitHandler sensorUnitHandler) {
         this.sensorUnitHandler = sensorUnitHandler;
         this.sensorManager = sensorManager;
-        matrix = new Array2DRowRealMatrix(3, 3);
+        inverseRotationMatrix = new Array2DRowRealMatrix(3, 3);
     }
 
     /**
@@ -78,7 +78,7 @@ public class OrientationHandler implements SensorEventListener {
             updateMatrix(rotationMatrix);
             float[] temp = sensorUnitHandler.getAccelerometer().getAccelerometerValues();
             if(temp != null){
-                transformAcceleration(sensorUnitHandler.getAccelerometer().getAccelerometerValues());
+                transformAcceleration(temp);
             }
         }
     }
@@ -89,15 +89,15 @@ public class OrientationHandler implements SensorEventListener {
      * @author Emrik
      */
     private void updateMatrix(float[] rotationMatrix) {
-        matrix.setEntry(0, 0, rotationMatrix[0]);
-        matrix.setEntry(0, 1, rotationMatrix[1]);
-        matrix.setEntry(0, 2, rotationMatrix[2]);
-        matrix.setEntry(1, 0, rotationMatrix[3]);
-        matrix.setEntry(1, 1, rotationMatrix[4]);
-        matrix.setEntry(1, 2, rotationMatrix[5]);
-        matrix.setEntry(2, 0, rotationMatrix[6]);
-        matrix.setEntry(2, 1, rotationMatrix[7]);
-        matrix.setEntry(2, 2, rotationMatrix[8]);
+        inverseRotationMatrix.setEntry(0, 0, rotationMatrix[0]);
+        inverseRotationMatrix.setEntry(0, 1, rotationMatrix[1]);
+        inverseRotationMatrix.setEntry(0, 2, rotationMatrix[2]);
+        inverseRotationMatrix.setEntry(1, 0, rotationMatrix[3]);
+        inverseRotationMatrix.setEntry(1, 1, rotationMatrix[4]);
+        inverseRotationMatrix.setEntry(1, 2, rotationMatrix[5]);
+        inverseRotationMatrix.setEntry(2, 0, rotationMatrix[6]);
+        inverseRotationMatrix.setEntry(2, 1, rotationMatrix[7]);
+        inverseRotationMatrix.setEntry(2, 2, rotationMatrix[8]);
     }
 
     /**
@@ -109,21 +109,21 @@ public class OrientationHandler implements SensorEventListener {
         RealVector vector = new ArrayRealVector(new double[]{
                 accelerometerValues[0], accelerometerValues[1], accelerometerValues[2]
         });
-        RealVector resultVector = matrix.operate(vector);
-        sensorUnitHandler.getAccelerometer().setAccelerometerValues(new float[]{(float) resultVector.getEntry(0),
+        RealVector resultVector = inverseRotationMatrix.operate(vector);
+        sensorUnitHandler.getAccelerometer()
+                .setAccelerometerValues(new float[]{(float) resultVector.getEntry(0),
                 (float) resultVector.getEntry(1), (float) resultVector.getEntry(2)});
         // transformedAcceleration[0] is east, transformedAcceleration[1] is north, transformedAcceleration[2] is vertical
     }
 
     /**
      * Not used.
-     * @param sensor
+     * @param sensor The sensor not used.
      * @param accuracy The new accuracy of this sensor, one of
      *         {@code SensorManager.SENSOR_STATUS_*}
      * @author Emrik
      */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 }

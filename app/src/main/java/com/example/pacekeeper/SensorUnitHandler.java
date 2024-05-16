@@ -36,12 +36,10 @@ public class SensorUnitHandler extends Service {
      * @author Emrik
      */
     public void startSensorThreads() {
-        if (accelerometer == null) {
-            sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
-            accelerometer = new Accelerometer(sensorManager);
-            gps = new GPS(context, this);
-            orientationHandler = new OrientationHandler(sensorManager, this);
-        }
+        sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
+        accelerometer = new Accelerometer(sensorManager);
+        gps = new GPS(context, this);
+        orientationHandler = new OrientationHandler(sensorManager, this);
         accelerometer.startAccelerometer();
         gps.startLocationUpdates();
         orientationHandler.startOrientationSensor();
@@ -59,20 +57,8 @@ public class SensorUnitHandler extends Service {
         }
     }
 
-    public SensorManager getSensorManager() {
-        return this.sensorManager;
-    }
-
     public Accelerometer getAccelerometer() {
         return this.accelerometer;
-    }
-
-    public GPS getGPS() {
-        return this.gps;
-    }
-
-    public OrientationHandler getOrientationHandler() {
-        return this.orientationHandler;
     }
 
     /**
@@ -162,11 +148,12 @@ public class SensorUnitHandler extends Service {
      * Used to create a notification for the Service
      * @see android.app.Service
      * @return notification for the Service.
-     * @author Emrik
+     * @author Emrik, Johnny
      */
     private Notification getNotification() {
         String channelId = "sensor_service";
-        NotificationChannel channel = new NotificationChannel(channelId, "Sensor Service", NotificationManager.IMPORTANCE_LOW);
+        NotificationChannel channel = new NotificationChannel(channelId,
+                "Sensor Service", NotificationManager.IMPORTANCE_LOW);
         NotificationManager manager = getSystemService(NotificationManager.class);
         manager.createNotificationChannel(channel);
         Intent gotoIntent = new Intent(context, MainActivity.class);
