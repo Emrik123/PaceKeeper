@@ -11,23 +11,20 @@ import android.util.Log;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Accelerometer implements SensorEventListener {
 
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private float[] accelerometerValues;
-    private static final float ALPHA = 0.8f;
+    private static final float ALPHA = 0.02f;
     private HandlerThread sensorThread;
     private Handler sensorHandler;
     private ArrayList<float[]> accHistory;
     private ArrayList<Long> timeStamp;
     private StopWatch stopWatch;
-    private AtomicInteger id = new AtomicInteger(0);
 
     public Accelerometer(SensorManager sensorManager) {
         timeStamp = new ArrayList<>();
@@ -85,7 +82,6 @@ public class Accelerometer implements SensorEventListener {
     public void storeValues(Data d){
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
                 "testDataFile_" + LocalDate.now() + "_#" + d.getTimeStamp().get(d.getTimeStamp().size()-1)+ ".txt");
-                Log.i("Test data index", String.valueOf(id));
         try{
             FileOutputStream oos = new FileOutputStream(file);
             ArrayList<float[]> acc = d.getAcc();

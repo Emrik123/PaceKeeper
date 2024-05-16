@@ -15,6 +15,9 @@ public class GPS implements Runnable {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
     private final long UPDATE_INTERVAL_MS = 250;
+    private final long LOW_ACCURACY = 1;
+    private final long HIGH_ACCURACY = 2;
+    private long gpsAccuracy = 0;
     private Thread thread;
     private Context context;
 
@@ -34,17 +37,46 @@ public class GPS implements Runnable {
         thread = new Thread(this);
     }
 
+    public void setHighAccuracy(){
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        gpsAccuracy = HIGH_ACCURACY;
+        updateLocationRequest();
+    }
+
+    public void setLowAccuracy(){
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        gpsAccuracy = LOW_ACCURACY;
+        updateLocationRequest();
+    }
+
+    public void updateLocationRequest() {
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((Activity) context, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            stopLocationUpdates();
+        }
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+    }
+    
     public void startLocationUpdates() {
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NotNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                if (!locationResult.getLocations().isEmpty()) {
-                    sensorUnitHandler.GPSNotification(locationResult);
+                if(locationResult.getLastLocation().getAccuracy() > 25) {
+                    if(gpsAccuracy != LOW_ACCURACY) {
+                        setLowAccuracy();
+                    }
+                }else{
+                    if(gpsAccuracy != HIGH_ACCURACY) {
+                        setHighAccuracy();
+                    }
                 }
+                sensorUnitHandler.GPSNotification(locationResult);
             }
         };
-        thread.start();
+        if (thread.getState() == Thread.State.NEW) {
+            thread.start();
+        }
     }
 
     public void stopLocationUpdates() {
@@ -60,6 +92,7 @@ public class GPS implements Runnable {
             stopLocationUpdates();
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+        gpsAccuracy = HIGH_ACCURACY;
         Looper.loop();
     }
 }
