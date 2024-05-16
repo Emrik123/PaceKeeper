@@ -9,6 +9,7 @@ public class AccelerometerFilter {
     private RealMatrix A, B, Q, R, H, K, P;
     private RealVector x;
     private double dt;
+    private final double variance = 0.05;
 
     public AccelerometerFilter() {
         dt = 0.5; // Initial value, will be recalculated
@@ -21,14 +22,11 @@ public class AccelerometerFilter {
                 {0, 1}
         });
 
-        // Höftskott deluxe
-        double std = 0.15; //standard covariance
         Q = MatrixUtils.createRealMatrix(new double[][]{
                 {1, dt},
-                {0, 1}}).scalarMultiply(std);
+                {0, 1}}).scalarMultiply(variance);
 
-        // Höftskott deluxe
-        double noiseVariance = 0.9;
+        double noiseVariance = 1.5;
         R = MatrixUtils.createRealMatrix(new double[][]{{noiseVariance}});
         x = new ArrayRealVector(new double[]{0, 0});
         H = MatrixUtils.createRowRealMatrix(new double[]{1, 0});
@@ -42,10 +40,9 @@ public class AccelerometerFilter {
                 {0, 1}
         });
 
-        double std = 0.1; //standard covariance
         Q = MatrixUtils.createRealMatrix(new double[][]{
                 {1, dt},
-                {0, 1}}).scalarMultiply(std);
+                {0, 1}}).scalarMultiply(variance);
     }
 
     private void predict() {
