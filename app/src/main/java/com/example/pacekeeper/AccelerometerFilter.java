@@ -6,9 +6,10 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 public class AccelerometerFilter {
-    private RealMatrix A, B, Q, R, H, K, P;
+    private RealMatrix A, Q, R, H, K, P;
     private RealVector x;
     private double dt;
+    private final double variance = 0.15;
 
     public AccelerometerFilter() {
         dt = 0.5; // Initial value, will be recalculated
@@ -21,11 +22,10 @@ public class AccelerometerFilter {
                 {0, 1}
         });
 
-        // Q is replaced with a scalar, std, essentially assuming a constant process noise variance across all state variables.
-        double std = 0.15;
+        // Q is replaced with a scalar, essentially assuming a constant process noise variance across all state variables.
         Q = MatrixUtils.createRealMatrix(new double[][]{
                 {1, dt},
-                {0, 1}}).scalarMultiply(std);
+                {0, 1}}).scalarMultiply(variance);
 
         double noiseVariance = 0.9;
         R = MatrixUtils.createRealMatrix(new double[][]{{noiseVariance}});
@@ -42,10 +42,9 @@ public class AccelerometerFilter {
                 {0, 1}
         });
 
-        double std = 0.15;
         Q = MatrixUtils.createRealMatrix(new double[][]{
                 {1, dt},
-                {0, 1}}).scalarMultiply(std);
+                {0, 1}}).scalarMultiply(variance);
     }
 
     private void predict() {
@@ -54,7 +53,6 @@ public class AccelerometerFilter {
     }
 
     private void estimate(double acc) {
-        // Kalman magic
         RealVector accVector = new ArrayRealVector(new double[]{acc});
 
         RealMatrix S = H.multiply(P).multiply(H.transpose()).add(R);
