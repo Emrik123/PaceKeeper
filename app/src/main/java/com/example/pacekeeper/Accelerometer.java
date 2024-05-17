@@ -19,7 +19,7 @@ public class Accelerometer implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private float[] accelerometerValues;
-    private static final float ALPHA = 0.02f;
+    private static final float ALPHA = 0.5f;
     private HandlerThread sensorThread;
     private Handler sensorHandler;
     private ArrayList<float[]> accHistory;

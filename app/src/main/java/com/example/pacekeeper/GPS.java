@@ -62,7 +62,7 @@ public class GPS implements Runnable {
             @Override
             public void onLocationResult(@NotNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                if(locationResult.getLastLocation().getAccuracy() > 25) {
+                if(locationResult.getLastLocation().getAccuracy() > 50) {
                     if(gpsAccuracy != LOW_ACCURACY) {
                         setLowAccuracy();
                     }
