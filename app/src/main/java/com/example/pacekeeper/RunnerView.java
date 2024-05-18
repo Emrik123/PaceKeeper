@@ -52,6 +52,7 @@ public class RunnerView extends Fragment {
     private Context context;
     private TextView unitOfVelocityDisplay;
 
+
     public static RunnerView newInstance(MainActivity mainActivity, double selectedPace, boolean autoSaveSession) {
         RunnerView fragment = new RunnerView();
         Bundle args = new Bundle();
@@ -62,6 +63,15 @@ public class RunnerView extends Fragment {
         return fragment;
     }
 
+    /**
+     * OnCreate method, called when creating the fragment,
+     * initializes graphical elements and starts a session
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     * @author Jonathan,Samuel
+     */
     @SuppressLint({"VisibleForTests", "SetTextI18n"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,6 +104,11 @@ public class RunnerView extends Fragment {
         return rootView;
     }
 
+    /**
+     * Method for initializing Graphical elements
+     * @param rootView
+     * @author Samuel
+     */
     public void initializeGraphicalResources(View rootView) {
         timeDisplay = rootView.findViewById(R.id.time);
         speedDisplay = rootView.findViewById(R.id.speedDisplay);
@@ -110,6 +125,10 @@ public class RunnerView extends Fragment {
         unitOfVelocityDisplay = rootView.findViewById(R.id.unit_of_velocity);
     }
 
+    /**
+     * Method for initializing event listeners
+     * @author Samuel
+     */
     public void initializeEventListeners() {
         pauseButton.setOnClickListener(v -> {
             pauseButton.setVisibility(View.INVISIBLE);
@@ -170,6 +189,11 @@ public class RunnerView extends Fragment {
         };
     }
 
+    /**
+     * onResume method, called when the runnerView is focused
+     * calls for the UI to be updated and sets application behaviour
+     * @author Johnny
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -184,12 +208,21 @@ public class RunnerView extends Fragment {
         interfaceUpdateHandler.removeCallbacks(uiUpdates);
     }
 
+    /**
+     * onDestroy method, stops the text to speech upon fragment destruction
+     * @author Samuel
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         feedbackHandler.removeTextToSpeech();
     }
 
+    /**
+     * Method for setting the return button on the navigation bar to minimize the application
+     * when the runnerView fragment is active.
+     * @author Johnny
+     */
     private void setBackButtonBehavior() {
         requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -199,6 +232,11 @@ public class RunnerView extends Fragment {
         });
     }
 
+    /**
+     * Method for hiding the navigation bar to avoid accidental clicks,
+     * navigation bar is displayed when swiping up from bottom of screen or down from top.
+     * @author Johnny
+     */
     private void hideNavigationBar() {
         View decorView = requireActivity().getWindow().getDecorView();
         int hideNavigation = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -206,12 +244,21 @@ public class RunnerView extends Fragment {
         decorView.setSystemUiVisibility(hideNavigation | immersive);
     }
 
+    /**
+     * Method for displaying the navigation bar.
+     * @author Johnny
+     */
     private void displayNavigationBar() {
         View decorView = requireActivity().getWindow().getDecorView();
         int visible = View.SYSTEM_UI_FLAG_VISIBLE;
         decorView.setSystemUiVisibility(visible);
     }
 
+    /**
+     * Method for updating the elements on the GUI to display the current values
+     * from a running session
+     * @author Samuel, Jonathan, Emrik
+     */
     @SuppressLint("SetTextI18n")
     public void updateUI() {
         if (currentSession.getRunning()) {
@@ -239,6 +286,12 @@ public class RunnerView extends Fragment {
         interfaceUpdateHandler.post(uiUpdates);
     }
 
+    /**
+     * Method called when starting a new session, calls for a new session to
+     * be created, a foregroundservice to be started and the feedbackhandler to give
+     * feedback.
+     * @author Samuel, Johnny
+     */
     private void start() {
         currentSession = new Session(selectedPace, context, feedbackHandler);
         serviceIntent = new Intent(context, SensorUnitHandler.class);
@@ -259,12 +312,20 @@ public class RunnerView extends Fragment {
         unitOfVelocityDisplay.setText(unitOfVelocity.toString());
     }
 
+    /**
+     * Method for displaying the settings fragment
+     * @author Johnny
+     */
     private void displaySettingsView() {
         fragmentManager.beginTransaction().add(R.id.fragment_container, SettingsFragment.class, null)
                 .addToBackStack(null)
                 .commit();
     }
 
+    /**
+     * Method for updating the GUI to display the desired pace
+     * @author Emrik
+     */
     @SuppressLint("SetTextI18n")
     public void updateSelectedPaceUnit(){
         if(currentSession != null && currentSession.getRunning()){
@@ -285,6 +346,10 @@ public class RunnerView extends Fragment {
         this.mainActivity = mainActivity;
     }
 
+    /**
+     * Method for displaying the sessionOverview fragment
+     * @author Jonathan
+     */
     private void displaySessionOverview() {
         SessionOverview sessionOverview = SessionOverview.newInstance(currentSession, sessionManager);
         fragmentManager.beginTransaction().add(R.id.fragment_container, sessionOverview, null)

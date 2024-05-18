@@ -15,6 +15,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import java.util.Locale;
 
+/**
+ * Activity class for the application
+ */
 public class MainActivity extends AppCompatActivity {
 
     private Activity mainActivity;
@@ -36,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView unitTextView;
     private RunnerView runnerView;
 
+    /**
+     * On create method, gets called every time the class is created and calls for
+     * initializers to set up the elements needed.
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     * @author Samuel, Jonathan
+     */
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
         initializeEventListeners();
     }
 
+    /**
+     * Method for initializing the graphical resources
+     * @author Samuel
+     */
     public void initializeGraphicalResources() {
         startSessionButton = findViewById(R.id.start_button);
         settingsButton = findViewById(R.id.settings_button);
@@ -63,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
         unitTextView = findViewById(R.id.unitTextView);
     }
 
+    /**
+     * Method for initializing event listeners
+     * @author Samuel
+     */
     public void initializeEventListeners() {
         startSessionButton.setOnClickListener(v -> {
             setTargetVelocity(unitOfVelocity);
@@ -74,18 +93,35 @@ public class MainActivity extends AppCompatActivity {
         previousSessionsButton.setOnClickListener(v -> displaySessionsView());
     }
 
+    /**
+     * onDestroy method, called every time the activity is destroyed
+     * Stops the service to keep it from running in the background while application is not running
+     * @author Johnny
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         stopService(new Intent(this, SensorUnitHandler.class));
     }
 
+    /**
+     * onPause method, called every time the activity is paused.
+     * Calls the save preference method for saving the selected pace
+     * between changing fragments or closing the application
+     * @author Johnny
+     */
     @Override
     protected void onPause() {
         super.onPause();
         saveSharedPreferences();
     }
 
+    /**
+     * Method for getting the pace selected from the scroll wheels and saves
+     * it to targetVelocity
+     * @author Samuel
+     * @param unitOfVelocity
+     */
     public void setTargetVelocity(UnitOfVelocity unitOfVelocity) {
         switch (unitOfVelocity) {
             case KM_PER_HOUR:
@@ -101,12 +137,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method for updating settings after they have been altered
+     * @author Johnny, Samuel
+     */
     public void updateSettings() {
         loadSharedPreferences();
         setUnit();
         setPickerStyle(unitOfVelocity);
     }
 
+    /**
+     * Method for updating settings in the runnerView
+     * @author Johnny, Samuel, Emrik
+     */
     public void updateSettingsRunnersView() {
         if (runnerView != null) {
             setFeedbackPreferences();
@@ -117,6 +161,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method for setting values of variables to ones previously saved.
+     * @author Johnny, Samuel
+     */
     public void loadSharedPreferences() {
         preferences = getSharedPreferences("preferences", MODE_PRIVATE);
         vibrationEnabled = preferences.getBoolean("vibrationFeedback", true);
@@ -134,6 +182,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method for saving the currently set pace to shared preferences for future
+     * use when creating the activity.
+     * @author Johnny
+     */
     private void saveSharedPreferences() {
         SharedPreferences.Editor preferenceEditor;
         preferenceEditor = preferences.edit();
@@ -147,6 +200,10 @@ public class MainActivity extends AppCompatActivity {
         preferenceEditor.apply();
     }
 
+    /**
+     * Method for setting the behaviour of the feedbackHandler.
+     * @author Samuel
+     */
     public void setFeedbackPreferences() {
         feedbackHandler.setVibrationAllowed(vibrationEnabled);
         feedbackHandler.setAudioAllowed(audioEnabled);
@@ -154,11 +211,19 @@ public class MainActivity extends AppCompatActivity {
         feedbackHandler.setUnitOfVelocity(unitOfVelocity);
     }
 
+    /**
+     * Method for displaying the current unit of pace selected
+     * @author Samuel
+     */
     @SuppressLint("SetTextI18n")
     public void setUnit() {
         unitTextView.setText(unitOfVelocity.toString().toUpperCase(Locale.US));
     }
 
+    /**
+     * Method for displaying the sessionFragment
+     * @author Jonathan
+     */
     private void displaySessionsView() {
         SessionFragment sessionFragment = SessionFragment.newInstance(sessionManager);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -167,12 +232,21 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    /**
+     * Method for displaying the settingsFragment
+     * @author Johnny
+     */
     private void displaySettingsView() {
         fragmentManager.beginTransaction().replace(R.id.fragment_container, SettingsFragment.class, null)
                 .addToBackStack(null)
                 .commit();
     }
 
+    /**
+     * Method for creating a new instance of runnerView and displaying it
+     * @param speed the desired pace for the session
+     * @author Jonathan, Samuel
+     */
     private void displayRunnerView(double speed) {
         loadSharedPreferences();
         setFeedbackPreferences();
@@ -187,6 +261,11 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    /**
+     * Sets the correct scroll wheels depending on desired unit of pace
+     * @param unitOfVelocity current set unit of pace
+     * @author Jonathan, Samuel, Johnny
+     */
     public void setPickerStyle(UnitOfVelocity unitOfVelocity) {
         switch (unitOfVelocity) {
             case MIN_PER_KM:
