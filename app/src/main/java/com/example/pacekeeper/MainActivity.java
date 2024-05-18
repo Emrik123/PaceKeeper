@@ -80,6 +80,12 @@ public class MainActivity extends AppCompatActivity {
         stopService(new Intent(this, SensorUnitHandler.class));
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveSharedPreferences();
+    }
+
     public void setTargetVelocity(UnitOfVelocity unitOfVelocity) {
         switch (unitOfVelocity) {
             case KM_PER_HOUR:
@@ -162,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displaySettingsView() {
-        saveSharedPreferences();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, SettingsFragment.class, null)
                 .addToBackStack(null)
                 .commit();
