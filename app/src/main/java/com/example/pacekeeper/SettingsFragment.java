@@ -17,7 +17,6 @@ import java.util.Locale;
 
 /**
  Class for managing GUI elements in the Settings fragment
- @author Johnny
  */
 public class SettingsFragment extends Fragment {
 
@@ -53,7 +52,7 @@ public class SettingsFragment extends Fragment {
      * Create method, called when the fragment is created and loads settings
      * saved in shared preferences
      * @param savedInstanceState
-     * @author Johnny
+     * @author Johnny, Emrik
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,7 +75,7 @@ public class SettingsFragment extends Fragment {
      * @param container
      * @param savedInstanceState
      * @return
-     * @author Johnny
+     * @author Johnny, Samuel
      */
     @SuppressLint("MissingInflatedId")
     @Override
@@ -94,7 +93,7 @@ public class SettingsFragment extends Fragment {
 
     /**
      * onPause method, called when the fragment is put out of focus
-     * @author Johnny
+     * @author Johnny, Samuel
      */
     @Override
     public void onPause() {
@@ -106,7 +105,7 @@ public class SettingsFragment extends Fragment {
     /**
      * Method for initializing graphical elements
      * @param rootView
-     * @author Johnny
+     * @author Johnny, Samuel
      */
     public void initGraphicElements(View rootView) {
         vibrationSwitch = rootView.findViewById(R.id.vibration_switch);
@@ -132,7 +131,7 @@ public class SettingsFragment extends Fragment {
 
     /**
      * Method for setting the behaviour of the buttons
-     * @author Johnny
+     * @author Johnny, Samuel
      */
     public void initListeners() {
         feedbackFrequencyRadioGroup.setOnCheckedChangeListener
@@ -219,7 +218,7 @@ public class SettingsFragment extends Fragment {
 
     /**
      * Method for loading settings currently set in the shared preference
-     * @author Johnny
+     * @author Johnny, Samuel
      */
     private void loadAndSetCurrentSettings() {
         vibrationFeedback = preferences.getBoolean("vibrationFeedback", true);
@@ -239,6 +238,7 @@ public class SettingsFragment extends Fragment {
 
     /**
      * Method for setting the GUI to match current settings in the shared preferences.
+     * @author Johnny
      */
     private void setGraphicElements() {
         audioSwitch.setChecked(audioFeedback);
