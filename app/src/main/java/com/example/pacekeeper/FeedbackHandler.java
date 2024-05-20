@@ -55,27 +55,29 @@ public class FeedbackHandler implements Serializable {
         CharSequence prompt = formattedVelocity();
 
         if (isRunning && currentSpeed > LOWER_LIMIT_MS) {
-            if (audioAllowed) {
-                if (movingAtCorrectSpeed() && deviated) {
-                    prompt += correctPrompt;
-                    deviated = false;
-                    speak(prompt);
-                } else if (movingTooFast()) {
-                    prompt += slowerPrompt;
-                    deviated = true;
-                    speak(prompt);
-                } else if (movingTooSlow()) {
-                    prompt += fasterPrompt;
-                    deviated = true;
-                    speak(prompt);
-                }
+            return;
+        }
+
+        if (audioAllowed) {
+            if (movingAtCorrectSpeed() && deviated) {
+                prompt += correctPrompt;
+                deviated = false;
+                speak(prompt);
+            } else if (movingTooFast()) {
+                prompt += slowerPrompt;
+                deviated = true;
+                speak(prompt);
+            } else if (movingTooSlow()) {
+                prompt += fasterPrompt;
+                deviated = true;
+                speak(prompt);
             }
-            if (vibrationAllowed) {
-                if (movingTooFast()) {
-                    vibrator.decreaseVelocity();
-                } else if (movingTooSlow()) {
-                    vibrator.increaseVelocity();
-                }
+        }
+        if (vibrationAllowed) {
+            if (movingTooFast()) {
+                vibrator.decreaseVelocity();
+            } else if (movingTooSlow()) {
+                vibrator.increaseVelocity();
             }
         }
     }
