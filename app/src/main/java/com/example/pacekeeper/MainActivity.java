@@ -16,7 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.Locale;
 
 /**
- * Activity class for the application
+ * Activity class for the application.
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Method for initializing the graphical resources
+     * Instantiates resources tied to the inflated XML.
+     *
      * @author Samuel
      */
     public void initializeGraphicalResources() {
@@ -79,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Method for initializing event listeners
+     * Initializes event listeners for interactable elements such as buttons.
+     *
      * @author Samuel
      */
     public void initializeEventListeners() {

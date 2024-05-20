@@ -103,8 +103,8 @@ public class SettingsFragment extends Fragment {
     }
 
     /**
-     * Method for initializing graphical elements
-     * @param rootView
+     * Instantiates resources tied to the inflated XML.
+     * @param rootView The root View of the inflated hierarchy.
      * @author Johnny, Samuel
      */
     public void initGraphicElements(View rootView) {

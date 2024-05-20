@@ -93,6 +93,12 @@ public class SessionOverview extends Fragment {
         return rootView;
     }
 
+    /**
+     * Instantiates resources tied to the inflated XML.
+     * @param rootView The root View of the inflated hierarchy.
+     *
+     * @author Samuel
+     */
     public void initializeGraphicalResources(View rootView) {
         saveSession = rootView.findViewById(R.id.save_session_button);
         resumeSession = rootView.findViewById(R.id.resume_session_button);
@@ -103,6 +109,11 @@ public class SessionOverview extends Fragment {
         editComment = rootView.findViewById(R.id.edit_comment);
     }
 
+    /**
+     * Initializes event listeners for interactable elements such as buttons.
+     *
+     * @author Jonathan, Samuel
+     */
     public void initializeEventListeners() {
         saveSession.setOnClickListener(v -> {
             if(!String.valueOf(editComment.getText()).equals("Add text here.")){

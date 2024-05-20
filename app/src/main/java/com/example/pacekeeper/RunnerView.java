@@ -65,12 +65,15 @@ public class RunnerView extends Fragment {
 
     /**
      * OnCreate method, called when creating the fragment,
-     * initializes graphical elements and starts a session
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     * @author Jonathan,Samuel
+     * initializes graphical elements and starts a session.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container If non-null, this is the parent view that the fragment's UI should be attached to.
+     *                  The fragment should not add the view itself, but this can be used to generate the LayoutParams of the view
+     * @param savedInstanceState  If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     * @return Return the View for the fragment's UI, or null.
+     *
+     * @author Jonathan, Samuel
      */
     @SuppressLint({"VisibleForTests", "SetTextI18n"})
     @Override
@@ -100,13 +103,14 @@ public class RunnerView extends Fragment {
         initializeEventListeners();
         initializeUiUpdates();
         start();
-        initializeGraphicalComponents();
+        setInitialState();
         return rootView;
     }
 
     /**
-     * Method for initializing Graphical elements
-     * @param rootView
+     * Instantiates resources tied to the inflated XML.
+     * @param rootView The root View of the inflated hierarchy.
+     *
      * @author Samuel
      */
     public void initializeGraphicalResources(View rootView) {
@@ -126,7 +130,8 @@ public class RunnerView extends Fragment {
     }
 
     /**
-     * Method for initializing event listeners
+     * Initializes event listeners for interactable elements such as buttons.
+     *
      * @author Samuel
      */
     public void initializeEventListeners() {
@@ -167,8 +172,13 @@ public class RunnerView extends Fragment {
         });
     }
 
+    /**
+     * Sets the graphical elements to an initial state.
+     *
+     * @author Samuel
+     */
     @SuppressLint("SetTextI18n")
-    public void initializeGraphicalComponents() {
+    public void setInitialState() {
         stopButton.setVisibility(View.INVISIBLE);
         resumeButton.setVisibility(View.INVISIBLE);
         settingsButton.setVisibility(View.INVISIBLE);
@@ -179,6 +189,11 @@ public class RunnerView extends Fragment {
         setBackButtonBehavior();
     }
 
+    /**
+     * Creates a runnable which is passed to the queue of the Handler managing the main looper.
+     *
+     * @author Samuel
+     */
     public void initializeUiUpdates() {
         uiUpdates = new Runnable() {
             @Override
@@ -202,6 +217,12 @@ public class RunnerView extends Fragment {
         setBackButtonBehavior();
     }
 
+    /**
+     * Called when the Fragment is no longer in focus (resumed).
+     * Removes any pending UI-updates.
+     *
+     * @author Samuel
+     */
     @Override
     public void onPause() {
         super.onPause();
