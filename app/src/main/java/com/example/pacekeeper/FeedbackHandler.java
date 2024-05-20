@@ -3,8 +3,15 @@ package com.example.pacekeeper;
 import java.io.Serializable;
 import java.util.*;
 import android.content.Context;
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 
+/**
+ * This class handles methods of haptic and auditory feedback, specifically a text to speech
+ * implementation and the system vibrator.
+ *
+ * @author Samuel
+ */
 public class FeedbackHandler implements Serializable {
     private final Vibrator vibrator;
     private boolean audioAllowed = true;
@@ -23,11 +30,24 @@ public class FeedbackHandler implements Serializable {
     private boolean deviated = false;
     private UnitOfVelocity unitOfVelocity;
 
+    /**
+     * Class constructor.
+     * Instantiates a vibrator that is used by this feedback handler.
+     *
+     * @param context the context of the global application object.
+     * @author Samuel
+     */
     public FeedbackHandler(Context context) {
         this.context = context;
         vibrator = new Vibrator(context);
     }
 
+    /**
+     * Gives either auditory feedback or haptic feedback, or both, given
+     * that a user moves faster than a lower limit of 0.5 m/s.
+     *
+     * @author Samuel
+     */
     public void giveFeedback() {
         String correctPrompt = "good pace.";
         String fasterPrompt = "speed up.";
@@ -60,10 +80,25 @@ public class FeedbackHandler implements Serializable {
         }
     }
 
+    /**
+     * Triggers the TextToSpeech to speak a given text,
+     * see {@link android.speech.tts.TextToSpeech#speak(CharSequence, int, Bundle, String)}.
+     * @param seq the sequence of Chars, or String, that is to be spoken.
+     *
+     * @author Samuel
+     */
     private void speak(CharSequence seq) {
         tts.speak(seq, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 
+    /**
+     * Returns a correctly formatted text to be spoken by the TextToSpeech,
+     * depending on what unit of velocity is configured.
+     *
+     * @return a sequence of Chars.
+     *
+     * @author Samuel
+     */
     private CharSequence formattedVelocity() {
         CharSequence seq = "";
         switch (unitOfVelocity) {
@@ -83,6 +118,12 @@ public class FeedbackHandler implements Serializable {
         return seq;
     }
 
+    /**
+     * Stops and removes the current TextToSpeech. Should be called in
+     * the onDestroy() method of an Activity to prevent memory leaks.
+     *
+     * @author Samuel
+     */
     public void removeTextToSpeech() {
         if (tts != null) {
             tts.stop();
@@ -90,13 +131,19 @@ public class FeedbackHandler implements Serializable {
         }
     }
 
-    public void runFeedback(double selectedSpeed) {
-        tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    tts.setLanguage(Locale.US);
-                }
+    /**
+     * Initiates a timer which will trigger feedback at set intervals,
+     * beginning after an initial delay.
+     * Instantiates the TextToSpeech used by this feedback handler.
+     *
+     * @param selectedSpeed the velocity chosen by the user.
+     *
+     * @author Samuel
+     */
+    public void startFeedback(double selectedSpeed) {
+        tts = new TextToSpeech(context, status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                tts.setLanguage(Locale.US);
             }
         });
 
@@ -106,6 +153,11 @@ public class FeedbackHandler implements Serializable {
         timer.schedule(timerTask, INITIAL_DELAY_MILLIS, feedbackDelayMillis);
     }
 
+    /**
+     * Stops all feedback and removes the TextToSpeech.
+     *
+     * @author Samuel
+     */
     public void stopFeedback() {
         removeTextToSpeech();
         timerTask.cancel();
@@ -113,6 +165,13 @@ public class FeedbackHandler implements Serializable {
         timer.purge();
     }
 
+    /**
+     * Specifies the frequency, in milliseconds, at which feedback is provided.
+     *
+     * @param keyword a String specifying the level of frequency.
+     *
+     * @author Samuel
+     */
     public void setFeedbackFrequency(String keyword) {
         switch (keyword.toLowerCase(Locale.ROOT)) {
             case "low":
@@ -127,14 +186,37 @@ public class FeedbackHandler implements Serializable {
         }
     }
 
+    /**
+     * Returns true if the user is moving at a velocity higher than
+     * the selected velocity + approximately 0.5 m/s.
+     *
+     * @return true if the user is moving too fast, false otherwise.
+     *
+     * @author Samuel
+     */
     private boolean movingTooFast() {
         return currentSpeed >= selectedSpeed + VELOCITY_DELTA_MS;
     }
 
+    /**
+     * Returns true if the user is moving at a velocity lower than
+     * the selected velocity - approximately 0.5 m/s.
+     *
+     * @return true if the user is moving too slow, false otherwise.
+     *
+     * @author Samuel
+     */
     private boolean movingTooSlow() {
         return currentSpeed <= selectedSpeed - VELOCITY_DELTA_MS;
     }
 
+    /**
+     * Returns true if the user is moving at a velocity within the accepted interval.
+     *
+     * @return true if the user is moving at the correct speed, false otherwise.
+     *
+     * @author Samuel
+     */
     private boolean movingAtCorrectSpeed() {
         return currentSpeed <= selectedSpeed + VELOCITY_DELTA_MS && currentSpeed >= selectedSpeed - VELOCITY_DELTA_MS;
     }

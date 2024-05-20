@@ -145,7 +145,7 @@ public class RunnerView extends Fragment {
             stopButton.setVisibility(View.INVISIBLE);
             settingsButton.setVisibility(View.INVISIBLE);
             currentSession.continueSession();
-            feedbackHandler.runFeedback(currentSession.getSelectedSpeed());
+            feedbackHandler.startFeedback(currentSession.getSelectedSpeed());
             hideNavigationBar();
         });
 
@@ -300,7 +300,7 @@ public class RunnerView extends Fragment {
         feedbackHandler.setRunning(currentSession.getRunning());
         feedbackHandler.setCurrentSpeed(currentSession.getCurrentSpeed());
         currentSession.setUnitOfVelocity(unitOfVelocity);
-        feedbackHandler.runFeedback(currentSession.getSelectedSpeed());
+        feedbackHandler.startFeedback(currentSession.getSelectedSpeed());
         runUiUpdates();
     }
 
