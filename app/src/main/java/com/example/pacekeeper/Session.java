@@ -28,7 +28,7 @@ public class Session {
     private long timeExceptCurrentKm;
     private int kmDistance = 1000;
     private final Kalman kalmanFilter;
-    private long timeDelta;
+    private long timeStep;
     private SessionBroadcastReceiver broadcastReceiver;
     private Context context;
     private FeedbackHandler feedbackHandler;
@@ -112,15 +112,15 @@ public class Session {
             }
             this.currentLocation = location.getLocations().get(location.getLocations().size() - 1);
             routeCoordinates.add(currentLocation);
-            double tempTime;
-            if (timeDelta != 0) {
-                tempTime = stopwatch.getTime() - timeDelta;
+            double deltaTime;
+            if (timeStep != 0) {
+                deltaTime = stopwatch.getTime() - timeStep;
             } else {
-                tempTime = 0;
+                deltaTime = 0;
             }
-            this.timeDelta = stopwatch.getTime();
+            this.timeStep = stopwatch.getTime();
             kalmanFilter.predict(a[0], a[1]);
-            kalmanFilter.update(currentLocation.getSpeed(), tempTime / 1000);
+            kalmanFilter.update(currentLocation.getSpeed(), deltaTime / 1000);
             double[] result = kalmanFilter.getState();
             this.currentSpeed = result[1];
             if (currentSpeed > 0.5 && lastLocation != null) {
