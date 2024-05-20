@@ -19,9 +19,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link RunnerView#newInstance} factory method to
- * create an instance of this fragment.
+ * A {@link Fragment} subclass representing an active session.
+ * This Fragment starts an {@link android.app.Service}.
+ *
+ * @author Jonathan, Samuel, Johnny, Emrik
  */
 public class RunnerView extends Fragment {
     private MainActivity mainActivity;
@@ -73,7 +74,7 @@ public class RunnerView extends Fragment {
      * @param savedInstanceState  If non-null, this fragment is being re-constructed from a previous saved state as given here.
      * @return Return the View for the fragment's UI, or null.
      *
-     * @author Jonathan, Samuel
+     * @author Jonathan, Samuel, Johnny, Emrik
      */
     @SuppressLint({"VisibleForTests", "SetTextI18n"})
     @Override

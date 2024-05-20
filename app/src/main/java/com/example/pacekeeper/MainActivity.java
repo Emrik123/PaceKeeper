@@ -16,7 +16,9 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.Locale;
 
 /**
- * Activity class for the application.
+ * The application Main Activity, this class serves as the entry point for the application.
+ *
+ * @author Jonathan, Samuel, Johnny, Emrik
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
      * @param savedInstanceState If the activity is being re-initialized after
      *     previously being shut down then this Bundle contains the data it most
      *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
-     * @author Samuel, Jonathan
+     * @author Samuel, Jonathan, Johnny, Emrik
      */
     @SuppressLint("WrongViewCast")
     @Override
@@ -119,10 +121,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Method for getting the pace selected from the scroll wheels and saves
-     * it to targetVelocity
+     * Converts and sets the selected pace to m/s depending on what unit of velocity
+     * is currently configured.
+     *
+     * @param unitOfVelocity Enum representing the current unit of velocity.
+     *
      * @author Samuel
-     * @param unitOfVelocity
      */
     public void setTargetVelocity(UnitOfVelocity unitOfVelocity) {
         switch (unitOfVelocity) {
