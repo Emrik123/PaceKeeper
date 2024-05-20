@@ -54,7 +54,7 @@ public class FeedbackHandler implements Serializable {
         String slowerPrompt = "slow down.";
         CharSequence prompt = formattedVelocity();
 
-        if (isRunning && currentSpeed > LOWER_LIMIT_MS) {
+        if (!isRunning || currentSpeed <= LOWER_LIMIT_MS) {
             return;
         }
 
