@@ -42,11 +42,12 @@ public class SessionManager {
 
     public void storeSessionToMemory(Context context) {
         try {
-            FileOutputStream fos = context.openFileOutput("testDataFile.dat", Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(sessions);
-            oos.close();
-            Log.i("Store session", "File successfully created and stored");
+                FileOutputStream fos = context.openFileOutput("testDataFile.dat", Context.MODE_PRIVATE);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(sessions);
+                oos.close();
+                Log.i("Store session", "File successfully created and stored");
+
         } catch (IOException e) {
             Log.e("Store session", "Error storing file: " + e.getMessage());
         }

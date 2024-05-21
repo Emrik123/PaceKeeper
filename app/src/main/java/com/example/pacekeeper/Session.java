@@ -239,7 +239,7 @@ public class Session {
         return timePerKm;
     }
 
-    public class StoredSession implements Serializable {
+    public static class StoredSession implements Serializable {
 
         private final double totalDistance;
         private final String totalTime;
