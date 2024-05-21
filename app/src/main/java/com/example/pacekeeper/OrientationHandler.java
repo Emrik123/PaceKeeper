@@ -28,6 +28,9 @@ public class OrientationHandler implements SensorEventListener {
     private RealMatrix inverseRotationMatrix;
     private HandlerThread sensorThread;
     private Handler sensorHandler;
+    private final AccelerometerFilter eastAxisFilter = new AccelerometerFilter();
+    private final AccelerometerFilter northAxisFilter = new AccelerometerFilter();
+    private final AccelerometerFilter verticalAxisFilter = new AccelerometerFilter();
 
     /**
      * Class constructor.
@@ -110,19 +113,19 @@ public class OrientationHandler implements SensorEventListener {
                 accelerometerValues[0], accelerometerValues[1], accelerometerValues[2]
         });
         RealVector resultVector = inverseRotationMatrix.operate(vector);
-        sensorUnitHandler.getAccelerometer()
-                .setAccelerometerValues(new float[]{(float) resultVector.getEntry(0),
-                (float) resultVector.getEntry(1), (float) resultVector.getEntry(2)});
         // transformedAcceleration[0] is east, transformedAcceleration[1] is north, transformedAcceleration[2] is vertical
+
+        filterAccelerometerValues(resultVector);
+        sensorUnitHandler.getAccelerometer().setAccelerometerValues(new float[]{(float) eastAxisFilter.getState()[1], (float) northAxisFilter.getState()[1], (float) verticalAxisFilter.getState()[1]});
     }
 
-    /**
-     * Not used.
-     * @param sensor The sensor not used.
-     * @param accuracy The new accuracy of this sensor, one of
-     *         {@code SensorManager.SENSOR_STATUS_*}
-     * @author Emrik
-     */
+    private void filterAccelerometerValues(RealVector resultVector) {
+        double timeStep = sensorUnitHandler.getAccelerometer().getTimeStep();
+        eastAxisFilter.update(resultVector.getEntry(0), timeStep);
+        northAxisFilter.update(resultVector.getEntry(1), timeStep);
+        verticalAxisFilter.update(resultVector.getEntry(2), timeStep);
+    }
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }

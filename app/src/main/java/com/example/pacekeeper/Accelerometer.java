@@ -6,6 +6,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.HandlerThread;
+import org.apache.commons.lang3.time.StopWatch;
+import java.util.ArrayList;
+
 
 /**
  * This class holds an Accelerometer sensor of type LINEAR_ACCELERATION.
@@ -22,6 +25,8 @@ public class Accelerometer implements SensorEventListener {
     private static final float ALPHA = 0.8f;
     private HandlerThread sensorThread;
     private Handler sensorHandler;
+    private StopWatch stopWatch;
+    private double previousTimeStep = 0;
 
     /**
      * Class constructor.
@@ -31,6 +36,7 @@ public class Accelerometer implements SensorEventListener {
      * @author Emrik
      */
     public Accelerometer(SensorManager sensorManager) {
+        stopWatch = new StopWatch();
         this.sensorManager = sensorManager;
         sensorThread = new HandlerThread("Accelerometer");
         sensorThread.start();
@@ -42,11 +48,10 @@ public class Accelerometer implements SensorEventListener {
      * @author Emrik, Johnny
      */
     public void startAccelerometer() {
-        accelerometer = sensorManager
-                .getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        stopWatch.start();
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         if (accelerometer != null) {
-            sensorManager.registerListener(this, accelerometer,
-                    SensorManager.SENSOR_DELAY_GAME, sensorHandler);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME, sensorHandler);
         }
     }
 
@@ -83,8 +88,7 @@ public class Accelerometer implements SensorEventListener {
             accelerometerValues = event.values.clone();
         } else {
             for (int i = 0; i < 3; i++) {
-                accelerometerValues[i] = ALPHA * accelerometerValues[i]
-                        + (1 - ALPHA) * event.values[i];
+                accelerometerValues[i] = ALPHA * accelerometerValues[i] + (1 - ALPHA) * event.values[i];
             }
         }
     }
@@ -116,5 +120,16 @@ public class Accelerometer implements SensorEventListener {
      */
     public float[] getAccelerometerValues() {
         return accelerometerValues;
+    }
+
+    public double getTimeStep() {
+        double timeStep = 0;
+        if (previousTimeStep == 0) {
+            return timeStep;
+        } else {
+            timeStep = stopWatch.getTime() - previousTimeStep;
+        }
+        previousTimeStep = stopWatch.getTime();
+        return timeStep / 1000;
     }
 }
