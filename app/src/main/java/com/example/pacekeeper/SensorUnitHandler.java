@@ -21,7 +21,6 @@ public class SensorUnitHandler extends Service {
     private GPS gps;
     private OrientationHandler orientationHandler;
     private Context context;
-    private AtomicInteger id = new AtomicInteger(0);
 
     public SensorUnitHandler() {
         super();
@@ -41,7 +40,7 @@ public class SensorUnitHandler extends Service {
 
     public void stopSensorThreads() {
         if (accelerometer != null && gps != null && orientationHandler != null) {
-            accelerometer.stopAccelerometer(id.getAndIncrement());
+            accelerometer.stopAccelerometer();
             gps.stopLocationUpdates();
             orientationHandler.stopOrientationSensor();
         }

@@ -49,10 +49,10 @@ public class Accelerometer implements SensorEventListener {
         }
     }
 
-    public void stopAccelerometer(int dataId) {
+    public void stopAccelerometer() {
         if (accelerometer != null) {
-            storeValues(new Data(accHistory, timeStamp), "raw", dataId);
-            storeValues(new Data(accHistoryFiltered, timeStamp), "filtered", dataId);
+            storeValues(new Data(accHistory, timeStamp), "raw");
+            storeValues(new Data(accHistoryFiltered, timeStamp), "filtered");
             sensorManager.unregisterListener(this, accelerometer);
             accelerometer = null;
         }
@@ -92,9 +92,9 @@ public class Accelerometer implements SensorEventListener {
         }
     }
 
-    public void storeValues(Data d, String type, int id){
+    public void storeValues(Data d, String type){
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-                type + "_testDataFile_" + LocalDate.now() + "_#" + id + ".txt");
+                type + "_testDataFile_" + LocalDate.now() + "_#" + stopWatch.getTime() + ".txt");
         try{
             FileOutputStream oos = new FileOutputStream(file);
             ArrayList<float[]> acc = d.getAcc();
