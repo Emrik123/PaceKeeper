@@ -34,7 +34,9 @@ public class AccelerometerFilter {
                 {0.25 * dt * dt * dt * dt, 0.5 * dt * dt * dt},
                 {0.5 * dt * dt * dt, dt * dt}}).scalarMultiply(initialVariance);*/
 
-        Q = calculateProcessNoiseCovariance(dt, initialVariance);
+        Q = MatrixUtils.createRealMatrix(new double[][]{
+                {dt * dt, dt},
+                {dt, 1}}).scalarMultiply(initialVariance * processNoiseFactor);
 
         double measurementNoiseVariance = 0.1;
         R = MatrixUtils.createRealMatrix(new double[][]{{measurementNoiseVariance}});
@@ -42,12 +44,6 @@ public class AccelerometerFilter {
         x = new ArrayRealVector(new double[]{0, 0});
         H = MatrixUtils.createRowRealMatrix(new double[]{1, 0});
         P = MatrixUtils.createRealIdentityMatrix(2);
-    }
-
-    private RealMatrix calculateProcessNoiseCovariance(double dt, double variance) {
-        return MatrixUtils.createRealMatrix(new double[][]{
-                {dt * dt, dt},
-                {dt, 1}}).scalarMultiply(variance * processNoiseFactor);
     }
 
     private void recalculateMatrices() {
@@ -65,7 +61,9 @@ public class AccelerometerFilter {
                 {0.25 * dt * dt * dt * dt, 0.5 * dt * dt * dt},
                 {0.5 * dt * dt * dt, dt * dt}}).scalarMultiply(initialVariance * processNoiseFactor);*/
 
-        Q = calculateProcessNoiseCovariance(dt, initialVariance);
+        Q = MatrixUtils.createRealMatrix(new double[][]{
+                {dt * dt, dt},
+                {dt, 1}}).scalarMultiply(initialVariance * processNoiseFactor);
     }
 
     private void predict() {
@@ -79,17 +77,17 @@ public class AccelerometerFilter {
         RealMatrix S = H.multiply(P).multiply(H.transpose()).add(R);
         K = P.multiply(H.transpose()).multiply(MatrixUtils.inverse(S));
 
-        RealVector innovation = accVector.subtract(H.operate(x));
+        /*RealVector innovation = accVector.subtract(H.operate(x));*/
         x = x.add(K.operate(accVector.subtract(H.operate(x))));
         P = P.subtract(K.multiply(H).multiply(P));
 
         // Dynamic weighting of process noise (Q)?
-        double innovationNorm = innovation.getNorm();
+        /*double innovationNorm = innovation.getNorm();
         if (innovationNorm > Math.sqrt(R.getEntry(0, 0))) {
             processNoiseFactor *= 1.1; // Increase process noise
         } else {
             processNoiseFactor *= 0.9; // Decrease process noise
-        }
+        }*/
     }
 
     public void update(double acc, double dt) {
