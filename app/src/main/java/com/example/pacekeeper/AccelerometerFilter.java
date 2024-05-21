@@ -35,7 +35,7 @@ public class AccelerometerFilter {
         P = MatrixUtils.createRealIdentityMatrix(2);
     }
 
-    private void recalculateMatrices() {
+    private void recalculateMatrix() {
         A = MatrixUtils.createRealMatrix(new double[][]{
                 {1, dt},
                 {0, 1}
@@ -59,7 +59,7 @@ public class AccelerometerFilter {
 
     public void update(double acc, double dt) {
         this.dt = dt;
-        recalculateMatrices();
+        recalculateMatrix();
         predict();
         estimate(acc);
     }
