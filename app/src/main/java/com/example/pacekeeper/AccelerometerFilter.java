@@ -10,8 +10,9 @@ public class AccelerometerFilter {
     private RealVector x;
     private double dt;
     //private final double variance = 0.15;
-    private final double initialVariance = 0.15;
-    private double processNoiseFactor = 0.5;
+    //private final double initialVariance = 0.15;
+    //private double processNoiseFactor = 0.001;
+
 
     public AccelerometerFilter() {
         dt = 0.5; // Initial value, will be recalculated
@@ -27,16 +28,27 @@ public class AccelerometerFilter {
         // Q is replaced with a scalar, essentially assuming a constant process noise variance across all state variables.
         /*Q = MatrixUtils.createRealMatrix(new double[][]{
                 {1, dt},
-                {0, 1}}).scalarMultiply(variance);*/
+                {0, 1}}).scalarMultiply(processNoiseFactor);*/
+
+        /*double n = 1.0;
+        Q = MatrixUtils.createRealMatrix(new double[][]{
+                {n * dt * dt, n * dt},
+                {n * dt, n}});*/
 
         // Adaptive Q
         /*Q = MatrixUtils.createRealMatrix(new double[][]{
                 {0.25 * dt * dt * dt * dt, 0.5 * dt * dt * dt},
                 {0.5 * dt * dt * dt, dt * dt}}).scalarMultiply(initialVariance);*/
 
-        Q = MatrixUtils.createRealMatrix(new double[][]{
+        /*Q = MatrixUtils.createRealMatrix(new double[][]{
                 {dt * dt, dt},
-                {dt, 1}}).scalarMultiply(initialVariance * processNoiseFactor);
+                {dt, 1}}).scalarMultiply(processNoiseFactor);*/
+
+        double processNoiseVariance = 0.01;
+        Q = MatrixUtils.createRealMatrix(new double[][]{
+                {dt * dt * processNoiseVariance, dt * processNoiseVariance},
+                {dt * processNoiseVariance, processNoiseVariance}
+        });
 
         double measurementNoiseVariance = 0.1;
         R = MatrixUtils.createRealMatrix(new double[][]{{measurementNoiseVariance}});
@@ -55,15 +67,20 @@ public class AccelerometerFilter {
 
         /*Q = MatrixUtils.createRealMatrix(new double[][]{
                 {1, dt},
-                {0, 1}}).scalarMultiply(variance);*/
+                {0, 1}}).scalarMultiply(processNoiseFactor);*/
+
+        /*double n = 1.0;
+        Q = MatrixUtils.createRealMatrix(new double[][]{
+                {n * dt * dt, n * dt},
+                {n * dt, n}});*/
 
         /*Q = MatrixUtils.createRealMatrix(new double[][]{
                 {0.25 * dt * dt * dt * dt, 0.5 * dt * dt * dt},
                 {0.5 * dt * dt * dt, dt * dt}}).scalarMultiply(initialVariance * processNoiseFactor);*/
 
-        Q = MatrixUtils.createRealMatrix(new double[][]{
+        /*Q = MatrixUtils.createRealMatrix(new double[][]{
                 {dt * dt, dt},
-                {dt, 1}}).scalarMultiply(initialVariance * processNoiseFactor);
+                {dt, 1}}).scalarMultiply(processNoiseFactor);*/
     }
 
     private void predict() {
