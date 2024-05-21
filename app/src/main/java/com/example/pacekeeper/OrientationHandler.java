@@ -114,12 +114,12 @@ public class OrientationHandler implements SensorEventListener {
         });
         RealVector resultVector = inverseRotationMatrix.operate(vector);
         // Unfiltered
-        sensorUnitHandler.getAccelerometer().setAccelerometerValues(new float[]{(float) resultVector.getEntry(0), (float) resultVector.getEntry(1), (float) resultVector.getEntry(2)});
+        /*sensorUnitHandler.getAccelerometer().setAccelerometerValues(new float[]{(float) resultVector.getEntry(0), (float) resultVector.getEntry(1), (float) resultVector.getEntry(2)});*/
         // transformedAcceleration[0] is east, transformedAcceleration[1] is north, transformedAcceleration[2] is vertical
 
         filterAccelerometerValues(resultVector);
         // Filtered
-        /*sensorUnitHandler.getAccelerometer().setAccelerometerValues(new float[]{(float) eastAxisFilter.getState()[1], (float) northAxisFilter.getState()[1], (float) verticalAxisFilter.getState()[1]});*/
+        sensorUnitHandler.getAccelerometer().setAccelerometerValues(new float[]{(float) eastAxisFilter.getState()[1], (float) northAxisFilter.getState()[1], (float) verticalAxisFilter.getState()[1]});
     }
 
     private void filterAccelerometerValues(RealVector resultVector) {

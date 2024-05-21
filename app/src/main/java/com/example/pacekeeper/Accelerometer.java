@@ -84,13 +84,14 @@ public class Accelerometer implements SensorEventListener {
      */
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (accelerometerValues == null) {
+        /*if (accelerometerValues == null) {
             accelerometerValues = event.values.clone();
         } else {
             for (int i = 0; i < 3; i++) {
                 accelerometerValues[i] = ALPHA * accelerometerValues[i] + (1 - ALPHA) * event.values[i];
             }
-        }
+        }*/
+        accelerometerValues = event.values.clone();
     }
 
     /**
