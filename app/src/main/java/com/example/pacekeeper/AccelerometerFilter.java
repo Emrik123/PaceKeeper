@@ -21,10 +21,18 @@ public class AccelerometerFilter {
                 {0, 1}
         });
 
-        double processNoiseVariance = 0.01;
+        // Platt med omvärderad Q
+        /*double processNoiseVariance = 0.01;
         Q = MatrixUtils.createRealMatrix(new double[][]{
                 {dt * dt * processNoiseVariance, dt * processNoiseVariance},
                 {dt * processNoiseVariance, processNoiseVariance}
+        });*/
+
+        // Bättre
+        double processNoiseVariance = 0.01;
+        Q = MatrixUtils.createRealMatrix(new double[][]{
+                {0.25 * dt * dt * processNoiseVariance + 0.001, 0.5 * dt * processNoiseVariance},
+                {0.5 * dt * processNoiseVariance, processNoiseVariance}
         });
 
         double measurementNoiseVariance = 0.1;
@@ -39,6 +47,12 @@ public class AccelerometerFilter {
         A = MatrixUtils.createRealMatrix(new double[][]{
                 {1, dt},
                 {0, 1}
+        });
+
+        double processNoiseVariance = 0.01;
+        Q = MatrixUtils.createRealMatrix(new double[][]{
+                {0.25 * dt * dt * processNoiseVariance + 0.001, 0.5 * dt * processNoiseVariance},
+                {0.5 * dt * processNoiseVariance, processNoiseVariance}
         });
     }
 
