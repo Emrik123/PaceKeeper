@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scroll_view"
+    android:id="@+id/fragment_blank"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.101">
-   <androidx.constraintlayout.widget.ConstraintLayout
-      android:id="@+id/fragment_blank"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:background="@drawable/runnerview"
-      android:visibility="visible"
-      tools:context=".MainActivity"
-      tools:clickable="true"
-      tools:visibility="visible">
+    android:background="@drawable/runnerview"
+    android:visibility="visible"
+    tools:context=".MainActivity"
+    tools:clickable="true"
+    tools:visibility="visible">
+
+
+  <!-->  <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.101">
+
+       <-->
+
 
         <LinearLayout
             android:id="@+id/session_layout"
@@ -81,17 +85,17 @@
                 android:layout_marginRight="1dp"
                 android:text="@string/route"
                 android:textSize="24sp" />
-  <-->
+
             <ImageView
                 android:id="@+id/route_image"
-                android:layout_width="match_parent"
-                android:layout_height="350dp"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
                 android:contentDescription="TODO"
                 android:src="@drawable/examplerouteimage"
                 app:layout_constraintEnd_toEndOf="@+id/linearLayout"
                 app:layout_constraintStart_toStartOf="@+id/linearLayout"
                 app:layout_constraintTop_toBottomOf="@+id/detail_text_view_route" />
-
+    <-->
 
             <View
                 android:layout_width="match_parent"
@@ -180,8 +184,6 @@
 
     </LinearLayout>
 
+
 </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-
-
 
