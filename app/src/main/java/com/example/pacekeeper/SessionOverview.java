@@ -24,7 +24,7 @@ import com.bumptech.glide.Glide;
  * create an instance of this fragment.
  */
 public class SessionOverview extends Fragment {
-
+//något
     private SessionManager sessionManager;
     private Session currentSession;
     private ImageButton saveSession;

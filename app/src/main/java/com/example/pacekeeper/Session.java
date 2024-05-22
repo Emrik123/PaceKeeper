@@ -18,6 +18,7 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Session {
+    //kommentar
     private final ArrayList<com.mapbox.geojson.Point> route;
     private final ArrayList<Double> storedSpeedArray;
     private final ArrayList<String> timePerKm;

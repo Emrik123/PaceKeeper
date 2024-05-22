@@ -184,7 +184,7 @@ public class SessionFragment extends Fragment {
 
 
 
-
+//något
                 expandButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
