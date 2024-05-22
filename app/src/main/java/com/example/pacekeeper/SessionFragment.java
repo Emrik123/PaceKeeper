@@ -1,17 +1,9 @@
 package com.example.pacekeeper;
-
-import static android.content.Context.INPUT_METHOD_SERVICE;
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,12 +15,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -40,22 +27,12 @@ import java.util.Locale;
  */
 public class SessionFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private SessionManager sessionManager;
     LinearLayout sessionContainer;
     private Runnable uiPopulation;
     private ImageButton returnButton;
-    private ImageButton deleteSession;
     private Fragment sessionFragment;
-
-    View sessionView;
+    private View sessionView;
     Handler uiHandler;
 
 
@@ -72,24 +49,13 @@ public class SessionFragment extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static SessionFragment newInstance(SessionManager sessionManager) {
         SessionFragment fragment = new SessionFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
         fragment.setSessionManager(sessionManager);
-
         return fragment;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-
-
     }
 
     @SuppressLint("SetTextI18n")
@@ -108,7 +74,6 @@ public class SessionFragment extends Fragment {
             }
         };
         populateUI();
-
         initializeEventListeners();
         return rootView;
     }
@@ -120,7 +85,6 @@ public class SessionFragment extends Fragment {
     public void initializeGraphicalResources(View rootView) {
         returnButton = rootView.findViewById(R.id.return_button);
         sessionContainer = rootView.findViewById(R.id.session_layout);
-        deleteSession = rootView.findViewById(R.id.delete_session);
     }
 
     public void initializeEventListeners() {
@@ -133,14 +97,7 @@ public class SessionFragment extends Fragment {
                 requireActivity().onBackPressed();
             }
         });
-        deleteSession.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
-
 
     private void updateUI() {
         List<Session.StoredSession> sessionsList = sessionManager.getSavedSessions();
@@ -148,7 +105,6 @@ public class SessionFragment extends Fragment {
         if(sessionsList!=null) {
             Collections.reverse(sessionsList);
             for (Session.StoredSession session : sessionsList) {
-
                 sessionView = LayoutInflater.from(getContext()).inflate(R.layout.session_item, null);
                 LinearLayout sessionItem = sessionView.findViewById(R.id.session_layout);
                 ImageButton compressButton = sessionView.findViewById(R.id.compress_button);
@@ -181,9 +137,6 @@ public class SessionFragment extends Fragment {
                     sessionComment.setText(session.getSessionComment());
                 }
 
-
-
-//något
                 expandButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -241,15 +194,11 @@ public class SessionFragment extends Fragment {
                         editCommentText.setVisibility(View.GONE);
                         saveCommentButton.setVisibility(View.GONE);
 
-
                         InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(saveCommentButton.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
                     }
 
                 });
-
-
-
 
                 View spacerView = new View(getContext());
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 20);

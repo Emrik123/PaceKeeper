@@ -16,8 +16,6 @@ public class MapGenerator {
     public MapGenerator(){
     }
 
-
-
         public String getUrl(String accessToken, Session currentSession) {
 
             ArrayList<Point> routeCoordinates = currentSession.getRoute();

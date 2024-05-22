@@ -239,6 +239,10 @@ public class Session {
         return timePerKm;
     }
 
+    public void setUnitOfVelocity(UnitOfVelocity unitOfVelocity) {
+        this.unitOfVelocity = unitOfVelocity;
+    }
+
     public static class StoredSession implements Serializable{
         private final double totalDistance;
         private final String totalTime;
