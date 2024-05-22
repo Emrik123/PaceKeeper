@@ -383,5 +383,4 @@ obj/
 .idea/deploymentTargetDropDown.xml
 PaceKeeper/src/main/res/values/developer-config.xml
 gradle.properties
-gradle.properties
 app/src/main/res/values/developer-config.xml
