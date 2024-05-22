@@ -123,6 +123,11 @@ public class Accelerometer implements SensorEventListener {
         return accelerometerValues;
     }
 
+    /**
+     * Returns a delta time from the current time step.
+     * @return The current delta time
+     * @author Samuel
+     */
     public double getTimeStep() {
         double timeStep = 0;
         if (previousTimeStep == 0) {

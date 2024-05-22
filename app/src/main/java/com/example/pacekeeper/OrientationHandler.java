@@ -106,7 +106,7 @@ public class OrientationHandler implements SensorEventListener {
     /**
      * Used to transform the acceleration values from the accelerometer to real north, east and down.
      * @param accelerometerValues values collected from the accelerometer.
-     * @author Emrik
+     * @author Emrik, Samuel
      */
     private void transformAcceleration(float[] accelerometerValues) {
         RealVector vector = new ArrayRealVector(new double[]{
@@ -122,6 +122,11 @@ public class OrientationHandler implements SensorEventListener {
         sensorUnitHandler.getAccelerometer().setAccelerometerValues(new float[]{(float) eastAxisFilter.getState()[1], (float) northAxisFilter.getState()[1], (float) verticalAxisFilter.getState()[1]});
     }
 
+    /**
+     * Filters all three axes of accelerometer readings.
+     * @param resultVector The transformed accelerometer readings.
+     * @author Samuel
+     */
     private void filterAccelerometerValues(RealVector resultVector) {
         double timeStep = sensorUnitHandler.getAccelerometer().getTimeStep();
         eastAxisFilter.update(resultVector.getEntry(0), timeStep);
