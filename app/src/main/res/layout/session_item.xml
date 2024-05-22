@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/session_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/titleSession"
-        android:background="@drawable/border"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/session_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:layout_constraintTop_toBottomOf="@+id/titleSession"
+    android:background="@drawable/border"
     android:clickable="true"
     android:layout_gravity="top"
-        >
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_gravity="center">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="center">
-
-                <ImageButton
-                    android:id="@+id/delete_session"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_gravity="end"
-                    android:backgroundTint="@color/transparent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/deleteicon"
-                    />
+            <ImageButton
+                android:id="@+id/delete_session"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="15dp"
+                android:layout_gravity="end"
+                android:backgroundTint="@color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/deleteicon"
+                />
             <TextView
                 android:id="@+id/summary_text_view1"
                 android:layout_width="wrap_content"
@@ -49,143 +49,142 @@
 
 
 
-            </LinearLayout>
-            <TextView
-                android:id="@+id/session_distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="20.3 km"
-                android:textSize="50sp"
-                android:textColor="@color/black"
-                android:layout_gravity="center"
-                />
-
-            <ImageButton
-                android:id="@+id/expand_button"
-                android:layout_width="70dp"
-                android:layout_height="48dp"
-                android:layout_gravity="end"
-                android:adjustViewBounds="false"
-                android:backgroundTint="@color/transparent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/expandlogopng" />
-
         </LinearLayout>
-
         <TextView
-            android:id="@+id/detail_text_view_km"
-            android:layout_width="match_parent"
+            android:id="@+id/session_distance"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/each_km_in_session"
-            android:textSize="30sp"
-            android:visibility="gone"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp" />
-        <!-->
-                <TextView
-                    android:id="@+id/detail_text_view_route"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/route"
-                    android:textSize="24sp"
-                    android:layout_marginLeft="1dp"
-                    android:layout_marginRight="1dp"
-                    />
-
-                <ImageView
-                    android:id="@+id/route_image"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    app:layout_constraintStart_toStartOf="@+id/linearLayout"
-                    app:layout_constraintEnd_toEndOf="@+id/linearLayout"
-                    app:layout_constraintTop_toBottomOf="@+id/detail_text_view_route"
-                    android:src="@drawable/cat"
-                    android:contentDescription="TODO" />
-                    /-->
-
-
-        <TextView
-            android:id="@+id/detail_text_view_session_comment_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp"
-            android:text="@string/session_comment_title"
-            android:textSize="28sp"
-            android:visibility="gone"
-
+            android:text="20.3 km"
+            android:textSize="50sp"
+            android:textColor="@color/black"
+            android:layout_gravity="center"
             />
-
 
         <ImageButton
-            android:id="@+id/edit_comment_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_edit_note_24"
-            android:visibility="gone"
-
-            />
-
-        <EditText
-            android:id="@+id/edit_comment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:text="@string/edit_comment_text"
-            android:visibility="gone"
-            android:clickable="true"
-            />
-
-        <TextView
-            android:id="@+id/detail_text_view_session_comment_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/session_comment"
-            android:textSize="18sp"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp"
-            android:layout_marginBottom="1dp"
-            android:visibility="gone"
-
-            />
-
-
-        <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <Button
-                    android:id="@+id/save_comment_button"
-                android:visibility="gone"
-
-                android:backgroundTint="#29cbfc"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                    android:text="Save"
-                android:textColor="@color/black"
-                    android:textSize="12sp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                android:layout_marginStart="10dp"
-            />
-
-            <ImageButton
-                    android:id="@+id/compress_button"
-                    android:layout_width="70dp"
-                    android:layout_height="48dp"
-                    android:backgroundTint="@color/transparent"
-                    android:layout_gravity="end"
-                    android:rotation="180"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/expandlogopng"
-                    android:layout_alignParentEnd="true"
-                android:visibility="gone"
-
-                />
-
-        </RelativeLayout>
+            android:id="@+id/expand_button"
+            android:layout_width="70dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end"
+            android:adjustViewBounds="false"
+            android:backgroundTint="@color/transparent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/expandlogopng" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/detail_text_view_km"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/each_km_in_session"
+        android:textSize="30sp"
+        android:visibility="gone"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp" />
+    <!-->
+            <TextView
+                android:id="@+id/detail_text_view_route"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/route"
+                android:textSize="24sp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                />
+/-->
+
+    <ImageView
+        android:id="@+id/route_image"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/detail_text_view_route"
+        android:src="@drawable/cat"
+        android:contentDescription="TODO" />
+
+
+    <TextView
+        android:id="@+id/detail_text_view_session_comment_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:text="@string/session_comment_title"
+        android:textSize="28sp"
+        android:visibility="gone"
+
+        />
+
+
+    <ImageButton
+        android:id="@+id/edit_comment_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/baseline_edit_note_24"
+        android:visibility="gone"
+
+        />
+
+    <EditText
+        android:id="@+id/edit_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:text="@string/edit_comment_text"
+        android:visibility="gone"
+        android:clickable="true"
+        />
+
+    <TextView
+        android:id="@+id/detail_text_view_session_comment_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/session_comment"
+        android:textSize="18sp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginBottom="1dp"
+        android:visibility="gone"
+
+        />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/save_comment_button"
+            android:visibility="gone"
+
+            android:backgroundTint="#29cbfc"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="Save"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            />
+
+        <ImageButton
+            android:id="@+id/compress_button"
+            android:layout_width="70dp"
+            android:layout_height="48dp"
+            android:backgroundTint="@color/transparent"
+            android:layout_gravity="end"
+            android:rotation="180"
+            android:scaleType="centerCrop"
+            android:src="@drawable/expandlogopng"
+            android:layout_alignParentEnd="true"
+            android:visibility="gone"
+
+            />
+
+    </RelativeLayout>
+
+</LinearLayout>
 
 

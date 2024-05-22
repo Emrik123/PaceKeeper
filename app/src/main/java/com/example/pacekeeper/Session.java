@@ -10,10 +10,11 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Session {
-    private final ArrayList<Location> routeCoordinates;
+    private final ArrayList<Point> routeCoordinates;
     private final ArrayList<Double> storedSpeedArray;
     private final ArrayList<String> timePerKm;
     private Location currentLocation;
@@ -113,7 +114,9 @@ public class Session {
                 lastLocation = currentLocation;
             }
             this.currentLocation = location.getLocations().get(location.getLocations().size() - 1);
-            routeCoordinates.add(currentLocation);
+            com.mapbox.geojson.Point point = Point.fromLngLat(currentLocation.getLongitude(), currentLocation.getLatitude());
+            routeCoordinates.add(point);
+
             double deltaTime;
             if (timeStep != 0) {
                 deltaTime = stopwatch.getTime() - timeStep;
@@ -204,7 +207,7 @@ public class Session {
     }
 
     public ArrayList<Point> getRoute(){
-        return route;
+        return routeCoordinates;
     }
 
     public double calculateAverageSpeed() {
@@ -236,7 +239,7 @@ public class Session {
         return timePerKm;
     }
 
-    public static class StoredSession implements Serializable {
+    public static class StoredSession implements Serializable{
         private final double totalDistance;
         private final String totalTime;
         private static final long serialVersionUID = 0L;
@@ -244,7 +247,8 @@ public class Session {
         private double selectedSpeed;
         private ArrayList<String> timePerKm;
         private String sessionComment;
-        
+        private ArrayList<Point> route;
+
         public StoredSession(LocalDate date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed, String sessionComment, List<Point> route){
             this.totalTime = time;
             this.totalDistance = distance;
@@ -252,9 +256,10 @@ public class Session {
             this.timePerKm = timePerKm;
             this.selectedSpeed = selectedSpeed;
             this.sessionComment = sessionComment;
+            this.route = (ArrayList<Point>) route;
         }
 
-        public void setSessionComment(String sessionComment) {
+        public void setSessionComment(String sessionComment){
             this.sessionComment = sessionComment;
         }
 
@@ -266,25 +271,25 @@ public class Session {
             return totalTime;
         }
 
-        public ArrayList<String> getTimePerKm() {
+        public ArrayList<String> getTimePerKm(){
             return timePerKm;
         }
 
-        public String getDate() {
+        public String getDate(){
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
-            if (date != null) {
+            if(date!=null){
                 return date.format(formatter);
-            } else {
+            }else{
                 return "no date found";
             }
         }
 
-        public String getSessionComment() {
+        public String getSessionComment(){
             return sessionComment;
         }
-
-        public String getSelectedSpeed() {
+        public String getSelectedSpeed(){
             return Double.toString(selectedSpeed);
         }
+        public ArrayList<Point> getRoute(){return route;}
     }
 }
