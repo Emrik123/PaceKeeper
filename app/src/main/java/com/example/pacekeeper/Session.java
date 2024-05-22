@@ -166,7 +166,7 @@ public class Session {
             case KM_PER_HOUR:
                 return String.format("%.2f", currentSpeed * CONVERSION_UNIT_KMH);
             case MIN_PER_KM:
-                return android.text.format.DateUtils.formatElapsedTime(Math.round(1000 / currentSpeed));
+                return android.text.format.DateUtils.formatElapsedTime((long) (1000 / currentSpeed));
         }
         return null;
     }
