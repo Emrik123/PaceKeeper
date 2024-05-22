@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -36,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private TextView unitTextView;
     private RunnerView runnerView;
-    private Button openMapButton;
+    private Session currentSession;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -63,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         feedbackHandler = new FeedbackHandler(getApplicationContext());
         previousSessionsButton = findViewById(R.id.previous_sessions_button);
         unitTextView = findViewById(R.id.unitTextView);
-        openMapButton = findViewById(R.id.open_map);
     }
 
     public void initializeEventListeners() {
@@ -75,9 +73,6 @@ public class MainActivity extends AppCompatActivity {
         });
         settingsButton.setOnClickListener(v -> displaySettingsView());
         previousSessionsButton.setOnClickListener(v -> displaySessionsView());
-        openMapButton.setOnClickListener(v -> displayMap());
-
-
     }
 
     @Override
@@ -167,13 +162,6 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    private void displayMap() {
-        MapTestFragment mapTestFragment = new MapTestFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, mapTestFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
 
     private void displaySettingsView() {
         saveSharedPreferences();

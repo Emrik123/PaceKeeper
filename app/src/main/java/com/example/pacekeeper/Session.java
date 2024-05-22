@@ -5,17 +5,20 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.location.Location;
 import com.google.android.gms.location.LocationResult;
+import com.mapbox.geojson.Point;
+
 import org.apache.commons.lang3.time.StopWatch;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Session {
-    private final ArrayList<Location> route;
+    private final ArrayList<com.mapbox.geojson.Point> route;
     private final ArrayList<Double> storedSpeedArray;
     private final ArrayList<String> timePerKm;
     private Location currentLocation;
@@ -36,11 +39,9 @@ public class Session {
     private FeedbackHandler feedbackHandler;
     private boolean isPaused;
     private String sessionComment;
-    private ArrayList<String> routeCordinates;
 
 
     public Session(double selectedSpeed, Context context, FeedbackHandler feedbackHandler){
-        routeCordinates = new ArrayList<>();
         this.feedbackHandler = feedbackHandler;
         kalmanFilter = new Kalman();
         this.sessionDate = LocalDate.now();
@@ -55,27 +56,9 @@ public class Session {
         stopwatch.start();
         broadcastReceiver = new SessionBroadcastReceiver(this);
         initializeReceiver();
-       // addRouteCordinates();
     }
 
-    public void addRouteCordinates(){
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-               routeCordinates.add(currentLocation.getLongitude() + "," + currentLocation.getLatitude());
-                System.out.println("Coordinate added.");
 
-                if(!isRunning){
-                    timer.cancel();
-                    for(String s : routeCordinates){
-                        System.out.println(s);
-                    }
-                }
-            }
-        }, 1000);
-
-    }
 
     public String updateTime(){
         long currentTimeMillis = stopwatch.getTime();
@@ -140,13 +123,10 @@ public class Session {
 
     public void killSession(){
         isRunning = false;
-        for(String s : routeCordinates){
-            System.out.println(s);
-        }
     }
 
     public StoredSession getSerializableSession(){
-        return new StoredSession(sessionDate, getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed, sessionComment);
+        return new StoredSession(sessionDate, getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed, sessionComment, getRoute());
     }
 
     public void updateLocation(LocationResult location, float[] a) {
@@ -156,7 +136,8 @@ public class Session {
                 lastLocation = currentLocation;
             }
             this.currentLocation = location.getLocations().get(location.getLocations().size() - 1);
-            route.add(currentLocation);
+            com.mapbox.geojson.Point point = Point.fromLngLat(currentLocation.getLongitude(), currentLocation.getLatitude());
+            route.add(point);
             double tempTime;
             if(timeDelta != 0){
                 tempTime = stopwatch.getTime() - timeDelta;
@@ -176,7 +157,6 @@ public class Session {
             feedbackHandler.setCurrentSpeed(currentSpeed);
         }
         System.out.println("Current location: " + currentLocation.getLongitude());
-        routeCordinates.add(currentLocation.getLongitude() + "," + currentLocation.getLatitude());
     }
 
     public boolean getRunning(){
@@ -265,7 +245,7 @@ public class Session {
         return conversionUnit;
     }
 
-    public ArrayList<Location> getRoute(){
+    public ArrayList<Point> getRoute(){
         return route;
     }
 
@@ -322,9 +302,11 @@ public class Session {
 
         private String sessionComment;
 
+        private ArrayList<Point> route;
 
 
-        public StoredSession( LocalDate date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed, String sessionComment){
+
+        public StoredSession(LocalDate date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed, String sessionComment, List<Point> route){
             this.totalTime = time;
             this.totalDistance = distance;
             this.date = date;
@@ -332,6 +314,7 @@ public class Session {
             this.sessionID = idCount.incrementAndGet();
             this.selectedSpeed = selectedSpeed;
             this.sessionComment = sessionComment;
+            this.route = (ArrayList<Point>) route;
         }
 
         public void setSessionComment(String sessionComment){
@@ -365,5 +348,6 @@ public class Session {
         public String getSelectedSpeed(){
             return Double.toString(selectedSpeed);
         }
+        public ArrayList<Point> getRoute(){return route;}
     }
 }

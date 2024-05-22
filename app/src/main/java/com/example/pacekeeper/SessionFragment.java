@@ -1,22 +1,30 @@
 package com.example.pacekeeper;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -44,7 +52,8 @@ public class SessionFragment extends Fragment {
     LinearLayout sessionContainer;
     private Runnable uiPopulation;
     private ImageButton returnButton;
-
+    private ImageButton deleteSession;
+    private Fragment sessionFragment;
 
     View sessionView;
     Handler uiHandler;
@@ -86,6 +95,7 @@ public class SessionFragment extends Fragment {
     @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        sessionFragment = this;
 
         uiHandler = new Handler(Looper.getMainLooper());
         View rootView = inflater.inflate(R.layout.fragment_session, container, false);
@@ -110,6 +120,7 @@ public class SessionFragment extends Fragment {
     public void initializeGraphicalResources(View rootView) {
         returnButton = rootView.findViewById(R.id.return_button);
         sessionContainer = rootView.findViewById(R.id.session_layout);
+        deleteSession = rootView.findViewById(R.id.delete_session);
     }
 
     public void initializeEventListeners() {
@@ -117,7 +128,16 @@ public class SessionFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 sessionManager.storeSessionToMemory(requireContext());
+                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(returnButton.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
                 requireActivity().onBackPressed();
+
+            }
+        });
+        deleteSession.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
@@ -138,6 +158,7 @@ public class SessionFragment extends Fragment {
                 TextView sessionComment = sessionView.findViewById(R.id.detail_text_view_session_comment_text);
                 TextView sessionCommentTitle = sessionView.findViewById(R.id.detail_text_view_session_comment_title);
                 TextView sessionDistance = sessionView.findViewById(R.id.session_distance);
+                ImageView routeImage = sessionView.findViewById(R.id.route_image);
 
                 Button saveCommentButton = sessionView.findViewById(R.id.save_comment_button);
                 EditText editCommentText = sessionView.findViewById(R.id.edit_comment);
@@ -171,6 +192,9 @@ public class SessionFragment extends Fragment {
                             editCommentIcon.setVisibility(View.VISIBLE);
                             allKmInSession.setVisibility(View.VISIBLE);
                             sessionCommentTitle.setVisibility(View.VISIBLE);
+                            MapGenerator mapGenerator = new MapGenerator();
+                            Glide.with(sessionFragment).load(mapGenerator.getUrlFromStoredSession(getString(R.string.mapbox_access_token),session)).into(routeImage);
+
                             if (session.getSessionComment() != null) {
                                 sessionComment.setVisibility(View.VISIBLE);
                             }
@@ -218,8 +242,16 @@ public class SessionFragment extends Fragment {
                         editCommentText.setVisibility(View.GONE);
                         saveCommentButton.setVisibility(View.GONE);
 
+
+                        InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(saveCommentButton.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
                     }
+
                 });
+
+
+
+
                 View spacerView = new View(getContext());
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 20);
                 spacerView.setLayoutParams(params);
