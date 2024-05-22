@@ -6,7 +6,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 /**
- * Kalman filter for filtering a single axis of accelerometer data. This filter does not take
+ * Kalman filter for filtering a single axis of accelerometer data. This filter does <b>not</b> take
  * gravitational forces into account when a vertical axis is filtered.
  * @author Samuel
  */
