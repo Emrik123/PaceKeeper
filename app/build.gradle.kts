@@ -31,6 +31,11 @@ android {
 
 dependencies {
 
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+    implementation ("com.mapbox.mapboxsdk:mapbox-sdk-services:5.1.0")
+    //implementation ("com.mapbox.plugin:plugin-annotation-v10:10.0.0")
+    implementation("com.mapbox.maps:android:11.3.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")

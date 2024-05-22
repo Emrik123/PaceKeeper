@@ -44,6 +44,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
+        <ImageButton
+            android:id="@+id/delete_session"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/transparent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/deleteicon"
+            />
+
         <LinearLayout
             android:id="@+id/session_layout"
             android:layout_width="match_parent"

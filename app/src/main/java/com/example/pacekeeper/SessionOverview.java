@@ -1,20 +1,22 @@
 package com.example.pacekeeper;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +34,8 @@ public class SessionOverview extends Fragment {
     private TextView sessionDistance;
     private TextView timePerKm;
     private EditText editComment;
+    private ImageView routeImage;
+    private MapGenerator mapGenerator;
 
 
     public SessionOverview() {
@@ -49,7 +53,13 @@ public class SessionOverview extends Fragment {
         SessionOverview fragment = new SessionOverview();
         fragment.setCurrentSession(currentSession);
         fragment.setSessionManager(sessionManager);
+        fragment.createMapGenerator();
+
         return fragment;
+    }
+
+    public void createMapGenerator(){
+        mapGenerator = new MapGenerator();
     }
 
     @Override
@@ -88,6 +98,9 @@ public class SessionOverview extends Fragment {
             timePerKm.setText(allKmTime);
         }
 
+        Glide.with(this).load(mapGenerator.getUrl(getString(R.string.mapbox_access_token),currentSession)).into(routeImage);
+
+
         initializeEventListeners();
 
         return rootView;
@@ -107,6 +120,7 @@ public class SessionOverview extends Fragment {
         sessionDistance = rootView.findViewById(R.id.session_distance);
         timePerKm = rootView.findViewById(R.id.detail_text_view_km);
         editComment = rootView.findViewById(R.id.edit_comment);
+        routeImage = rootView.findViewById(R.id.route_image);
     }
 
     /**
@@ -122,6 +136,8 @@ public class SessionOverview extends Fragment {
             sessionManager.add(currentSession.getSerializableSession());
             sessionManager.storeSessionToMemory(getContext());
             currentSession.killSession();
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(saveSession.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
             getActivity().getSupportFragmentManager().popBackStack(
                     "mainActivity",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -136,6 +152,8 @@ public class SessionOverview extends Fragment {
         });
 
         resumeSession.setOnClickListener(v -> {
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(resumeSession.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
             getActivity().getSupportFragmentManager().popBackStack(
                     "runnerView",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -144,6 +162,8 @@ public class SessionOverview extends Fragment {
 
         deleteSession.setOnClickListener(v -> {
             currentSession.killSession();
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(deleteSession.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
             getActivity().getSupportFragmentManager().popBackStack(
                     "mainActivity",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
