@@ -1,16 +1,16 @@
 package com.example.pacekeeper;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.location.Location;
 import com.google.android.gms.location.LocationResult;
+import com.mapbox.geojson.Point;
 import org.apache.commons.lang3.time.StopWatch;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
 
 public class Session {
     private final ArrayList<Location> routeCoordinates;
@@ -53,7 +53,7 @@ public class Session {
         initializeReceiver();
     }
 
-    public String updateTime() {
+    public String updateTime(){
         long currentTimeMillis = stopwatch.getTime();
         int hours = (int) (currentTimeMillis / (1000 * 60 * 60)) % 24;
         int minutes = (int) ((currentTimeMillis / (1000 * 60)) % 60);
@@ -85,10 +85,12 @@ public class Session {
         return timeExceptCurrentKm;
     }
 
+
     public void pauseSession() {
         isPaused = true;
         stopwatch.suspend();
     }
+
 
     public void continueSession() {
         isPaused = false;
@@ -101,7 +103,7 @@ public class Session {
     }
 
     public StoredSession getSerializableSession() {
-        return new StoredSession(sessionDate, getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed, sessionComment);
+        return new StoredSession(sessionDate, getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed, sessionComment, getRoute());
     }
 
     public void updateLocation(LocationResult location, float[] a) {
@@ -135,7 +137,6 @@ public class Session {
     public boolean getRunning() {
         return isRunning;
     }
-
 
     public double getSelectedSpeed() {
         return selectedSpeed;
@@ -202,12 +203,8 @@ public class Session {
         return formattedTime.toString().trim();
     }
 
-    public ArrayList<Location> getRouteCoordinates() {
-        return routeCoordinates;
-    }
-
-    public void setUnitOfVelocity(UnitOfVelocity unitOfVelocity) {
-        this.unitOfVelocity = unitOfVelocity;
+    public ArrayList<Point> getRoute(){
+        return route;
     }
 
     public double calculateAverageSpeed() {
@@ -240,7 +237,6 @@ public class Session {
     }
 
     public static class StoredSession implements Serializable {
-
         private final double totalDistance;
         private final String totalTime;
         private static final long serialVersionUID = 0L;
@@ -248,8 +244,8 @@ public class Session {
         private double selectedSpeed;
         private ArrayList<String> timePerKm;
         private String sessionComment;
-
-        public StoredSession(LocalDate date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed, String sessionComment) {
+        
+        public StoredSession(LocalDate date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed, String sessionComment, List<Point> route){
             this.totalTime = time;
             this.totalDistance = distance;
             this.date = date;

@@ -123,9 +123,12 @@ public class SessionFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 sessionManager.storeSessionToMemory(requireContext());
-                getParentFragmentManager().popBackStackImmediate();
+                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(returnButton.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+                requireActivity().onBackPressed();
             }
         });
+
     }
 
 
@@ -166,8 +169,6 @@ public class SessionFragment extends Fragment {
                 if (session.getSessionComment() != null) {
                     sessionComment.setText(session.getSessionComment());
                 }
-
-
 
 
                 expandButton.setOnClickListener(new View.OnClickListener() {

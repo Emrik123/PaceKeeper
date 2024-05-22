@@ -12,6 +12,7 @@
         app:layout_constraintTop_toBottomOf="@+id/titleSession"
         android:background="@drawable/border"
     android:clickable="true"
+    android:layout_gravity="top"
         >
 
         <LinearLayout

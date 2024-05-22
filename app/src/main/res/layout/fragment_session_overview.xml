@@ -50,7 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginBottom="21dp"
                     android:fontFamily="@font/fugaz_one"
                     android:text="20.3 km"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"

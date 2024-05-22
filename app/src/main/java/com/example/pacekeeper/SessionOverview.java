@@ -22,7 +22,6 @@ import android.widget.TextView;
  * create an instance of this fragment.
  */
 public class SessionOverview extends Fragment {
-
     private SessionManager sessionManager;
     private Session currentSession;
     private ImageButton saveSession;
@@ -122,10 +121,11 @@ public class SessionOverview extends Fragment {
             sessionManager.add(currentSession.getSerializableSession());
             sessionManager.storeSessionToMemory(getContext());
             currentSession.killSession();
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(saveSession.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
             getActivity().getSupportFragmentManager().popBackStack(
                     "mainActivity",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
             stopService();
         });
 
