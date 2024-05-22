@@ -57,8 +57,8 @@ public class Kalman {
      */
     public Kalman() {
         dt = 0.5;
-        processNoise = 0.05;
-        gpsNoise = 0.4;
+        processNoise = 0.125;
+        gpsNoise = 0.06;
         initializeMatrices();
     }
 

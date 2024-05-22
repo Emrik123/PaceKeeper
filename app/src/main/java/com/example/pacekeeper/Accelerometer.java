@@ -4,38 +4,49 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Log;
 import org.apache.commons.lang3.time.StopWatch;
-
-import java.io.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
+
+/**
+ * This class holds an Accelerometer sensor of type LINEAR_ACCELERATION.
+ * It implements the SensorEventListener interface to register a listener to the sensor.
+ * Each time the sensor values change, the onSensorChanged method is called.
+ * The accelerometer is set to a sensor update frequency of SENSOR_DELAY_GAME, i.e. a rate of 50 Hz.
+ * @author Emrik, Johnny
+ */
 public class Accelerometer implements SensorEventListener {
 
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private float[] accelerometerValues;
-    private static final float ALPHA = 0.5f;
+    private static final float ALPHA = 0.8f;
     private HandlerThread sensorThread;
     private Handler sensorHandler;
-    private ArrayList<float[]> accHistory;
-    private ArrayList<Long> timeStamp;
     private StopWatch stopWatch;
+    private double previousTimeStep = 0;
 
+    /**
+     * Class constructor.
+     * Initializes a HandlerThread and starts is with a default looper.
+     * @param sensorManager takes in an instance of the device's
+     *                      sensor manager to gain access to the accelerometer.
+     * @author Emrik
+     */
     public Accelerometer(SensorManager sensorManager) {
-        timeStamp = new ArrayList<>();
         stopWatch = new StopWatch();
-        accHistory = new ArrayList<>();
         this.sensorManager = sensorManager;
         sensorThread = new HandlerThread("Accelerometer");
         sensorThread.start();
         sensorHandler = new Handler(sensorThread.getLooper());
     }
 
+    /**
+     * Used to start the accelerometer and register a listener to the representing object.
+     * @author Emrik, Johnny
+     */
     public void startAccelerometer() {
         stopWatch.start();
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
@@ -44,9 +55,12 @@ public class Accelerometer implements SensorEventListener {
         }
     }
 
+    /**
+     * Used to stop the accelerometer and kill the HandlerThread.
+     * @author Emrik
+     */
     public void stopAccelerometer() {
         if (accelerometer != null) {
-            storeValues(new Data(accHistory, timeStamp));
             sensorManager.unregisterListener(this, accelerometer);
             accelerometer = null;
         }
@@ -62,43 +76,12 @@ public class Accelerometer implements SensorEventListener {
         }
     }
 
-    public static class Data implements Serializable {
-        private ArrayList<float[]> acc;
-        private ArrayList<Long> timeStamp;
-        public Data(ArrayList<float[]> acc, ArrayList<Long> timeStamp){
-            this.acc = acc;
-            this.timeStamp = timeStamp;
-        }
-
-        public ArrayList<float[]> getAcc() {
-            return acc;
-        }
-
-        public ArrayList<Long> getTimeStamp() {
-            return timeStamp;
-        }
-    }
-
-    public void storeValues(Data d){
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-                "testDataFile_" + LocalDate.now() + "_#" + d.getTimeStamp().get(d.getTimeStamp().size()-1)+ ".txt");
-        try{
-            FileOutputStream oos = new FileOutputStream(file);
-            ArrayList<float[]> acc = d.getAcc();
-            ArrayList<Long> timeStamp = d.getTimeStamp();
-            for(int i = 0; i < acc.size(); i++){
-                double a = Math.sqrt(Math.pow(acc.get(i)[0], 2) + Math.pow(acc.get(i)[1], 2) + Math.pow(acc.get(i)[2], 2));
-                String s = timeStamp.get(i) + " " + a + "\n";
-                oos.write(s.getBytes());
-            }
-            oos.flush();
-            oos.close();
-            Log.i("File write confirmation", "Successfully wrote file.");
-        }catch (IOException e){
-            Log.e("File write error", "Couldn't write file: " + e.getMessage());
-        }
-    }
-
+    /**
+     * Each time the sensor values are updated, (values are checked at a rate of 50 Hz)
+     * this method is called. Passing along the event holding the sensor values as parameter.
+     * @param event the {@link android.hardware.SensorEvent SensorEvent}.
+     * @author Emrik, Johnny
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (accelerometerValues == null) {
@@ -110,17 +93,43 @@ public class Accelerometer implements SensorEventListener {
         }
     }
 
+    /**
+     * Not used.
+     * @param sensor of which the accuracy of has changed.
+     * @param accuracy The new accuracy of this sensor, one of
+     *         {@code SensorManager.SENSOR_STATUS_*}
+     * @author Emrik
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    public void setAccelerometerValues(float[] values){
+    /**
+     * Setter.
+     * @param values to set.
+     * @author Emrik
+     */
+    public void setAccelerometerValues(float[] values) {
         accelerometerValues = values;
-        accHistory.add(accelerometerValues);
-        timeStamp.add(stopWatch.getTime());
     }
 
-    public float[] getAccelerometerValues(){
+    /**
+     * Getter.
+     * @return the current accelerometer values.
+     * @author Emrik
+     */
+    public float[] getAccelerometerValues() {
         return accelerometerValues;
+    }
+
+    public double getTimeStep() {
+        double timeStep = 0;
+        if (previousTimeStep == 0) {
+            return timeStep;
+        } else {
+            timeStep = stopWatch.getTime() - previousTimeStep;
+        }
+        previousTimeStep = stopWatch.getTime();
+        return timeStep / 1000;
     }
 }
