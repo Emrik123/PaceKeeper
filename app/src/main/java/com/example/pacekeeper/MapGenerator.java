@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapGenerator {
-
-    private Session currentSession;
+    
     public MapGenerator(){
     }
 
