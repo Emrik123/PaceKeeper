@@ -1,24 +1,18 @@
 package com.example.pacekeeper;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.location.Location;
 import com.google.android.gms.location.LocationResult;
 import com.mapbox.geojson.Point;
-
 import org.apache.commons.lang3.time.StopWatch;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Session {
-    //kommentar
     private final ArrayList<com.mapbox.geojson.Point> route;
     private final ArrayList<Double> storedSpeedArray;
     private final ArrayList<String> timePerKm;
@@ -59,8 +53,6 @@ public class Session {
         initializeReceiver();
     }
 
-
-
     public String updateTime(){
         long currentTimeMillis = stopwatch.getTime();
 
@@ -95,21 +87,9 @@ public class Session {
         return timeExceptCurrentKm;
     }
 
-    public void setSelectedSpeed(double speed){
-        this.selectedSpeed = speed;
-    }
-
-    public void setConversionUnit(double value){
-        this.conversionUnit = value;
-    }
-
     public void pauseSession(){
         isPaused = true;
         stopwatch.suspend();
-    }
-
-    public boolean isPaused(){
-        return isPaused;
     }
 
     public void continueSession(){
@@ -118,16 +98,14 @@ public class Session {
         stopwatch.resume();
     }
 
-    public void setPaused(){
-        isPaused = true;
-    }
-
     public void killSession(){
         isRunning = false;
     }
 
+
     public StoredSession getSerializableSession(){
         return new StoredSession(sessionDate, getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed, sessionComment, getRoute());
+
     }
 
     public void updateLocation(LocationResult location, float[] a) {
@@ -164,10 +142,6 @@ public class Session {
         return this.isRunning;
     }
 
-    public Location getCurrentLocation(){
-        return currentLocation;
-    }
-
     public double getSelectedSpeed(){
         return selectedSpeed;
     }
@@ -197,10 +171,6 @@ public class Session {
         return null;
     }
 
-
-    public double getCurrentSpeedMinPerKm(){
-        return (1000/currentSpeed)/60;
-    }
 
     public double getDistance(){
         return distance;
@@ -240,10 +210,6 @@ public class Session {
             }
 
             return formattedTime.toString().trim();
-    }
-
-    public double getConversionUnit(){
-        return conversionUnit;
     }
 
     public ArrayList<Point> getRoute(){
@@ -289,30 +255,21 @@ public class Session {
 
 
     public static class StoredSession implements Serializable{
-
-        private static final AtomicInteger idCount = new AtomicInteger(0);
         private final double totalDistance;
         private final String totalTime;
         private int sessionID;
         private static final long serialVersionUID = 0L;
         private LocalDate date;
-
         private double selectedSpeed;
-
         private ArrayList<String> timePerKm;
-
         private String sessionComment;
-
         private ArrayList<Point> route;
-
-
 
         public StoredSession(LocalDate date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed, String sessionComment, List<Point> route){
             this.totalTime = time;
             this.totalDistance = distance;
             this.date = date;
             this.timePerKm = timePerKm;
-            this.sessionID = idCount.incrementAndGet();
             this.selectedSpeed = selectedSpeed;
             this.sessionComment = sessionComment;
             this.route = (ArrayList<Point>) route;

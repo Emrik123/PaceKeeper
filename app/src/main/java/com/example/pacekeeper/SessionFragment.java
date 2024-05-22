@@ -131,7 +131,6 @@ public class SessionFragment extends Fragment {
                 InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(returnButton.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
                 requireActivity().onBackPressed();
-
             }
         });
         deleteSession.setOnClickListener(new View.OnClickListener() {
