@@ -65,7 +65,7 @@ public class Session {
     public void initializeReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("locationUpdate");
-        context.registerReceiver(broadcastReceiver, intentFilter);
+        context.registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED);
     }
 
     public void updateSessionData() {
