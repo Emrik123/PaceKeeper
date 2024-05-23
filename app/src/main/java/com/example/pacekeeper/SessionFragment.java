@@ -176,6 +176,7 @@ public class SessionFragment extends Fragment {
                             editCommentText.setVisibility(View.GONE);
                             saveCommentButton.setVisibility(View.GONE);
                             editCommentIcon.setVisibility(View.GONE);
+                            routeImage.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -228,6 +229,10 @@ public class SessionFragment extends Fragment {
                             editCommentIcon.setVisibility(View.VISIBLE);
                             allKmInSession.setVisibility(View.VISIBLE);
                             sessionCommentTitle.setVisibility(View.VISIBLE);
+                            MapGenerator mapGenerator = new MapGenerator();
+                            Glide.with(sessionFragment)
+                                    .load(mapGenerator.getUrlFromStoredSession(getString(R.string.mapbox_access_token)
+                                    , session)).into(routeImage);
                             if (session.getSessionComment() != null) {
                                 sessionComment.setVisibility(View.VISIBLE);
                             }
@@ -242,6 +247,7 @@ public class SessionFragment extends Fragment {
                             editCommentText.setVisibility(View.GONE);
                             saveCommentButton.setVisibility(View.GONE);
                             editCommentIcon.setVisibility(View.GONE);
+                            routeImage.setVisibility(View.GONE);
                         }
                     }
                 });
