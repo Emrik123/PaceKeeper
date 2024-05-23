@@ -125,8 +125,8 @@ public class Session {
                 tempTime = 0;
             }
             this.timeDelta = stopwatch.getTime();
-            double acc = Math.sqrt(Math.pow(a[0], 2) + Math.pow(a[1], 2) + Math.pow(a[2], 2));
-            kalmanFilter.predict(acc);
+            double acc_xy = Math.sqrt(Math.pow(a[0], 2) + Math.pow(a[1], 2));
+            kalmanFilter.predict(acc_xy);
             kalmanFilter.update(currentLocation.getSpeed(), tempTime /1000);
             double[] result = kalmanFilter.getState();
             this.currentSpeed = Math.abs(result[1]);
