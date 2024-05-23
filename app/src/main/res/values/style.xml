@@ -12,9 +12,6 @@
     <style name="radio_background" parent="Theme.AppCompat">
         <item name="colorControlActivated"> @color/black </item>
         <item name="colorControlNormal">@color/black</item>
-<!--        <item name="colorSwitchThumbNormal"> @color/switch_unchecked </item>-->
-<!--        <item name="trackTint"> @color/black</item>-->
-<!--        <item name="trackColorInactive"> @color/black</item>-->
     </style>
 
     <style name="numberpicker_style" parent="Theme.AppCompat.Light">
@@ -27,8 +24,3 @@
 
 
 </resources>
-<!--        <item name="colorControlNormal"> @color/black </item>-->
-<!--        <item name="android:colorForeground">#673AB7</item>-->
-<!--        <item name="android:colorBackground">#03A9F4</item>-->
-<!--        <item name="trackColorInactive">#9C27B0</item>-->
-<!--        <item name="trackColorActive">@color/white</item>-->

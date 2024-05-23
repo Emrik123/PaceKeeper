@@ -3,6 +3,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.text.format.DateUtils;
 import com.google.android.gms.location.LocationResult;
 import com.mapbox.geojson.Point;
 import org.apache.commons.lang3.time.StopWatch;
@@ -66,7 +67,7 @@ public class Session {
     public void initializeReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("locationUpdate");
-        context.registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED);
+        context.registerReceiver(broadcastReceiver, intentFilter);
     }
 
     public void updateSessionData() {
@@ -154,7 +155,7 @@ public class Session {
             case KM_PER_HOUR:
                 return selectedSpeed * CONVERSION_UNIT_KMH + unitOfVelocity.toString();
             case MIN_PER_KM:
-                return android.text.format.DateUtils.formatElapsedTime((Math.round(3600 / (selectedSpeed * CONVERSION_UNIT_KMH)))) + unitOfVelocity.toString();
+                return android.text.format.DateUtils.formatElapsedTime((Math.round(1000 / selectedSpeed))) + unitOfVelocity.toString();
         }
         return null;
     }

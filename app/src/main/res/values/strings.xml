@@ -1,17 +1,16 @@
 <resources>
     <string name="app_name">PaceKeeper</string>
-    <string name="viewString">Current speed</string>
-    <string name="viewString2">km/h</string>
-    <string name="reachedSpeed">You\'ve reached the desired speed!</string>
-    <string name="tooFast">You\'re going too fast!</string>
-    <string name="tooSlow">You\'re going too slow!</string>
+    <string name="view_string">Current speed</string>
+    <string name="view_string2">km/h</string>
+    <string name="reached_speed">You\'ve reached the desired speed!</string>
+    <string name="too_fast">You\'re going too fast!</string>
+    <string name="too_slow">You\'re going too slow!</string>
     <string name="time">00:00:00</string>
     <string name="pacekeeper">PaceKeeper</string>
     <string name="status">Status:</string>
     <string name="n_a">N/A</string>
     <string name="distance">DISTANCE</string>
     <string name="confirm">Start</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="timeS">TIME</string>
     <string name="distanceS">0.00</string>
@@ -26,7 +25,7 @@
     <string name="frequency_medium">MEDIUM</string>
     <string name="frequency_high">HIGH</string>
     <string name="save_settings_button">Save settings</string>
-    <string name="sessionOverview">30/3 | 18 min | 5.2 km</string>
+    <string name="session_overview">30/3 | 18 min | 5.2 km</string>
     <string name="desired_pace_text">DESIRED PACE:&#160;</string>
     <string name="each_km_in_session"><![CDATA[
     km1 | 5:35 \n
