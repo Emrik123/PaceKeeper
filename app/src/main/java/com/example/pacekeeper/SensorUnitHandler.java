@@ -9,6 +9,7 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import com.google.android.gms.location.LocationResult;
+import org.apache.commons.lang3.time.StopWatch;
 
 /**
  * This class is used to hold all the sensors which the application uses.
@@ -22,6 +23,8 @@ public class SensorUnitHandler extends Service {
     private GPS gps;
     private OrientationHandler orientationHandler;
     private Context context;
+    private StopWatch stopWatch;
+    private boolean firstLocation = false;
 
     /**
      * Required empty constructor.
@@ -43,6 +46,28 @@ public class SensorUnitHandler extends Service {
         accelerometer.startAccelerometer();
         gps.startLocationUpdates();
         orientationHandler.startOrientationSensor();
+        stopWatch = new StopWatch();
+        stopWatch.start();
+        waitForGpsLocation();
+    }
+
+    /**
+     * This method is called when the sensor threads are started. It's used to wait for the first
+     * location update from the GPS. It waits 5 seconds and if it hasn't received a location by then
+     * it sets the GPS accuracy to low to use network based location updates since the GPS signal is lacking.
+     */
+    public void waitForGpsLocation() {
+        Thread t = new Thread(() -> {
+            while(stopWatch.getTime() < 10000){
+                if(firstLocation){
+                    break;
+                }
+            }
+            if(!firstLocation){
+                gps.setLowAccuracy();
+            }
+        });
+        t.start();
     }
 
     /**
@@ -68,6 +93,10 @@ public class SensorUnitHandler extends Service {
      * @author Emrik
      */
     public void GPSNotification(LocationResult result) {
+        if(!firstLocation){
+            firstLocation = true;
+            stopWatch.stop();
+        }
         Intent locationIntent = new Intent("locationUpdate");
         Bundle bundle = new Bundle();
         bundle.putParcelable("loc", result);
@@ -76,6 +105,7 @@ public class SensorUnitHandler extends Service {
         locationIntent.putExtras(bundle);
         sendBroadcast(locationIntent);
     }
+
 
     /**
      * Default onCreate

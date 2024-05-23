@@ -7,7 +7,6 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import org.apache.commons.lang3.time.StopWatch;
-import java.util.ArrayList;
 
 
 /**
