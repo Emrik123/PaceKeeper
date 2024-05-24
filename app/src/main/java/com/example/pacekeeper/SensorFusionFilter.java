@@ -57,7 +57,7 @@ public class SensorFusionFilter {
      */
     public SensorFusionFilter() {
         dt = 0.5;
-        processNoise = 0.125;
+        processNoise = 0.035;
         gpsNoise = 0.06;
         initializeMatrices();
     }
@@ -124,7 +124,7 @@ public class SensorFusionFilter {
      * Used to update the current model to match against the most recent predicted state.
      * The velocity collected from the GPS is used to correct any major deviance in the estimate.
      * dt represents the time step from the last update.
-     * @param z velocity harvested from the GPS.
+     * @param z velocity retrieved from the GPS.
      * @param dt time step from the last update.
      * @author Emrik
      */
