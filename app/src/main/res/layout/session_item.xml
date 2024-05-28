@@ -4,7 +4,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/session_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -81,25 +80,14 @@
         android:visibility="gone"
         android:layout_marginLeft="1dp"
         android:layout_marginRight="1dp" />
-    <!-->
-            <TextView
-                android:id="@+id/detail_text_view_route"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/route"
-                android:textSize="24sp"
-                android:layout_marginLeft="1dp"
-                android:layout_marginRight="1dp"
-                />
-/-->
 
     <ImageView
         android:id="@+id/route_image"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_gravity="center"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/detail_text_view_route"
-        android:src="@drawable/cat"
         android:contentDescription="TODO" />
 
 

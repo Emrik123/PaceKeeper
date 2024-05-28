@@ -152,6 +152,7 @@ public class SessionFragment extends Fragment {
                             editCommentIcon.setVisibility(View.VISIBLE);
                             allKmInSession.setVisibility(View.VISIBLE);
                             sessionCommentTitle.setVisibility(View.VISIBLE);
+                            routeImage.setVisibility(View.VISIBLE);
                             MapGenerator mapGenerator = new MapGenerator();
                             Glide.with(sessionFragment).load(mapGenerator.getUrlFromStoredSession(getString(R.string.mapbox_access_token),session)).into(routeImage);
 
@@ -229,6 +230,7 @@ public class SessionFragment extends Fragment {
                             editCommentIcon.setVisibility(View.VISIBLE);
                             allKmInSession.setVisibility(View.VISIBLE);
                             sessionCommentTitle.setVisibility(View.VISIBLE);
+                            routeImage.setVisibility(View.VISIBLE);
                             MapGenerator mapGenerator = new MapGenerator();
                             Glide.with(sessionFragment).load(mapGenerator.getUrlFromStoredSession(getString(R.string.mapbox_access_token),session)).into(routeImage);
 
