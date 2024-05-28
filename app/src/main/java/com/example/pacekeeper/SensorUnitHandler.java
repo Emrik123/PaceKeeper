@@ -58,7 +58,7 @@ public class SensorUnitHandler extends Service {
      */
     public void waitForGpsLocation() {
         Thread t = new Thread(() -> {
-            while(stopWatch.getTime() < 10000){
+            while(stopWatch.getTime() < 8000){
                 if(firstLocation){
                     break;
                 }

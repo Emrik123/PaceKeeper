@@ -8,9 +8,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import org.apache.commons.lang3.time.StopWatch;
 
-import java.util.Arrays;
-
-
 /**
  * This class holds an Accelerometer sensor of type LINEAR_ACCELERATION.
  * It implements the SensorEventListener interface to register a listener to the sensor.

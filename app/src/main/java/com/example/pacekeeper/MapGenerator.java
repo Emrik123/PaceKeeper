@@ -1,5 +1,4 @@
 package com.example.pacekeeper;
-import android.location.Location;
 
 import com.mapbox.api.staticmap.v1.MapboxStaticMap;
 import com.mapbox.api.staticmap.v1.models.StaticPolylineAnnotation;

@@ -1,4 +1,5 @@
 package com.example.pacekeeper;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -11,7 +12,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class Session {
     private final ArrayList<Point> routeCoordinates;
