@@ -71,7 +71,7 @@
                 android:fontFamily="monospace"
                 android:textColor="#302E2E"
                 android:text="@string/each_km_in_session"
-                android:textSize="40sp" />
+                android:textSize="35sp" />
             <!-->
                         <TextView
                             android:id="@+id/detail_text_view_route"
@@ -85,7 +85,7 @@
             <ImageView
                 android:id="@+id/route_image"
                 android:layout_width="match_parent"
-                android:layout_height="350dp"
+                android:layout_height="250dp"
                 android:contentDescription="TODO"
                 android:src="@drawable/examplerouteimage"
                 app:layout_constraintEnd_toEndOf="@+id/linearLayout"

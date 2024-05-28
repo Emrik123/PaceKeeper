@@ -130,10 +130,16 @@ public class SessionFragment extends Fragment {
                 TextView sessionOverview = sessionView.findViewById(R.id.summary_text_view1);
                 TextView allKmInSession = sessionView.findViewById(R.id.detail_text_view_km);
 
-                String formattedDistance = String.format(Locale.forLanguageTag("Swedish"), "%.1f", session.getTotalDistance() / 1000);
+                String formattedDistance ="";
+
+                if(session.getTotalDistance()>100){
+                    formattedDistance = String.format(Locale.forLanguageTag("Swedish"), "%.1f", session.getTotalDistance() / 1000) + " km";
+                } else{
+                    formattedDistance = (int) session.getTotalDistance()+ " m";
+                }
 
                 sessionOverview.setText(session.getDate() + " | " + session.getTotalTime());
-                sessionDistance.setText(formattedDistance + " km");
+                sessionDistance.setText(formattedDistance);
                 StringBuilder allKmTime = new StringBuilder();
                 if (session.getTimePerKm() != null) {
                     for (int i = 0; i < session.getTimePerKm().size(); i++) {
