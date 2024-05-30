@@ -23,10 +23,15 @@ import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link SessionFragment#newInstance} factory method to
+ * Use the {@link SessionHistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SessionFragment extends Fragment {
+
+/**
+ * This class creates the session history fragment and determines
+ * the actions of all buttons.
+ */
+public class SessionHistoryFragment extends Fragment {
 
     private SessionManager sessionManager;
     LinearLayout sessionContainer;
@@ -37,23 +42,26 @@ public class SessionFragment extends Fragment {
     Handler uiHandler;
 
 
-    public SessionFragment() {
+    public SessionHistoryFragment() {
         // Required empty public constructor
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
+     * The new instance method is used to send data between fragment/activities when creating a fragment.
      * @return A new instance of fragment SessionFragment.
+     * @author Jonathan
      */
-    // TODO: Rename and change types and number of parameters
-    public static SessionFragment newInstance(SessionManager sessionManager) {
-        SessionFragment fragment = new SessionFragment();
+    public static SessionHistoryFragment newInstance(SessionManager sessionManager) {
+        SessionHistoryFragment fragment = new SessionHistoryFragment();
         fragment.setSessionManager(sessionManager);
         return fragment;
     }
 
+    /**
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     * @author Jonathan, Emrik
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,13 +74,27 @@ public class SessionFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
+    /**
+     * standard method which is run when the fragment is created which initializes all the
+     * elements in the fragment and their corresponding listeners.
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     */
+
     @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         sessionFragment = this;
 
         uiHandler = new Handler(Looper.getMainLooper());
-        View rootView = inflater.inflate(R.layout.fragment_session, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_session_history, container, false);
         initializeGraphicalResources(rootView);
 
         uiPopulation = new Runnable() {
@@ -86,15 +108,29 @@ public class SessionFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Method which populates the fragment on a separate thread to ensure that
+     * the application does not close unexpectedly when different views is
+     * opened rapidly.
+     */
     public void populateUI(){
         uiHandler.post(uiPopulation);
     }
 
+    /**
+     * Separate method to initialize the elements from the fragment.
+     * @param rootView the fragment which the elements is fetched from.
+     * @author Jonathan, Samuel
+     */
     public void initializeGraphicalResources(View rootView) {
         returnButton = rootView.findViewById(R.id.return_button);
         sessionContainer = rootView.findViewById(R.id.session_layout);
     }
 
+    /**
+     * The method which initializes the eventlisteners for the elements in the
+     * fragment_session_history.
+     */
     public void initializeEventListeners() {
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,12 +143,23 @@ public class SessionFragment extends Fragment {
         });
     }
 
+    /**
+     * The method which is run on a separate thread and is responsible for populating
+     * the session history fragment by creating several session_items and placing them
+     * inside the session history fragment.
+     * Here all sessions is retrieved from the session list and for each session a
+     * session item is populated and the appropriate action listeners is added to
+     * each element.
+     * @author Jonathan
+     */
+
     private void updateUI() {
         List<Session.StoredSession> sessionsList = sessionManager.getSavedSessions();
 
         if(sessionsList!=null) {
             Collections.reverse(sessionsList);
             for (Session.StoredSession session : sessionsList) {
+                //Initialize each element in the session_item
                 sessionView = LayoutInflater.from(getContext()).inflate(R.layout.session_item, null);
                 LinearLayout sessionItem = sessionView.findViewById(R.id.session_layout);
                 ImageButton compressButton = sessionView.findViewById(R.id.compress_button);
@@ -131,7 +178,7 @@ public class SessionFragment extends Fragment {
                 TextView allKmInSession = sessionView.findViewById(R.id.detail_text_view_km);
 
                 String formattedDistance ="";
-
+                //Add the data from the session retrieved.
                 if(session.getTotalDistance()>100){
                     formattedDistance = String.format(Locale.forLanguageTag("Swedish"), "%.1f", session.getTotalDistance() / 1000) + " km";
                 } else{
@@ -150,7 +197,8 @@ public class SessionFragment extends Fragment {
                 if (session.getSessionComment() != null) {
                     sessionComment.setText(session.getSessionComment());
                 }
-
+                //Listener for the expand button which enables the user to
+                //expand a session item.
                 expandButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -159,6 +207,7 @@ public class SessionFragment extends Fragment {
                             allKmInSession.setVisibility(View.VISIBLE);
                             sessionCommentTitle.setVisibility(View.VISIBLE);
                             routeImage.setVisibility(View.VISIBLE);
+                            //Creates the route image and places it in the routeImage imageview.
                             MapGenerator mapGenerator = new MapGenerator();
                             Glide.with(sessionFragment).load(mapGenerator.getUrlFromStoredSession(getString(R.string.mapbox_access_token),session)).into(routeImage);
 
@@ -170,7 +219,7 @@ public class SessionFragment extends Fragment {
                         }
                     }
                 });
-
+                //Enables the user to make the session item smaller again.
                 compressButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -187,7 +236,7 @@ public class SessionFragment extends Fragment {
                         }
                     }
                 });
-
+                //Listener which reveals the edit text element on click.
                 editCommentIcon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -200,7 +249,8 @@ public class SessionFragment extends Fragment {
                         editCommentIcon.setVisibility(View.GONE);
                     }
                 });
-
+                //Saves the comment the user has entered in the edit text element.
+                //And ensures that the keyboard is minimized on save.
                 saveCommentButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -215,11 +265,11 @@ public class SessionFragment extends Fragment {
                     }
 
                 });
-
+                //Adds a bit of spacing in between each session item for increased readability.
                 View spacerView = new View(getContext());
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 20);
                 spacerView.setLayoutParams(params);
-
+                //Listener for deleting a session.
                 deleteSessionButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -228,7 +278,8 @@ public class SessionFragment extends Fragment {
                         sessionContainer.removeView(spacerView);
                     }
                 });
-
+                //Listener which expands the session item if it is not expanded
+                //and compresses it if it's already expanded.
                 sessionItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -259,7 +310,7 @@ public class SessionFragment extends Fragment {
 
                     }
                 });
-
+                //Removes the place default text when the user presses the text field.
                 editCommentText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
@@ -268,7 +319,7 @@ public class SessionFragment extends Fragment {
                         }
                     }
                 });
-
+                //Adds the session item (sessionView) to the session history fragment (session container).
                 sessionContainer.addView(sessionView);
                 sessionContainer.addView(spacerView);
             }

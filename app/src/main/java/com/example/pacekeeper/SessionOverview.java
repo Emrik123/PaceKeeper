@@ -23,6 +23,12 @@ import com.bumptech.glide.Glide;
  * Use the {@link SessionOverview#newInstance} factory method to
  * create an instance of this fragment.
  */
+
+/**
+ * This class creates the session overview fragment and determines
+ * the actions of all the buttons.
+ * @author Jonathan, Johnny, Samuel
+ */
 public class SessionOverview extends Fragment {
     private SessionManager sessionManager;
     private Session currentSession;
@@ -42,12 +48,11 @@ public class SessionOverview extends Fragment {
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
+     *The new instance method is used to send data between fragments when creating a fragment.
      * @return A new instance of fragment SessionOverview.
+     * @author Jonathan
      */
-    // TODO: Rename and change types and number of parameters
+
     public static SessionOverview newInstance(Session currentSession, SessionManager sessionManager) {
         SessionOverview fragment = new SessionOverview();
         fragment.setCurrentSession(currentSession);
@@ -61,6 +66,10 @@ public class SessionOverview extends Fragment {
         mapGenerator = new MapGenerator();
     }
 
+    /**
+     * Method which determines the actions of the application when it's reopened.
+     * @author Johnny
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -79,6 +88,18 @@ public class SessionOverview extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * The on create view populates all elements in the fragment.
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return the rootview, i.e. the fragment created.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -105,6 +126,11 @@ public class SessionOverview extends Fragment {
         return rootView;
     }
 
+    /**
+     * Separate method to initialize the elements from the fragment.
+     * @param rootView the fragment which the elements is fetched from.
+     * @author Jonathan, Samuel
+     */
     public void initializeGraphicalResources(View rootView) {
         saveSession = rootView.findViewById(R.id.save_session_button);
         resumeSession = rootView.findViewById(R.id.resume_session_button);
@@ -116,6 +142,11 @@ public class SessionOverview extends Fragment {
         routeImage = rootView.findViewById(R.id.route_image);
     }
 
+    /**
+     * The method which initializes the eventlisteners for the elements in the
+     * fragment_session_overview.
+     * @author Jonathan, Samuel, Johnny
+     */
     public void initializeEventListeners() {
         saveSession.setOnClickListener(v -> {
             if(!String.valueOf(editComment.getText()).equals("Add text here.")){
@@ -168,12 +199,21 @@ public class SessionOverview extends Fragment {
         requireContext().startForegroundService(intent);
     }
 
+    /**
+     * Method for hiding the navigation bar
+     * @author Johnny
+     */
     private void hideNavigationBar() {
         View decorView = requireActivity().getWindow().getDecorView();
         int hideNavigation = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         int immersive = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(hideNavigation | immersive);
     }
+
+    /**
+     * Method for displaying the navigation bar
+     * @author Johnny
+     */
     private void displayNavigationBar() {
         View decorView = requireActivity().getWindow().getDecorView();
         int visible = View.SYSTEM_UI_FLAG_VISIBLE;

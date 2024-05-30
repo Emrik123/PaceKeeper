@@ -80,7 +80,7 @@ public class RunnerView extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_blank, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_runner_view, container, false);
         context = container.getContext();
         initializeGraphicalResources(rootView);
         fragmentManager = mainActivity.getSupportFragmentManager();
@@ -112,7 +112,7 @@ public class RunnerView extends Fragment {
      * Instantiates resources tied to the inflated XML.
      * @param rootView The root View of the inflated hierarchy.
      *
-     * @author Samuel
+     * @author Samuel, Jonathan
      */
     public void initializeGraphicalResources(View rootView) {
         timeDisplay = rootView.findViewById(R.id.time);
@@ -133,7 +133,7 @@ public class RunnerView extends Fragment {
     /**
      * Initializes event listeners for interactable elements such as buttons.
      *
-     * @author Samuel
+     * @author Samuel, Johnny, Jonathan
      */
     public void initializeEventListeners() {
         pauseButton.setOnClickListener(v -> {

@@ -17,14 +17,22 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 
-public class SessionManager {
+/**
+ * Class responsible for adding and removing sessions from the list of sessions.
+ * The list of sessions is then stored in the internal storage when a session is saved or modified.
+ * @author Jonathan
+ */
 
+public class SessionManager {
     private ArrayList<Session.StoredSession> sessions;
     public SessionManager(){
         sessions = new ArrayList<>();
     }
 
-
+    /**
+     * Method for adding a session in the list of sessions.
+     * @param session the session which is added.
+     */
     public void add(Session.StoredSession session){
         if(sessions==null){
             sessions = new ArrayList<>();
@@ -32,6 +40,10 @@ public class SessionManager {
         sessions.add(session);
     }
 
+    /**
+     * Method for removing a session from the list of sessions.
+     * @param session the session to remove.
+     */
     public void remove(Session.StoredSession session){
         sessions.remove(session);
     }
@@ -39,6 +51,11 @@ public class SessionManager {
     public ArrayList<Session.StoredSession> getSavedSessions(){
         return sessions;
     }
+
+    /**
+     * This method stores the list of sessions to the internal memory.
+     * @param context the context to which the file should be saved.
+     */
 
     public void storeSessionToMemory(Context context) {
         try {
@@ -52,6 +69,11 @@ public class SessionManager {
             Log.e("Store session", "Error storing file: " + e.getMessage());
         }
     }
+
+    /**
+     * This method sets the session list with the sessions stored in the internal memory.
+     * @param context the context from which the data is fetched.
+     */
 
     public void readFile(Context context) {
         try {

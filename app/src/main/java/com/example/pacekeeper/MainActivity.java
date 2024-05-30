@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
      * @author Jonathan
      */
     private void displaySessionsView() {
-        SessionFragment sessionFragment = SessionFragment.newInstance(sessionManager);
+        SessionHistoryFragment sessionFragment = SessionHistoryFragment.newInstance(sessionManager);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, sessionFragment);
         transaction.addToBackStack(null);

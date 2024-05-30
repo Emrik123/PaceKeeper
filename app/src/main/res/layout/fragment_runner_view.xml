@@ -12,9 +12,6 @@
     android:clickable="true"
     >
 
-<!--For some reason all horizontal placement is set using orientation vertical and vice versa for vertical-->
-    <!--I don't know why-->
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_horizontal_text"
         android:layout_width="wrap_content"
