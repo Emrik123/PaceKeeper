@@ -40,7 +40,6 @@ public class Accelerometer implements SensorEventListener {
         sensorThread.start();
         sensorHandler = new Handler(sensorThread.getLooper());
     }
-
     /**
      * Used to start the accelerometer and register a listener to the representing object.
      * @author Emrik, Johnny

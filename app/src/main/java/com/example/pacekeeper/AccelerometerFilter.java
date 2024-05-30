@@ -36,7 +36,7 @@ public class AccelerometerFilter {
                 {1, dt},
                 {0, 1}
         });
-        processNoiseVariance = 0.05;
+        processNoiseVariance = 0.02;
         Q = MatrixUtils.createRealMatrix(new double[][]{
                 {0.25 * dt * dt * processNoiseVariance , 0.5 * dt * processNoiseVariance},
                 {0.5 * dt * processNoiseVariance, processNoiseVariance}

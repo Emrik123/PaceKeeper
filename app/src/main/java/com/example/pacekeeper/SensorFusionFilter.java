@@ -8,39 +8,33 @@ import org.apache.commons.math3.linear.*;
  */
 public class SensorFusionFilter {
     /**
-     *  A - State transition matrix describing how the "measured state" changes over time. Acceleration is ignored in the measurement.
-     *      [1 dt  0  0] - Where dt is the time interval of change.
-     *      [0  1  0  0]
-     *      [0  0  1 dt]
-     *      [0  0  0  1]
+     *  Note: dt represents timeDelta in each time step.
+     *  <p>
+     *  A - State transition matrix describing how the "measured state" changes over time.
+     *  Acceleration is ignored in the measurement.
+     *      [1 dt]
+     *      [0  1]
      * <p>
-     *  B - State control matrix, describing the linear state model of the transition matrix from state x0 to x1.
-     *      [0.5*dt^2  0]
-     *      [dt        0]
-     *      [0  0.5*dt^2]
-     *      [0        dt]
+     *  B - State control matrix, complementary matrix to A describing the model of the transition from state x0 to x1.
+     *      [0.5*dt^2]
+     *      [   dt   ]
      * <p>
      *  H - Observation matrix determining which variables we observe. In this case velocity.
-     *      [0  1  0  0]
+     *      [0  1]
      * <p>
      *  Q - Process noise matrix. Sensor noise is determined to be low (ranging from 0.09-0.16)
      *      NOTE: Android accelerometer standard deviation is between 0.025 and 0.044 m/s
-     *      [0.25*dt^4  0.5*dt^3  0  0]  * 0.035
-     *      [0.5*dt^3    dt^2     0  0]
-     *      [0  0  0.25*dt^4  0.5*dt^3]
-     *      [0  0  0.5*dt^3       dt^2]
+     *      [0.25*dt^4  0.5*dt^3]  * 0.035
+     *      [0.5*dt^3     dt^2  ]
      * <p>
      *  R - Measurement noise covariance. In this case GPS sensor noise, measured to be low (ranging from 0.4-0.7 km/h).
      *      R = 0.06
      * <p>
      *  P - Identity matrix for noise covariance (4x4)
-     *      [1  0  0  0]
-     *      [0  1  0  0]
-     *      [0  0  1  0]
-     *      [0  0  0  1]
+     *      [1  0]
+     *      [0  1]
      * <p>
      *     Note that matrices A, B and Q are recalculated each cycle with a dynamically changing dt.
-     *
      */
 
     private RealMatrix A, B, Q, R, P, K, H;
