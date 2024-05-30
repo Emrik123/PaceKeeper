@@ -205,6 +205,11 @@ public class Session {
         return currentSpeed;
     }
 
+    /**
+     * Returns the pace selected by the user formatted as either km/h or min/km.
+     * @return The user's selected speed.
+     * @author Samuel
+     */
     public String getFormattedSelectedSpeed() {
         switch (unitOfVelocity) {
             case KM_PER_HOUR:
@@ -215,6 +220,11 @@ public class Session {
         return null;
     }
 
+    /**
+     * Returns the velocity the user's velocity formatted as either km/h or min/km.
+     * @return The user's current velocity.
+     * @author Samuel, Johnny
+     */
     @SuppressLint("DefaultLocale")
     public String getFormattedCurrentSpeed() {
         switch (unitOfVelocity) {
@@ -230,6 +240,12 @@ public class Session {
         return distance;
     }
 
+    /**
+     * Returns the distance formatted as kilometers, or meters, if the distance travelled is less or equal to
+     * 1 kilometer.
+     * @return The distance travelled.
+     * @author Emrik, Johnny
+     */
     @SuppressLint("DefaultLocale")
     public String getFormattedDistance() {
         if (getDistance() > 1000) {
@@ -243,11 +259,21 @@ public class Session {
         this.sessionComment = sessionComment;
     }
 
+    /**
+     * Returns the date of a session, formatted as MM/DD.
+     * @return A date.
+     * @author Jonathan
+     */
     public String getSessionDate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd");
         return sessionDate.format(formatter);
     }
 
+    /**
+     * Returns the total time elapsed during a session.
+     * @return The total time of the session.
+     * @author Jonathan
+     */
     public String getTotalSessionTime() {
         long totalTimeMillis = stopwatch.getTime();
         long hours = totalTimeMillis / (60 * 60 * 1000);
