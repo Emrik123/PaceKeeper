@@ -296,6 +296,11 @@ public class Session {
         return stopwatch.getTime();
     }
 
+    /**
+     * Adds the time elapsed for each kilometer.
+     * @param time The time it took the travel the current kilometer
+     * @author Jonathan
+     */
     public void addTimePerKm(long time) {
         long minutes = (time % (60 * 60 * 1000)) / (60 * 1000);
         long seconds = (time % (60 * 1000)) / 1000; //
@@ -331,7 +336,18 @@ public class Session {
         private String sessionComment;
         private final ArrayList<Point> route;
 
-
+        /**
+         * Class constructor.
+         * Adds the relevant data from the current session to this serializable version.
+         * @param date The date of the session.
+         * @param distance The total distance travelled.
+         * @param time The total time elapsed during the session
+         * @param timePerKm The kilometer split
+         * @param selectedSpeed The selected speed
+         * @param sessionComment An optional comment
+         * @param route A list of coordinates used to generate a route image
+         * @author Jonathan
+         */
         public StoredSession(LocalDate date, double distance, String time, ArrayList<String> timePerKm, String selectedSpeed, String sessionComment, List<Point> route){
             this.totalTime = time;
             this.totalDistance = distance;
