@@ -70,6 +70,15 @@
             android:src="@drawable/expandlogopng" />
 
     </LinearLayout>
+    <TextView
+        android:id="@+id/desired_pace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Desired pace: 6 km/h"
+        android:textSize="20sp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
 
     <TextView
         android:id="@+id/detail_text_view_km"
@@ -77,8 +86,8 @@
         android:layout_height="wrap_content"
         android:text="@string/each_km_in_session"
         android:textSize="30sp"
-        android:visibility="gone"
         android:layout_marginLeft="1dp"
+        android:visibility="gone"
         android:layout_marginRight="1dp" />
 
     <ImageView
@@ -100,7 +109,6 @@
         android:text="@string/session_comment_title"
         android:textSize="28sp"
         android:visibility="gone"
-
         />
 
 
@@ -110,7 +118,6 @@
         android:layout_height="40dp"
         android:src="@drawable/baseline_edit_note_24"
         android:visibility="gone"
-
         />
 
     <EditText
@@ -120,8 +127,8 @@
         android:ems="10"
         android:inputType="text"
         android:text="@string/edit_comment_text"
-        android:visibility="gone"
         android:clickable="true"
+        android:visibility="gone"
         />
 
     <TextView
@@ -134,7 +141,6 @@
         android:layout_marginRight="1dp"
         android:layout_marginBottom="1dp"
         android:visibility="gone"
-
         />
 
 
@@ -145,7 +151,6 @@
         <Button
             android:id="@+id/save_comment_button"
             android:visibility="gone"
-
             android:backgroundTint="#29cbfc"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
@@ -159,6 +164,7 @@
 
         <ImageButton
             android:id="@+id/compress_button"
+            android:visibility="gone"
             android:layout_width="70dp"
             android:layout_height="48dp"
             android:backgroundTint="@color/transparent"
@@ -167,7 +173,6 @@
             android:scaleType="centerCrop"
             android:src="@drawable/expandlogopng"
             android:layout_alignParentEnd="true"
-            android:visibility="gone"
 
             />
 

@@ -154,7 +154,7 @@ public class Session {
      * @author Jonathan
      */
     public StoredSession getSerializableSession() {
-        return new StoredSession(sessionDate, getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed, sessionComment, getRoute());
+        return new StoredSession(sessionDate, getDistance(), getTotalSessionTime(), getTimePerKm(), getFormattedSelectedSpeed(), sessionComment, getRoute());
     }
 
     /**
@@ -302,12 +302,13 @@ public class Session {
         private final String totalTime;
         private static final long serialVersionUID = 0L;
         private LocalDate date;
-        private double selectedSpeed;
+        private String selectedSpeed;
         private ArrayList<String> timePerKm;
         private String sessionComment;
         private ArrayList<Point> route;
 
-        public StoredSession(LocalDate date, double distance, String time, ArrayList<String> timePerKm, double selectedSpeed, String sessionComment, List<Point> route){
+
+        public StoredSession(LocalDate date, double distance, String time, ArrayList<String> timePerKm, String selectedSpeed, String sessionComment, List<Point> route){
             this.totalTime = time;
             this.totalDistance = distance;
             this.date = date;
@@ -345,9 +346,7 @@ public class Session {
         public String getSessionComment(){
             return sessionComment;
         }
-        public String getSelectedSpeed(){
-            return Double.toString(selectedSpeed);
-        }
+        public String getSelectedSpeed(){return selectedSpeed;}
         public ArrayList<Point> getRoute(){return route;}
     }
 }

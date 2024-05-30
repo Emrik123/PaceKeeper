@@ -176,6 +176,7 @@ public class SessionHistoryFragment extends Fragment {
 
                 TextView sessionOverview = sessionView.findViewById(R.id.summary_text_view1);
                 TextView allKmInSession = sessionView.findViewById(R.id.detail_text_view_km);
+                TextView desiredPace = sessionView.findViewById(R.id.desired_pace);
 
                 String formattedDistance ="";
                 //Add the data from the session retrieved.
@@ -197,6 +198,7 @@ public class SessionHistoryFragment extends Fragment {
                 if (session.getSessionComment() != null) {
                     sessionComment.setText(session.getSessionComment());
                 }
+                desiredPace.setText("Desired pace: " + session.getSelectedSpeed());
                 //Listener for the expand button which enables the user to
                 //expand a session item.
                 expandButton.setOnClickListener(new View.OnClickListener() {
@@ -207,6 +209,7 @@ public class SessionHistoryFragment extends Fragment {
                             allKmInSession.setVisibility(View.VISIBLE);
                             sessionCommentTitle.setVisibility(View.VISIBLE);
                             routeImage.setVisibility(View.VISIBLE);
+                            desiredPace.setVisibility(View.VISIBLE);
                             //Creates the route image and places it in the routeImage imageview.
                             MapGenerator mapGenerator = new MapGenerator();
                             Glide.with(sessionFragment).load(mapGenerator.getUrlFromStoredSession(getString(R.string.mapbox_access_token),session)).into(routeImage);
@@ -224,6 +227,7 @@ public class SessionHistoryFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         if (allKmInSession.getVisibility() == View.VISIBLE) {
+                            desiredPace.setVisibility(View.GONE);
                             allKmInSession.setVisibility(View.GONE);
                             sessionCommentTitle.setVisibility(View.GONE);
                             sessionComment.setVisibility(View.GONE);
@@ -287,6 +291,7 @@ public class SessionHistoryFragment extends Fragment {
                             editCommentIcon.setVisibility(View.VISIBLE);
                             allKmInSession.setVisibility(View.VISIBLE);
                             sessionCommentTitle.setVisibility(View.VISIBLE);
+                            desiredPace.setVisibility(View.VISIBLE);
                             MapGenerator mapGenerator = new MapGenerator();
                             Glide.with(sessionFragment)
                                     .load(mapGenerator.getUrlFromStoredSession(getString(R.string.mapbox_access_token)
@@ -297,6 +302,7 @@ public class SessionHistoryFragment extends Fragment {
                             expandButton.setVisibility(View.GONE);
                             compressButton.setVisibility(View.VISIBLE);
                         } else{
+                            desiredPace.setVisibility(View.GONE);
                             allKmInSession.setVisibility(View.GONE);
                             sessionCommentTitle.setVisibility(View.GONE);
                             sessionComment.setVisibility(View.GONE);
