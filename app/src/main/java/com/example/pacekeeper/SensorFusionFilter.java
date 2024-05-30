@@ -30,7 +30,7 @@ public class SensorFusionFilter {
      *  R - Measurement noise covariance. In this case GPS sensor noise, measured to be low (ranging from 0.4-0.7 km/h).
      *      R = 0.06
      * <p>
-     *  P - Identity matrix for noise covariance (4x4)
+     *  P - Identity matrix for noise covariance (2x2)
      *      [1  0]
      *      [0  1]
      * <p>
