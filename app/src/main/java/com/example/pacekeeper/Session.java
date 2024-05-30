@@ -20,7 +20,6 @@ import java.util.List;
  */
 public class Session {
     private final ArrayList<Point> routeCoordinates;
-    private final ArrayList<Double> storedSpeedArray;
     private final ArrayList<String> timePerKm;
     private Location currentLocation;
     private double distance;
@@ -58,7 +57,6 @@ public class Session {
         isPaused = false;
         routeCoordinates = new ArrayList<>();
         this.context = context;
-        storedSpeedArray = new ArrayList<>();
         timePerKm = new ArrayList<>();
         stopwatch = new StopWatch();
         stopwatch.start();
@@ -301,11 +299,11 @@ public class Session {
         private final double totalDistance;
         private final String totalTime;
         private static final long serialVersionUID = 0L;
-        private LocalDate date;
-        private String selectedSpeed;
-        private ArrayList<String> timePerKm;
+        private final LocalDate date;
+        private final String selectedSpeed;
+        private final ArrayList<String> timePerKm;
         private String sessionComment;
-        private ArrayList<Point> route;
+        private final ArrayList<Point> route;
 
 
         public StoredSession(LocalDate date, double distance, String time, ArrayList<String> timePerKm, String selectedSpeed, String sessionComment, List<Point> route){
