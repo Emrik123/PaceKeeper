@@ -7,8 +7,6 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import org.apache.commons.lang3.time.StopWatch;
-import java.util.ArrayList;
-
 
 /**
  * This class holds an Accelerometer sensor of type LINEAR_ACCELERATION.
@@ -42,7 +40,6 @@ public class Accelerometer implements SensorEventListener {
         sensorThread.start();
         sensorHandler = new Handler(sensorThread.getLooper());
     }
-
     /**
      * Used to start the accelerometer and register a listener to the representing object.
      * @author Emrik, Johnny
@@ -84,13 +81,13 @@ public class Accelerometer implements SensorEventListener {
      */
     @Override
     public void onSensorChanged(SensorEvent event) {
-        /*if (accelerometerValues == null) {
+        if (accelerometerValues == null) {
             accelerometerValues = event.values.clone();
         } else {
             for (int i = 0; i < 3; i++) {
                 accelerometerValues[i] = ALPHA * accelerometerValues[i] + (1 - ALPHA) * event.values[i];
             }
-        }*/
+        }
         accelerometerValues = event.values.clone();
     }
 

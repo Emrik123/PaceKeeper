@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.CombinedVibration;
 import android.os.VibrationEffect;
 import android.os.VibratorManager;
-
 import java.io.Serializable;
 
 /**

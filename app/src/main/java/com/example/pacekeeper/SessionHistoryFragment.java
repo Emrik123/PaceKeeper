@@ -287,10 +287,10 @@ public class SessionHistoryFragment extends Fragment {
                             editCommentIcon.setVisibility(View.VISIBLE);
                             allKmInSession.setVisibility(View.VISIBLE);
                             sessionCommentTitle.setVisibility(View.VISIBLE);
-                            routeImage.setVisibility(View.VISIBLE);
                             MapGenerator mapGenerator = new MapGenerator();
-                            Glide.with(sessionFragment).load(mapGenerator.getUrlFromStoredSession(getString(R.string.mapbox_access_token),session)).into(routeImage);
-
+                            Glide.with(sessionFragment)
+                                    .load(mapGenerator.getUrlFromStoredSession(getString(R.string.mapbox_access_token)
+                                    , session)).into(routeImage);
                             if (session.getSessionComment() != null) {
                                 sessionComment.setVisibility(View.VISIBLE);
                             }
@@ -307,7 +307,6 @@ public class SessionHistoryFragment extends Fragment {
                             editCommentIcon.setVisibility(View.GONE);
                             routeImage.setVisibility(View.GONE);
                         }
-
                     }
                 });
                 //Removes the place default text when the user presses the text field.

@@ -12,7 +12,6 @@ import android.widget.*;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
-
 import java.util.Locale;
 
 /**
