@@ -6,10 +6,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.HandlerThread;
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.linear.*;
 
 /**
  * This class is used to determine the current orientation of the device, which is necessary
@@ -91,16 +88,14 @@ public class OrientationHandler implements SensorEventListener {
      * @param rotationMatrix passed from getRotationMatrixFromVector.
      * @author Emrik
      */
-    private void updateMatrix(float[] rotationMatrix) {
-        inverseRotationMatrix.setEntry(0, 0, rotationMatrix[0]);
-        inverseRotationMatrix.setEntry(0, 1, rotationMatrix[1]);
-        inverseRotationMatrix.setEntry(0, 2, rotationMatrix[2]);
-        inverseRotationMatrix.setEntry(1, 0, rotationMatrix[3]);
-        inverseRotationMatrix.setEntry(1, 1, rotationMatrix[4]);
-        inverseRotationMatrix.setEntry(1, 2, rotationMatrix[5]);
-        inverseRotationMatrix.setEntry(2, 0, rotationMatrix[6]);
-        inverseRotationMatrix.setEntry(2, 1, rotationMatrix[7]);
-        inverseRotationMatrix.setEntry(2, 2, rotationMatrix[8]);
+    private synchronized void updateMatrix(float[] rotationMatrix) {
+        RealMatrix rotationMatrixReal = new Array2DRowRealMatrix(new double[][]{
+                {rotationMatrix[0], rotationMatrix[1], rotationMatrix[2]},
+                {rotationMatrix[3], rotationMatrix[4], rotationMatrix[5]},
+                {rotationMatrix[6], rotationMatrix[7], rotationMatrix[8]}
+        });
+        LUDecomposition luDecomposition = new LUDecomposition(rotationMatrixReal);
+        inverseRotationMatrix = luDecomposition.getSolver().getInverse();
     }
 
     /**
@@ -112,14 +107,16 @@ public class OrientationHandler implements SensorEventListener {
         RealVector vector = new ArrayRealVector(new double[]{
                 accelerometerValues[0], accelerometerValues[1], accelerometerValues[2]
         });
-        RealVector resultVector = inverseRotationMatrix.operate(vector);
-        // Unfiltered
-        /*sensorUnitHandler.getAccelerometer().setAccelerometerValues(new float[]{(float) resultVector.getEntry(0), (float) resultVector.getEntry(1), (float) resultVector.getEntry(2)});*/
-        // transformedAcceleration[0] is east, transformedAcceleration[1] is north, transformedAcceleration[2] is vertical
-
+        RealVector resultVector;
+        synchronized (this) {
+            resultVector = inverseRotationMatrix.operate(vector);
+        }
         filterAccelerometerValues(resultVector);
-        // Filtered
-        sensorUnitHandler.getAccelerometer().setAccelerometerValues(new float[]{(float) eastAxisFilter.getState()[1], (float) northAxisFilter.getState()[1], (float) verticalAxisFilter.getState()[1]});
+        sensorUnitHandler.getAccelerometer().setAccelerometerValues(new float[]{
+                (float) eastAxisFilter.getState()[0],
+                (float) northAxisFilter.getState()[0],
+                (float) verticalAxisFilter.getState()[0]
+        });
     }
 
     /**

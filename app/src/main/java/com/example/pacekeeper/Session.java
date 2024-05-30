@@ -1,9 +1,9 @@
 package com.example.pacekeeper;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.location.Location;
-import android.text.format.DateUtils;
 import com.google.android.gms.location.LocationResult;
 import com.mapbox.geojson.Point;
 import org.apache.commons.lang3.time.StopWatch;
@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class Session {
     private final ArrayList<Point> routeCoordinates;
@@ -29,7 +28,7 @@ public class Session {
     private final StopWatch stopwatch;
     private long timeExceptCurrentKm;
     private int kmDistance = 1000;
-    private final Kalman kalmanFilter;
+    private final SensorFusionFilter sensorFusionFilter;
     private long timeStep;
     private SessionBroadcastReceiver broadcastReceiver;
     private Context context;
@@ -40,7 +39,7 @@ public class Session {
 
     public Session(double selectedSpeed, Context context, FeedbackHandler feedbackHandler) {
         this.feedbackHandler = feedbackHandler;
-        kalmanFilter = new Kalman();
+        sensorFusionFilter = new SensorFusionFilter();
         this.sessionDate = LocalDate.now();
         this.selectedSpeed = selectedSpeed;
         isRunning = true;
@@ -125,9 +124,10 @@ public class Session {
                 deltaTime = 0;
             }
             this.timeStep = stopwatch.getTime();
-            kalmanFilter.predict(a[0], a[1]);
-            kalmanFilter.update(currentLocation.getSpeed(), deltaTime / 1000);
-            double[] result = kalmanFilter.getState();
+            double acc_xy = Math.sqrt(Math.pow(a[0], 2) + Math.pow(a[1], 2));
+            sensorFusionFilter.predict(acc_xy);
+            sensorFusionFilter.update(currentLocation.getSpeed(), deltaTime / 1000);
+            double[] result = sensorFusionFilter.getState();
             this.currentSpeed = result[1];
             if (currentSpeed > 0.5 && lastLocation != null) {
                 distance = result[0];
