@@ -13,6 +13,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class holds and tracks all relevant variables for a running session.
+ * It contains an instance of SessionBroadcastReceiver, which receives updates from the running sensor service.
+ * @author Emrik, Johnny, Samuel, Jonathan
+ */
 public class Session {
     private final ArrayList<Point> routeCoordinates;
     private final ArrayList<Double> storedSpeedArray;
@@ -36,7 +41,14 @@ public class Session {
     private boolean isPaused;
     private String sessionComment;
 
-
+    /**
+     * Constructor.
+     * @param selectedSpeed user input desired pace
+     * @param context application context
+     * @param feedbackHandler see the FeedbackHandler class
+     * @see FeedbackHandler
+     * @author Emrik, Johnny, Samuel, Jonathan
+     */
     public Session(double selectedSpeed, Context context, FeedbackHandler feedbackHandler) {
         this.feedbackHandler = feedbackHandler;
         sensorFusionFilter = new SensorFusionFilter();
@@ -54,6 +66,12 @@ public class Session {
         initializeReceiver();
     }
 
+    /**
+     * Method to update the session timer. Uses a Stopwatch and converts the value into hours, minutes and seconds.
+     * @return the converted time
+     * @see StopWatch
+     * @author Jonathan
+     */
     public String updateTime(){
         long currentTimeMillis = stopwatch.getTime();
         int hours = (int) (currentTimeMillis / (1000 * 60 * 60)) % 24;
@@ -63,12 +81,23 @@ public class Session {
         return timeString;
     }
 
+    /**
+     * Method that registers an instance of SessionBroadcastReceiver to the application context.
+     * Passes an IntentFilter that listens for "locationUpdate".
+     * @see IntentFilter
+     * @see android.content.BroadcastReceiver
+     * @author Johnny
+     */
     public void initializeReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("locationUpdate");
         context.registerReceiver(broadcastReceiver, intentFilter);
     }
 
+    /**
+     * Method that collects a kilometer split when the current distance increments by 1km.
+     * @author Samuel, Jonathan
+     */
     public void updateSessionData() {
         if (getDistance() >= kmDistance) {
             long time = getTotalTime() - getTimeExceptCurrentKm();
@@ -78,6 +107,11 @@ public class Session {
         }
     }
 
+    /**
+     * Method used to pass the current kilometer split.
+     * @param kmTime split for the latest kilometer
+     * @author Jonathan
+     */
     public void addTime(long kmTime) {
         timeExceptCurrentKm += kmTime;
     }
@@ -86,27 +120,50 @@ public class Session {
         return timeExceptCurrentKm;
     }
 
-
+    /**
+     * Method used to pause the current session
+     * @author Emrik, Samuel
+     */
     public void pauseSession() {
         isPaused = true;
         stopwatch.suspend();
     }
 
-
+    /**
+     * Method used to continue the current session
+     * @author Emrik, Samuel
+     */
     public void continueSession() {
         isPaused = false;
         currentLocation = null;
         stopwatch.resume();
     }
 
+    /**
+     * Method used to kill (stop) the current session
+     * @author Emrik
+     */
     public void killSession() {
         isRunning = false;
     }
 
+    /**
+     * Method used to pass a serializable object containing the relevant statistics of the current session.
+     * @return serializable object holding relevant session data
+     * @see StoredSession
+     * @author Jonathan
+     */
     public StoredSession getSerializableSession() {
         return new StoredSession(sessionDate, getDistance(), getTotalSessionTime(), getTimePerKm(), selectedSpeed, sessionComment, getRoute());
     }
 
+    /**
+     * Method used to update the session data when a locational update has been received.
+     * @param location new LocationResult from the GPS
+     * @param a accelerometer values
+     * @see LocationResult
+     * @author Johnny, Samuel, Jonathan, Emrik
+     */
     public void updateLocation(LocationResult location, float[] a) {
         if (isRunning && !isPaused) {
             Location lastLocation = null;
@@ -211,14 +268,6 @@ public class Session {
         return routeCoordinates;
     }
 
-    public double calculateAverageSpeed() {
-        double avg = 0;
-        for (Double d : storedSpeedArray) {
-            avg += d;
-        }
-        return avg / storedSpeedArray.size();
-    }
-
     public long getTotalTime() {
         return stopwatch.getTime();
     }
@@ -244,6 +293,10 @@ public class Session {
         this.unitOfVelocity = unitOfVelocity;
     }
 
+    /**
+     * Inner class used to export Serializable object of current session.
+     * @author Jonathan
+     */
     public static class StoredSession implements Serializable{
         private final double totalDistance;
         private final String totalTime;
